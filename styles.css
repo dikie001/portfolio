@@ -363,3 +363,7 @@ home-content h1 {
     flex-direction: column;
   }
 }
+
+.hidden {
+  display: none !important;
+}
