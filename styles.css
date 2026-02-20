@@ -907,7 +907,8 @@ section {
   transition: var(--transition);
 }
 
-.social-icon img {
+.social-icon img,
+.social-icon svg {
   width: 22px;
   height: 22px;
   filter: brightness(0) invert(1) opacity(0.7);
@@ -920,7 +921,8 @@ section {
   transform: translateY(-5px);
 }
 
-.social-icon:hover img {
+.social-icon:hover img,
+.social-icon:hover svg {
   filter: brightness(0) invert(0);
 }
 
