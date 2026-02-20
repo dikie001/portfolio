@@ -5,168 +5,268 @@
     <meta charset="UTF-8">
     <link rel="icon" type="image/x-icon" href="/logo.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>dickens | portfolio</title>
+    <title>Dickens Omondi | Premium E-Commerce Developer</title>
+
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
+
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <header class="header">
-        <a href="#home" class="logo"> Dickens <span>Omondi</span></a>
+    <header class="header fade-in">
+        <a href="#home" class="logo">D.O.</a>
+
         <img src="burger-menu.png" class="" alt='icon' id="menu-icon" width="40px" height="40px">
         <img src="cancel.png" class="hidden" alt='icon' id="cancel-icon" width="25px" height="25px">
+
         <nav class="navbar">
             <a href="#home">Home</a>
-            <a href="#about">About</a>
-            <a href="#services">Services</a>
+            <a href="#about">Expertise</a>
+            <a href="#works">Selected Works</a>
+            <a href="#rates">Rate Card</a>
             <a href="#contact">Contact</a>
         </nav>
     </header>
+
     <section class="home" id="home">
         <div class="home-content">
-            <h1>Hi, It's <span id="myName">Dickens</span></h1>
-            <h3>I'm a passionate <span>Software Engineer</span></h3>
-            <p>I specialize in React, Next.js, React Native, and MongoDB. I create sleek
-                web and mobile applications, aiming to deliver impactful digital solutions.</p>
-            <div class="social-icons">
-                
-                <a target='_blank' href="https://github.com/dikie001">
-                    <img src="github.png" alt="github" width="30px" height="30px">
-                </a>
-                <a target='_blank' href="#">
-                    <img src="linkedin.png" alt="linkedin" width="30px" height="30px">
-                </a>
-                <a target='_blank' href="https://www.instagram.com/dikie.255?igsh=YzljYTk1ODg3Zg==">
-                    <img src="instagram.png" alt="instagram" width="30px" height="30px">
-                </a>
-                <a target='_blank' href="https://x.com/Dickens1457?s=09">
-                    <img src="twitter.png" alt="twitter" width="30px" height="30px">
-                </a>
-                
+            <p class="subtitle fade-in">Dickens Omondi</p>
+            <h1 class="fade-in delay-1">Crafting Premium <br> <span>E-Commerce</span> Experiences.</h1>
+            <p class="description fade-in delay-2">I build high-converting, visually stunning Next.js and Shopify
+                storefronts tailored exclusively for modern fashion brands.</p>
+            <div class="btn-group fade-in delay-3">
+                <a href="#works" class="btn btn-primary">View Live Portfolio</a>
+                <a href="#rates" class="btn btn-outline">View Rates</a>
             </div>
-            <div class="btn-group">
 
-                <a href="#contact" class="btn">Contact</a>
+            <div class="social-links-hero fade-in delay-3">
+                <a target='_blank' href="https://github.com/dikie001">GitHub</a>
+                <a target='_blank' href="#">LinkedIn</a>
+                <a target='_blank' href="https://www.instagram.com/dikie.255?igsh=YzljYTk1ODg3Zg==">Instagram</a>
+                <a target='_blank' href="https://x.com/Dickens1457?s=09">Twitter</a>
             </div>
         </div>
-        <div class="home-img">
-            <img src="dikie.jpg" alt="dikie">
-
+        <div class="home-img fade-in delay-2">
+            <img src="dikie.jpg" alt="Dickens Omondi">
         </div>
-
     </section>
+
     <section class="about" id="about">
-        <div class="about-img">
-            <img src="dikie001.jpg" alt="me">
-        </div>
-        <div class="about-content">
-            <h2>About <span>Me</span></h2>
-            <p>I am a skilled front-end developer with expertise in React, Next.js, and MongoDB. I am proficient in
-                crafting
-                user-friendly and visually appealing web applications using Tailwind CSS, prioritizing a clean and
-                efficient development
-                process. I have a strong interest in exploring the integration of 3D visuals to enhance user engagement.
-                I am a highly
-                motivated and results-oriented individual with a strong work ethic and a passion for building innovative
-                web experiences
-            </p>
-            <a href="#" class="btn">Read More</a>
-        </div>
-    </section>
-    <section class="services" id="services">
-        <h2 class="heading">Services</h2>
-        <div class="services-container">
-
-            <div class="service-box">
-                <div class="service-info">
-                    <img src="app.png" alt="app-logo" width="100px">
-
-                    <h4>Mobile App Development</h4>
-                    <p>I develop cross-platform mobile applications, focusing on creating responsive, efficient, and
-                        user-friendly experiences.
-                        I prioritize clean code, performance optimization, and seamless functionality.</p>
-                </div>
+        <div class="about-grid">
+            <div class="about-img fade-in">
+                <img src="dikie001.jpg" alt="Setup">
             </div>
-
-            <div class="service-box">
-                <div class="service-info">
-                    <img src="front-end.png" alt="web-logo" width="100px">
-                    <h4>front-end Development</h4>
-                    <p>I specialize in creating dynamic, responsive user interfaces with a focus on clean design and
-                        seamless functionality.
-                        Leveraging modern tools like React,tailwind and threejs I build fast and scalable web
-                        applications while ensuring an intuitive user
-                        experience.</p>
-                </div>
-            </div>
-
-            <div class="service-box">
-                <div class="service-info">
-                    <img src="back-end.png" alt="backend-logo" width="100px">
-                    <h4>Backend Development</h4>
-                    <p>I develop scalable and efficient server-side applications using Next.js for seamless server-side
-                        rendering and API
-                        integration. My expertise includes working with databases like MongoDB and MySQL, enabling me to
-                        create secure and
-                        robust data-driven systems.
-                    </p>
+            <div class="about-content">
+                <span class="section-tag fade-in">Expertise</span>
+                <h2 class="fade-in delay-1">Elevating Fashion Brands <br> in the Digital Space.</h2>
+                <p class="fade-in delay-2">I am a specialized e-commerce web developer with a proven track record of
+                    building storefronts that drive sales and captivate fashion audiences. With deep expertise in React,
+                    Next.js, and headless commerce, I create lightning-fast shopping experiences.</p>
+                <br>
+                <p class="fade-in delay-2">My approach prioritizes pixel-perfect minimal design, seamless checkout
+                    journeys, and robust front-end performance—ensuring your fashion brand stands out in a competitive
+                    luxury market.</p>
+                <div class="stats fade-in delay-3">
+                    <div class="stat-item">
+                        <h4>3+</h4>
+                        <p>Years Experience</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>Next/React</h4>
+                        <p>Modern Stack</p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <section class="works" id="works">
+        <div class="section-header fade-in">
+            <span class="section-tag">Live Portfolio</span>
+            <h2>Selected Works</h2>
+            <p>Live e-commerce experiences engineered for high-end brands.</p>
+        </div>
+
+        <div class="works-container">
+            <!-- Project 1 -->
+            <div class="work-card fade-in delay-1">
+                <div class="img-placeholder light">
+                    <span class="brand-logo" style="letter-spacing: 2px;">BITSA</span>
+                </div>
+                <div class="work-info">
+                    <h3>BITSA Platform</h3>
+                    <p>A comprehensive full-stack platform for IT students featuring role-based management, an AI
+                        Assistant powered by Google Gemini, event tracking, and content management systems.</p>
+                    <div class="tags">
+                        <span>React 19</span>
+                        <span>Node.js</span>
+                        <span>Prisma</span>
+                        <span>Gemini AI</span>
+                    </div>
+                    <a href="https://bitsa-ueab.vercel.app" target="_blank" class="btn btn-outline-small">View Live
+                        Build &rarr;</a>
+                    <a href="https://github.com/dikie001/bitsa" target="_blank" class="btn btn-outline-small"
+                        style="margin-left: 1rem; border-color: rgba(255,255,255,0.2);">GitHub Repo &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Project 2 -->
+            <div class="work-card reverse fade-in delay-1">
+                <div class="img-placeholder dark">
+                    <span class="brand-logo"
+                        style="font-family: 'Inter', sans-serif; letter-spacing: 4px;">BRILLIA</span>
+                </div>
+                <div class="work-info">
+                    <h3>Brillia PWA App</h3>
+                    <p>A Progressive Web App serving as a daily companion for inspiration, interactive quizzes, flash
+                        stories, and fun facts. Fully offline-capable and responsive.</p>
+                    <div class="tags">
+                        <span>React 19</span>
+                        <span>TypeScript</span>
+                        <span>Tailwind v4</span>
+                        <span>PWA</span>
+                    </div>
+                    <a href="https://brillia-six.vercel.app" target="_blank" class="btn btn-outline-small">View Live
+                        Build &rarr;</a>
+                    <a href="https://github.com/dikie001/Brillia" target="_blank" class="btn btn-outline-small"
+                        style="margin-left: 1rem; border-color: rgba(255,255,255,0.2);">GitHub Repo &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Project 3 -->
+            <div class="work-card fade-in delay-1">
+                <div class="img-placeholder beige">
+                    <span class="brand-logo" style="color: #4a4036;">Noir Studio</span>
+                </div>
+                <div class="work-info">
+                    <h3>Noir Minimalist Studio</h3>
+                    <p>A sleek monochrome digital storefront for an independent fashion label focusing on seamless
+                        mobile experience and ultra-fast page loads.</p>
+                    <div class="tags">
+                        <span>React Native</span>
+                        <span>Next.js</span>
+                        <span>Stripe API</span>
+                    </div>
+                    <a href="https://github.com/dikie001" target="_blank" class="btn btn-outline-small">View Live Build
+                        &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="rates" id="rates">
+        <div class="section-header text-center fade-in">
+            <span class="section-tag">Rate Card</span>
+            <h2>Clear & Transparent Pricing</h2>
+            <p>Tailored e-commerce solutions to fit your brand's specific runway.</p>
+        </div>
+
+        <div class="rates-container">
+            <div class="rate-card fade-in delay-1">
+                <h3>Store Audit & Optimization</h3>
+                <div class="price"><span>$</span>500</div>
+                <p class="rate-desc">Perfect for existing fashion stores needing a conversion boost.</p>
+                <ul class="features">
+                    <li>Performance analysis (Speed, Web Vitals)</li>
+                    <li>UX/UI review for fashion aesthetics</li>
+                    <li>Mobile responsiveness fixes</li>
+                    <li>Codebase cleanup & SEO alignment</li>
+                </ul>
+                <a href="#contact" class="btn btn-outline w-100">Inquire Now</a>
+            </div>
+
+            <div class="rate-card featured fade-in delay-2">
+                <div class="badge">Most Popular</div>
+                <h3>Custom E-Commerce Store</h3>
+                <div class="price"><span>$</span>2,500<span>+</span></div>
+                <p class="rate-desc">A complete, custom-designed storefront built from scratch.</p>
+                <ul class="features">
+                    <li>Bespoke premium design (Figma to Code)</li>
+                    <li>Next.js / React Frontend</li>
+                    <li>Headless Shopify Integration</li>
+                    <li>Advanced filtering & seamless cart</li>
+                    <li>Fully responsive & high conversion setup</li>
+                </ul>
+                <a href="#contact" class="btn btn-primary w-100">Start Project</a>
+            </div>
+
+            <div class="rate-card fade-in delay-3">
+                <h3>Monthly Retainer</h3>
+                <div class="price"><span>From $</span>1,200<span>/mo</span></div>
+                <p class="rate-desc">Ongoing dedicated e-commerce development.</p>
+                <ul class="features">
+                    <li>Priority bug fixes & updates</li>
+                    <li>New clothing collection/line integration</li>
+                    <li>A/B testing implementation</li>
+                    <li>Continuous performance monitoring</li>
+                </ul>
+                <a href="#contact" class="btn btn-outline w-100">Discuss Retainer</a>
+            </div>
+        </div>
+    </section>
+
     <section class="contact" id="contact">
-        <h2 class="heading">Contact <span>Me</span></h2>
+        <div class="contact-wrapper">
+            <div class="contact-info fade-in delay-1">
+                <h2>Ready to build your standout storefront?</h2>
+                <p>Send me a message with your timeframe, store requirements, and let's get your fashion brand the
+                    digital presence it deserves. I'll get back to you within 24 hours.</p>
 
-        <form action="https://formspree.io/f/mgvvgozj" method="POST">
-            <div class="input-group">
-                <div class="input-box">
-                    <input type='text' id='name' placeholder="full name " name="name " required>
-                    <input type='email' id="email" placeholder="email" name="email" requirerd>
-                </div>
-                <div class="input-box">
-                    <input type="number" id="phoneNumber" placeholder="Phone Number" required>
-
+                <div class="contact-details">
+                    <p><strong>Email:</strong> dickens@ecommercedev.com</p>
+                    <p><strong>Location:</strong> Remote / Global</p>
                 </div>
             </div>
-            <div class="input-group-2">
-                <textarea name="message" id="message" cols="30" rows="10" placeholder="Your Message"
-                    required></textarea>
-                <input type="submit" value="Send Message" onClick="submitMail()" class="btn">
 
-            </div>
-        </form>
-    </section>
-    <footer class="footer">
-        <div class="social-icons">
-            <a target='_blank' href="https://github.com/dikie001">
-                <img src="github.png" alt="github" width="30px" height="30px">
-            </a>
-            <a target='_blank' href="#">
-                <img src="linkedin.png" alt="linkedin" width="30px" height="30px">
-            </a>
-            <a target='_blank' href="https://www.instagram.com/dikie.255?igsh=YzljYTk1ODg3Zg==">
-                <img src="instagram.png" alt="instagram" width="30px" height="30px">
-            </a>
-            <a target='_blank' href="https://x.com/Dickens1457?s=09">
-                <img src="twitter.png" alt="twitter" width="30px" height="30px">
-            </a>
+            <form action="https://formspree.io/f/mgvvgozj" method="POST" class="contact-form fade-in delay-2">
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="name">Name / Brand</label>
+                        <input type="text" id="name" name="name" placeholder="E.g., Lumière Fashion" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="brand@example.com" required>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="subject">Estimated Timeline</label>
+                    <input type="text" id="subject" name="subject" placeholder="E.g., 4-6 Weeks" required>
+                </div>
+                <div class="input-group">
+                    <label for="message">Project Details</label>
+                    <textarea name="message" id="message" rows="5" placeholder="Tell me about your e-commerce needs..."
+                        required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send Message</button>
+            </form>
         </div>
-        <ul class="list">
-            <li>
-                <a href="#">FAQ</a>
-            </li>
-            <li>
-                <a href="#services">Services</a>
-            </li>
-            <li>
-                <a href="#about">About</a>
-            </li>
-            <li>
-                <a href="#contact">Contact</a>
-            </li </ul>
-            <p class="copyright">
-                &copy; Dickens Omondi | All Rights Reserved
-            </p>
+    </section>
+
+    <footer class="footer fade-in">
+        <div class="footer-content">
+            <div class="logo">D.O.</div>
+            <div class="footer-links">
+                <a href="#home">Home</a>
+                <a href="#about">Expertise</a>
+                <a href="#works">Portfolio</a>
+                <a href="#rates">Rates</a>
+            </div>
+            <div class="footer-social">
+                <a target='_blank' href="https://github.com/dikie001">GitHub</a>
+                <a target='_blank' href="#">LinkedIn</a>
+                <a target='_blank' href="https://www.instagram.com/dikie.255?igsh=YzljYTk1ODg3Zg==">Instagram</a>
+                <a target='_blank' href="https://x.com/Dickens1457?s=09">Twitter</a>
+            </div>
+        </div>
+        <p class="copyright">&copy; 2026 Dickens Omondi. Premium E-Commerce Web Developer.</p>
     </footer>
+
     <script src="main.js"></script>
 </body>
 
