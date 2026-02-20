@@ -1,4 +1,4 @@
-/* Premium Golden Fashion E-Commerce Minimalist Theme */
+/* Portfolio Styles */
 
 :root {
   --bg-color: #080808;
@@ -1093,6 +1093,7 @@ section {
 
   .header {
     padding: 1rem 5%;
+    justify-content: space-between;
   }
 
   #menu-icon,
@@ -1103,26 +1104,26 @@ section {
   .navbar {
     position: fixed;
     top: 0;
-    right: -100%;
+    left: 0;
     width: 100%;
     height: 100vh;
     background-color: var(--bg-color);
     flex-direction: column;
     flex: unset;
     padding: 10rem 3rem;
-    transition: var(--transition);
     align-items: center;
     justify-content: center;
     gap: 3rem;
     z-index: 100;
+    display: none;
+  }
+
+  .navbar.active {
+    display: flex;
   }
 
   .navbar a {
     font-size: 1.4rem;
-  }
-
-  .navbar.active {
-    right: 0;
   }
 
   .home {
