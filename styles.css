@@ -1163,17 +1163,29 @@ html[data-theme='light'] .availability-card:hover {
   }
 
   .rates {
-    margin: 2rem;
-    padding: 6rem 3rem;
+    margin: 1rem;
+    padding: 5rem 2rem;
   }
 
   .about {
-    margin: 2rem;
-    padding: 6rem 3rem;
+    margin: 1rem auto;
+    max-width: calc(100% - 2rem);
+    padding: 5rem 2rem;
   }
 }
 
 @media (max-width: 768px) {
+
+  section {
+    padding: 5rem 5%;
+  }
+
+  .about {
+    margin: 0.5rem auto;
+    max-width: calc(100% - 1rem);
+    padding: 4rem 1.5rem;
+    border-radius: 20px;
+  }
 
   .header {
     padding: 1rem 5%;
@@ -1224,8 +1236,9 @@ html[data-theme='light'] .availability-card:hover {
   .home {
     flex-direction: column-reverse;
     text-align: center;
-    padding-top: 12rem;
-    gap: 4rem;
+    padding-top: 8rem;
+    min-height: auto;
+    gap: 2rem;
   }
 
   .home-content h1 {
@@ -1279,14 +1292,25 @@ html[data-theme='light'] .availability-card:hover {
 
   /* Rates section mobile enhancements */
   .rates {
-    margin: 1rem;
-    padding: 3rem 1.5rem;
-    border-radius: 20px;
+    margin: 0;
+    max-width: 100%;
+    padding: 3rem 1rem;
+    border-radius: 0;
+  }
+
+  .rates-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 2rem;
   }
 
   .rate-card {
-    padding: 3rem 1.5rem 2rem;
-    margin-top: 1.5rem;
+    padding: 2.5rem 1.5rem 2rem;
+    margin: 0 0.4rem;
+  }
+
+  .rate-card.overdrive {
+    transform: scale(1);
   }
 
   .price {
