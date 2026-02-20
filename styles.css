@@ -1301,7 +1301,10 @@ html[data-theme='light'] .availability-card:hover {
     max-width: 100%;
     padding: 3rem 1rem;
     border-radius: 0;
-    /* margin-right: -20px !important; */
+    background: transparent;
+    border: none;
+    box-shadow: none;
+
   }
 
   .rates-container {
