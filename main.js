@@ -15,6 +15,16 @@ cancelIcon.onclick = () => {
   navbar.classList.toggle("active");
 };
 
+// Close mobile menu when a link is clicked
+const navLinks = document.querySelectorAll(".navbar a");
+navLinks.forEach(link => {
+  link.addEventListener("click", () => {
+    menuIcon.classList.remove("hidden");
+    cancelIcon.classList.add("hidden");
+    navbar.classList.remove("active");
+  });
+});
+
 // Scroll Animation Observer for Golden Theme elements
 const fadeElements = document.querySelectorAll('.fade-in');
 
