@@ -84,15 +84,14 @@ section {
   top: 0;
   left: 0;
   width: 100%;
-  padding: 2rem 5%;
+  padding: 1.5rem 5%;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   z-index: 100;
   background: rgba(8, 8, 8, 0.85);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(212, 175, 55, 0.15);
-  /* Suble gold line */
+  gap: 2rem;
 }
 
 .logo {
@@ -105,6 +104,8 @@ section {
 .navbar {
   display: flex;
   gap: 3rem;
+  flex: 1;
+  justify-content: center;
 }
 
 .navbar a {
@@ -135,13 +136,20 @@ section {
   color: var(--accent-color);
 }
 
+/* Header Actions (toggle + hamburger) */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
 #menu-icon,
 #cancel-icon {
   display: none;
   cursor: pointer;
   z-index: 101;
   filter: invert(70%) sepia(35%) saturate(700%) hue-rotate(5deg) brightness(105%) contrast(85%);
-  /* makes it somewhat gold from black */
 }
 
 .hidden {
@@ -1083,6 +1091,10 @@ section {
 
 @media (max-width: 768px) {
 
+  .header {
+    padding: 1rem 5%;
+  }
+
   #menu-icon,
   #cancel-icon {
     display: block;
@@ -1096,15 +1108,17 @@ section {
     height: 100vh;
     background-color: var(--bg-color);
     flex-direction: column;
+    flex: unset;
     padding: 10rem 3rem;
     transition: var(--transition);
     align-items: center;
     justify-content: center;
-    gap: 4rem;
+    gap: 3rem;
+    z-index: 100;
   }
 
   .navbar a {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
   }
 
   .navbar.active {
