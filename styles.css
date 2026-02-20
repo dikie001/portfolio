@@ -824,12 +824,13 @@ section {
   gap: 6rem;
   max-width: 1200px;
   margin: 0 auto;
-  align-items: start;
+  align-items: stretch;
 }
 
 .contact-info {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: 1.5rem;
 }
 
@@ -921,6 +922,94 @@ section {
   transform: translateY(-5px);
 }
 
+/* Decorative Animation Container */
+.animation-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: auto;
+  padding: 3rem 0;
+}
+
+.rotating-badge {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.rotating-text {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  animation: rotateText 15s linear infinite;
+  transform-origin: center;
+}
+
+.badge-text {
+  font-family: var(--font-body);
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: 4px;
+  fill: var(--text-light);
+  text-transform: uppercase;
+  transition: var(--transition);
+}
+
+.rotating-badge:hover .badge-text {
+  fill: var(--accent-color);
+}
+
+.badge-center {
+  position: absolute;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.05);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  transition: var(--transition);
+}
+
+.rotating-badge:hover .badge-center {
+  background: rgba(212, 175, 55, 0.15);
+  transform: scale(1.1);
+}
+
+.pulsing-core {
+  width: 12px;
+  height: 12px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  box-shadow: 0 0 15px var(--accent-color);
+  animation: pulseCore 2s ease-in-out infinite alternate;
+}
+
+@keyframes rotateText {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulseCore {
+  0% {
+    transform: scale(0.8);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+  }
+
+  100% {
+    transform: scale(1.3);
+    box-shadow: 0 0 25px rgba(212, 175, 55, 1);
+  }
+}
 
 /* Availability Card */
 .availability-card {
