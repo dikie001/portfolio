@@ -1375,16 +1375,69 @@ html[data-theme='light'] .availability-card:hover {
     height: 45px;
   }
 
-  .footer-content {
-    flex-direction: column;
-    gap: 3rem;
+  /* Footer mobile redesign */
+  .footer {
+    padding: 3rem 6%;
     text-align: center;
   }
 
-  .footer-links,
+  .footer-content {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 0;
+  }
+
+  .footer .logo {
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Gold divider under logo */
+  .footer .logo::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 2px;
+    background: var(--accent-color);
+    margin: 0.8rem auto 2rem;
+    border-radius: 2px;
+  }
+
+  /* Nav links — 2×2 grid */
+  .footer-links {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem 2.5rem;
+    justify-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .footer-links a {
+    font-size: 0.78rem;
+    letter-spacing: 1.5px;
+  }
+
+  /* Social links — single row, centered */
   .footer-social {
-    flex-wrap: wrap;
+    display: flex;
+    flex-wrap: nowrap;
     justify-content: center;
+    gap: 1.5rem;
+    padding: 1.2rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    margin-bottom: 1.8rem;
+  }
+
+  .footer-social a {
+    font-size: 0.75rem;
+    letter-spacing: 1.2px;
+  }
+
+  .copyright {
+    font-size: 0.78rem;
+    letter-spacing: 0.5px;
   }
 }
 
