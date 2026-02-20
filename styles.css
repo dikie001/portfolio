@@ -919,6 +919,90 @@ section {
   filter: brightness(0) invert(0);
 }
 
+/* Availability Card */
+.availability-card {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: var(--transition);
+}
+
+.availability-card:hover {
+  border-color: rgba(212, 175, 55, 0.4);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.05);
+}
+
+html[data-theme='light'] .availability-card {
+  background: #fff;
+  border-color: #eee;
+}
+
+html[data-theme='light'] .availability-card:hover {
+  border-color: var(--accent-color);
+  box-shadow: 0 10px 30px rgba(200, 160, 40, 0.1);
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 0.95rem;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  background-color: #22c55e;
+  border-radius: 50%;
+  position: relative;
+}
+
+.status-dot::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  background-color: #22c55e;
+  border-radius: 50%;
+  opacity: 0.4;
+  animation: pulse-dot 2s ease-out infinite;
+}
+
+@keyframes pulse-dot {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.location-time {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--text-light);
+  font-size: 0.85rem;
+  font-family: var(--font-body);
+}
+
+.location-time svg {
+  color: var(--accent-color);
+}
+
 .contact-form-container {
   background: linear-gradient(145deg, #111, #0a0a0a);
   border: 1px solid #222;

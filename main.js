@@ -84,3 +84,22 @@ planButtons.forEach(btn => {
     }
   });
 });
+
+// Local Time Updates
+function updateLocalTime() {
+  const timeElement = document.getElementById('local-time');
+  if (timeElement) {
+    const now = new Date();
+    // Use Kenya timezone
+    const options = {
+      timeZone: 'Africa/Nairobi',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    };
+    timeElement.textContent = now.toLocaleTimeString('en-US', options) + ' Local Time';
+  }
+}
+
+updateLocalTime();
+setInterval(updateLocalTime, 60000); // update every minute
