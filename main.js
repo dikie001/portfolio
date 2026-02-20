@@ -23,7 +23,7 @@ const appearOptions = {
   rootMargin: "0px 0px -50px 0px"
 };
 
-const appearOnScroll = new IntersectionObserver(function(entries, observer) {
+const appearOnScroll = new IntersectionObserver(function (entries, observer) {
   entries.forEach(entry => {
     if (!entry.isIntersecting) {
       return;
@@ -36,4 +36,25 @@ const appearOnScroll = new IntersectionObserver(function(entries, observer) {
 
 fadeElements.forEach(el => {
   appearOnScroll.observe(el);
+});
+
+// Theme Toggle
+const themeToggle = document.getElementById('theme-toggle');
+const htmlEl = document.documentElement;
+
+// Check for saved theme preference or default to dark
+const savedTheme = localStorage.getItem('theme') || 'dark';
+if (savedTheme === 'light') {
+  htmlEl.setAttribute('data-theme', 'light');
+}
+
+themeToggle.addEventListener('click', () => {
+  const current = htmlEl.getAttribute('data-theme');
+  if (current === 'light') {
+    htmlEl.removeAttribute('data-theme');
+    localStorage.setItem('theme', 'dark');
+  } else {
+    htmlEl.setAttribute('data-theme', 'light');
+    localStorage.setItem('theme', 'light');
+  }
 });
