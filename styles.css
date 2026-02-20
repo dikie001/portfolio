@@ -908,6 +908,7 @@ section {
 
   .about-grid,
   .work-card,
+  .work-card.reverse,
   .contact-wrapper {
     grid-template-columns: 1fr;
     gap: 4rem;
