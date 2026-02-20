@@ -1409,6 +1409,10 @@ html[data-theme='light'] .availability-card:hover {
     transform: scale(1);
   }
 
+  .animation-container {
+    display: none;
+  }
+
   .price {
     font-size: 2.5rem;
   }
