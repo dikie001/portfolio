@@ -911,7 +911,7 @@ section {
 .social-icon svg {
   width: 22px;
   height: 22px;
-  filter: brightness(0) invert(1) opacity(0.7);
+  /* filter: brightness(0) invert(1) opacity(0.7); */
   transition: var(--transition);
 }
 
@@ -921,10 +921,6 @@ section {
   transform: translateY(-5px);
 }
 
-.social-icon:hover img,
-.social-icon:hover svg {
-  filter: brightness(0) invert(0);
-}
 
 /* Availability Card */
 .availability-card {
