@@ -413,7 +413,7 @@ const PAGE_SIZE = 10;
 let lastVisibleMessage = null, firstVisibleMessage = null;
 const dashboardLoadTime = new Date();
 
-function showToast(title, message) {
+function showNotificationToast(title, message) {
     const toast = document.createElement('div');
     toast.className = 'toast-notification fade-in';
     toast.style.cssText = `position: fixed; bottom: 2rem; right: 2rem; background: #1a1a1a; border: 1px solid var(--accent-color); padding: 1.5rem; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10001; max-width: 350px;`;
@@ -442,7 +442,7 @@ function setupRealtimeNotifications() {
                 const msg = change.doc.data();
                 const title = "New Inquiry: " + msg.name;
                 const body = msg.message.substring(0, 100) + "...";
-                showToast(title, body);
+                showNotificationToast(title, body);
                 if ("Notification" in window && Notification.permission === "granted") {
                     const options = {
                         body: body,
