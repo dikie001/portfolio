@@ -464,7 +464,7 @@ section {
 
 .home-img img {
   width: auto;
-  height: 90vh;
+  height: 86vh;
   object-fit: contain;
   filter: drop-shadow(0 0 50px rgba(212, 175, 55, 0.2)) brightness(1.1) contrast(1.05);
   transition: filter 0.6s ease;
@@ -472,76 +472,10 @@ section {
   margin-bottom: -12rem;
   transform: scale(1.4);
   transform-origin: bottom right;
-  cursor: pointer;
 }
 
 .home-img img:hover {
   filter: drop-shadow(0 0 70px rgba(212, 175, 55, 0.3)) brightness(1.15) contrast(1.1);
-}
-
-.greeting-bubble {
-  position: absolute;
-  top: 15%;
-  right: 55%; /* Closer to the person */
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 1.2rem;
-  border-radius: 20px;
-  width: 250px;
-  z-index: 10;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-  opacity: 0;
-  visibility: hidden;
-  transform: scale(0.8) translateX(30px);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: default;
-}
-
-.greeting-bubble.active {
-  opacity: 1;
-  visibility: visible;
-  transform: scale(1) translateX(0);
-  animation: floatBubble 4s ease-in-out infinite;
-}
-
-/* Speech bubble tail */
-.greeting-bubble::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  right: -10px;
-  transform: translateY(-50%);
-  border-width: 10px 0 10px 10px;
-  border-style: solid;
-  border-color: transparent transparent transparent rgba(255, 255, 255, 0.15);
-}
-
-.greeting-badge {
-  background: var(--accent-color);
-  color: #000;
-  padding: 4px 10px;
-  border-radius: 100px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  display: inline-block;
-  margin-bottom: 0.5rem;
-}
-
-.greeting-bubble p {
-  font-size: 1rem;
-  line-height: 1.5;
-  color: var(--text-color);
-  margin: 0;
-}
-
-.greeting-bubble strong {
-  color: var(--accent-color);
-}
-
-@keyframes floatBubble {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-15px); }
 }
 
 /* About Section */
