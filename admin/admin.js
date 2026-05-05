@@ -237,10 +237,45 @@ let isInitialMessagesLoad = true;
 let lastVisibleMessage = null;
 let firstVisibleMessage = null;
 const PAGE_SIZE = 10;
-const dashboardLoadTime = new Date();
+const dashboardLoadTime = new Date(Date.now() - 60000); // 1-minute buffer to avoid missing messages
+
+function showToast(title, message) {
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification fade-in';
+    toast.style.cssText = `
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background: #1a1a1a;
+        border: 1px solid var(--accent-color);
+        padding: 1.5rem;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        z-index: 10001;
+        max-width: 350px;
+    `;
+    toast.innerHTML = `
+        <h4 style="color: var(--accent-color); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            ${title}
+        </h4>
+        <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem;">${message}</p>
+        <button class="btn btn-primary" style="padding: 0.4rem 1rem; font-size: 0.8rem;" onclick="this.parentElement.remove()">Dismiss</button>
+    `;
+    document.body.appendChild(toast);
+    
+    // Auto-remove after 10 seconds
+    setTimeout(() => { if (toast.parentElement) toast.remove(); }, 10000);
+}
 
 function setupRealtimeNotifications() {
-    console.log("Setting up real-time notifications...");
+    console.log("Setting up real-time notifications (Watching from:", dashboardLoadTime.toISOString(), ")");
+    
+    // Request permission early
+    if ("Notification" in window && Notification.permission === "default") {
+        Notification.requestPermission();
+    }
+
     const q = query(
         collection(db, "messages"), 
         where("createdAt", ">", dashboardLoadTime),
@@ -251,23 +286,35 @@ function setupRealtimeNotifications() {
         snapshot.docChanges().forEach((change) => {
             if (change.type === "added") {
                 const msg = change.doc.data();
-                console.log("New message received:", msg);
+                console.log("New message detected:", msg);
                 
-                // Show Browser Notification
+                const title = "New Inquiry: " + msg.name;
+                const body = msg.message.substring(0, 100) + "...";
+
+                // 1. In-App Toast (Reliable)
+                showToast(title, body);
+
+                // 2. Browser Notification (If permitted)
                 if ("Notification" in window && Notification.permission === "granted") {
-                    new Notification("New Inquiry from " + msg.name, {
-                        body: msg.message.substring(0, 100) + "...",
-                        icon: "../images/logo.png"
-                    });
+                    try {
+                        new Notification(title, {
+                            body: body,
+                            icon: "../images/logo.png"
+                        });
+                    } catch (e) {
+                        console.warn("Could not show browser notification:", e);
+                    }
                 }
                 
-                // Refresh the first page if we are on it to show the new message
-                // (Optional: can be handled by reloading or just letting the user know)
+                // Refresh list
                 loadMessages('initial');
             }
         });
+    }, (error) => {
+        console.error("Real-time notification listener error:", error);
     });
 }
+
 
 async function loadMessages(direction = 'initial') {
 

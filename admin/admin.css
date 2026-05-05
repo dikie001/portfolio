@@ -350,23 +350,35 @@ body {
 }
 
 .dropdown-header img {
-    width: 48px;
-    height: 48px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     border: 2px solid var(--accent-color);
+    flex-shrink: 0;
+}
+
+.dropdown-info {
+    overflow: hidden;
+    min-width: 0; /* Important for flex child to allow shrinking */
 }
 
 .dropdown-info h4 {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--text-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .dropdown-info p {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--text-light);
-    word-break: break-all;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
+
 
 .dropdown-divider {
     height: 1px;
