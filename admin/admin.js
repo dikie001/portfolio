@@ -18,8 +18,6 @@ import {
     limitToLast
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-
-
 // DOM Elements
 const projectsTableBody = document.getElementById('projects-table-body');
 const messagesTableBody = document.getElementById('messages-table-body');
@@ -42,15 +40,11 @@ const sourceList = document.getElementById('source-list');
 const countryList = document.getElementById('country-list');
 
 // Navigation
-const projectsNav = document.querySelector('a[href="#projects"]');
-const messagesNav = document.querySelector('a[href="#messages"]');
-const analyticsNav = document.querySelector('a[href="#analytics"]');
-const settingsNav = document.querySelector('a[href="#settings"]');
-
-const projectsView = document.getElementById('projects-view');
-const messagesView = document.getElementById('messages-view');
-const analyticsView = document.getElementById('analytics-view');
-const settingsView = document.getElementById('settings-view');
+const projectsNav = document.getElementById('projects-nav');
+const messagesNav = document.getElementById('messages-nav');
+const visitorsNav = document.getElementById('visitors-nav');
+const analyticsNav = document.getElementById('analytics-nav');
+const settingsNav = document.getElementById('settings-nav');
 
 // Auth State Check
 onAuthStateChanged(auth, async (user) => {
@@ -61,126 +55,86 @@ onAuthStateChanged(auth, async (user) => {
 
     try {
         const adminDoc = await getDoc(doc(db, 'config', 'admin'));
-        
         if (!adminDoc.exists() || adminDoc.data().uid !== user.uid) {
-            console.error("User is not the designated admin.");
             await signOut(auth);
             window.location.href = 'index.html';
             return;
         }
-
-        // User is admin, initialize dashboard
         initDashboard();
         requestNotificationPermission();
     } catch (error) {
-        console.error("Error verifying admin status:", error);
+        console.error("Auth verification error:", error);
         window.location.href = 'index.html';
     }
 });
 
-
-
 function requestNotificationPermission() {
-    if ("Notification" in window) {
-        Notification.requestPermission().then(permission => {
-            console.log("Notification permission:", permission);
-        });
+    if ("Notification" in window && Notification.permission === "default") {
+        Notification.requestPermission();
     }
-}
-
-// Test Notification Button
-if (testNotifyBtn) {
-    testNotifyBtn.addEventListener('click', () => {
-        if ("Notification" in window) {
-            if (Notification.permission === "granted") {
-                new Notification("Test Notification", {
-                    body: "If you see this, notifications are working!",
-                    icon: '../images/logo.png'
-                });
-            } else {
-                alert("Notification permission is currently: " + Notification.permission + ". Please enable them in your browser.");
-                Notification.requestPermission();
-            }
-        } else {
-            alert("This browser does not support desktop notifications.");
-        }
-    });
 }
 
 function initDashboard() {
     console.log("Initializing Dashboard...");
-    document.getElementById('auth-loader').style.display = 'none';
+    const loader = document.getElementById('auth-loader');
+    if (loader) loader.style.display = 'none';
     
-    // Update Navbar & Dropdown User Info
     const user = auth.currentUser;
     if (user) {
         const name = user.displayName || "Admin User";
-        document.getElementById('user-name').textContent = name;
-        document.getElementById('dropdown-name').textContent = name;
-        document.getElementById('dropdown-email').textContent = user.email;
-        
+        const userNameEl = document.getElementById('user-name');
+        const dropNameEl = document.getElementById('dropdown-name');
+        const dropEmailEl = document.getElementById('dropdown-email');
+        const userAvatar = document.getElementById('user-avatar');
+        const dropAvatar = document.getElementById('dropdown-avatar');
+
+        if (userNameEl) userNameEl.textContent = name;
+        if (dropNameEl) dropNameEl.textContent = name;
+        if (dropEmailEl) dropEmailEl.textContent = user.email;
         if (user.photoURL) {
-            document.getElementById('user-avatar').src = user.photoURL;
-            document.getElementById('dropdown-avatar').src = user.photoURL;
+            if (userAvatar) userAvatar.src = user.photoURL;
+            if (dropAvatar) dropAvatar.src = user.photoURL;
         }
     }
 
-    // Profile Dropdown Toggle
     const profileTrigger = document.getElementById('profile-trigger');
     const profileDropdown = document.getElementById('profile-dropdown');
-    
-    profileTrigger.addEventListener('click', (e) => {
-        e.stopPropagation();
-        profileDropdown.classList.toggle('hidden');
-    });
-
-    document.addEventListener('click', () => {
-        profileDropdown.classList.add('hidden');
-    });
-
-    // Page-specific Initialization
-    const path = window.location.pathname;
-    if (path.includes('projects.html') || path.endsWith('/admin/')) {
-        loadProjects();
-    } else if (path.includes('messages.html')) {
-        loadMessages();
-    } else if (path.includes('analytics.html')) {
-        loadAnalytics();
-    } else if (path.includes('visitors.html')) {
-        loadVisitors();
+    if (profileTrigger && profileDropdown) {
+        profileTrigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            profileDropdown.classList.toggle('hidden');
+        });
+        document.addEventListener('click', () => profileDropdown.classList.add('hidden'));
     }
+
+    const path = window.location.pathname;
+    if (path.includes('projects.html') || path.endsWith('/admin/')) loadProjects();
+    else if (path.includes('messages.html')) loadMessages();
+    else if (path.includes('analytics.html')) loadAnalytics();
+    else if (path.includes('visitors.html')) loadVisitors();
     
     setupRealtimeNotifications();
 }
 
-
-
-
-
-
-
-
-// Logout
 const handleLogout = async () => {
     try {
         await signOut(auth);
         window.location.href = 'index.html';
     } catch (error) {
-        console.error("Error signing out:", error);
+        console.error("Logout error:", error);
     }
 };
 
-logoutBtn.addEventListener('click', handleLogout);
-document.getElementById('dropdown-logout-btn').addEventListener('click', handleLogout);
-
-
+if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+const dropLogoutBtn = document.getElementById('dropdown-logout-btn');
+if (dropLogoutBtn) dropLogoutBtn.addEventListener('click', handleLogout);
 
 // PROJECTS LOGIC
 async function loadProjects() {
+    if (!projectsTableBody) return;
     onSnapshot(query(collection(db, "projects"), orderBy("createdAt", "desc")), (snapshot) => {
         projectsTableBody.innerHTML = '';
-        let total = 0;
-        let live = 0;
+        let total = 0, live = 0;
 
         snapshot.forEach((docSnap) => {
             const project = docSnap.data();
@@ -206,8 +160,8 @@ async function loadProjects() {
             projectsTableBody.appendChild(tr);
         });
 
-        totalProjectsCount.textContent = total;
-        liveProjectsCount.textContent = live;
+        if (totalProjectsCount) totalProjectsCount.textContent = total;
+        if (liveProjectsCount) liveProjectsCount.textContent = live;
 
         document.querySelectorAll('.edit-btn').forEach(btn => {
             btn.addEventListener('click', () => openEditModal(btn.dataset.id, snapshot));
@@ -219,27 +173,14 @@ async function loadProjects() {
 }
 
 // MESSAGES LOGIC
-let isInitialMessagesLoad = true;
-let lastVisibleMessage = null;
-let firstVisibleMessage = null;
 const PAGE_SIZE = 10;
-const dashboardLoadTime = new Date(Date.now() - 60000); // 1-minute buffer to avoid missing messages
+let lastVisibleMessage = null, firstVisibleMessage = null;
+const dashboardLoadTime = new Date(Date.now() - 60000);
 
 function showToast(title, message) {
     const toast = document.createElement('div');
     toast.className = 'toast-notification fade-in';
-    toast.style.cssText = `
-        position: fixed;
-        bottom: 2rem;
-        right: 2rem;
-        background: #1a1a1a;
-        border: 1px solid var(--accent-color);
-        padding: 1.5rem;
-        border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        z-index: 10001;
-        max-width: 350px;
-    `;
+    toast.style.cssText = `position: fixed; bottom: 2rem; right: 2rem; background: #1a1a1a; border: 1px solid var(--accent-color); padding: 1.5rem; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10001; max-width: 350px;`;
     toast.innerHTML = `
         <h4 style="color: var(--accent-color); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
@@ -249,132 +190,65 @@ function showToast(title, message) {
         <button class="btn btn-primary" style="padding: 0.4rem 1rem; font-size: 0.8rem;" onclick="this.parentElement.remove()">Dismiss</button>
     `;
     document.body.appendChild(toast);
-    
-    // Auto-remove after 10 seconds
     setTimeout(() => { if (toast.parentElement) toast.remove(); }, 10000);
 }
 
 function setupRealtimeNotifications() {
-    console.log("Setting up real-time notifications (Watching from:", dashboardLoadTime.toISOString(), ")");
-    
-    // Request permission early
-    if ("Notification" in window && Notification.permission === "default") {
-        Notification.requestPermission();
-    }
-
-    const q = query(
-        collection(db, "messages"), 
-        where("createdAt", ">", dashboardLoadTime),
-        orderBy("createdAt", "desc")
-    );
-
+    const q = query(collection(db, "messages"), where("createdAt", ">", dashboardLoadTime), orderBy("createdAt", "desc"));
     onSnapshot(q, (snapshot) => {
         snapshot.docChanges().forEach((change) => {
             if (change.type === "added") {
                 const msg = change.doc.data();
-                console.log("New message detected:", msg);
-                
                 const title = "New Inquiry: " + msg.name;
                 const body = msg.message.substring(0, 100) + "...";
-
-                // 1. In-App Toast (Reliable)
                 showToast(title, body);
-
-                // 2. Browser Notification (If permitted)
                 if ("Notification" in window && Notification.permission === "granted") {
-                    try {
-                        new Notification(title, {
-                            body: body,
-                            icon: "../images/logo.png"
-                        });
-                    } catch (e) {
-                        console.warn("Could not show browser notification:", e);
-                    }
+                    new Notification(title, { body: body, icon: "../images/logo.png" });
                 }
-                
-                // Refresh list
-                loadMessages('initial');
+                if (messagesTableBody) loadMessages('initial');
             }
         });
-    }, (error) => {
-        console.error("Real-time notification listener error:", error);
     });
 }
 
-
 async function loadMessages(direction = 'initial') {
-
-    console.log("Loading messages from Firestore...");
-    
+    if (!messagesTableBody) return;
     const messagesCollection = collection(db, "messages");
     let q;
+    if (direction === 'next' && lastVisibleMessage) q = query(messagesCollection, orderBy("createdAt", "desc"), startAfter(lastVisibleMessage), limit(PAGE_SIZE));
+    else if (direction === 'prev' && firstVisibleMessage) q = query(messagesCollection, orderBy("createdAt", "desc"), endBefore(firstVisibleMessage), limitToLast(PAGE_SIZE));
+    else q = query(messagesCollection, orderBy("createdAt", "desc"), limit(PAGE_SIZE));
 
-    if (direction === 'next' && lastVisibleMessage) {
-        q = query(messagesCollection, orderBy("createdAt", "desc"), startAfter(lastVisibleMessage), limit(PAGE_SIZE));
-    } else if (direction === 'prev' && firstVisibleMessage) {
-        q = query(messagesCollection, orderBy("createdAt", "desc"), endBefore(firstVisibleMessage), limitToLast(PAGE_SIZE));
-    } else {
-        q = query(messagesCollection, orderBy("createdAt", "desc"), limit(PAGE_SIZE));
-    }
-
-    // Unread count is no longer supported by the required schema
-    unreadCountBadge.style.display = 'none';
+    if (unreadCountBadge) unreadCountBadge.style.display = 'none';
 
     try {
         const snapshot = await getDocs(q);
-
         if (snapshot.empty) {
-            if (direction === 'initial') {
-                messagesTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">No messages found.</td></tr>';
-            }
+            if (direction === 'initial') messagesTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">No messages found.</td></tr>';
             return;
         }
-
         firstVisibleMessage = snapshot.docs[0];
         lastVisibleMessage = snapshot.docs[snapshot.docs.length - 1];
-
         renderMessages(snapshot);
         updatePaginationButtons(snapshot.size);
     } catch (error) {
-        console.error("Error loading messages:", error);
-        if (error.code === 'permission-denied') {
-            alert("Permission denied. Your session may have expired.");
-            window.location.href = 'index.html';
-        }
+        console.error("Messages load error:", error);
     }
 }
 
 function updatePaginationButtons(currentSize) {
     const nextBtn = document.getElementById('next-messages-btn');
     const prevBtn = document.getElementById('prev-messages-btn');
-    
-    // Simple logic: disable next if we got fewer than PAGE_SIZE
-    nextBtn.disabled = currentSize < PAGE_SIZE;
-    
-    // For Previous, we'd need more complex state or just enable/disable based on if we ever clicked next
-    // For this simple implementation, let's just enable it if we aren't on the first page
-    // Actually, a better way is to track page numbers
+    if (nextBtn) nextBtn.disabled = currentSize < PAGE_SIZE;
 }
 
-// Re-implementing renderMessages for clarity and to handle the new snapshot type
 function renderMessages(snapshot) {
+    if (!messagesTableBody) return;
     messagesTableBody.innerHTML = '';
-
     snapshot.forEach((docSnap) => {
         const msg = docSnap.data();
         const id = docSnap.id;
-
-        let date = 'Just now';
-        if (msg.createdAt) {
-            if (msg.createdAt.toDate) {
-                date = msg.createdAt.toDate().toLocaleDateString();
-            } else if (msg.createdAt instanceof Date) {
-                date = msg.createdAt.toLocaleDateString();
-            } else if (typeof msg.createdAt === 'string') {
-                date = new Date(msg.createdAt).toLocaleDateString();
-            }
-        }
-
+        const date = msg.createdAt ? (msg.createdAt.toDate ? msg.createdAt.toDate().toLocaleDateString() : new Date(msg.createdAt).toLocaleDateString()) : 'Just now';
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${date}</td>
@@ -393,86 +267,50 @@ function renderMessages(snapshot) {
         messagesTableBody.appendChild(tr);
     });
 
-    document.querySelectorAll('.view-msg-btn').forEach(btn => {
-        btn.addEventListener('click', () => viewMessage(btn.dataset.id, snapshot));
-    });
-    document.querySelectorAll('.delete-msg-btn').forEach(btn => {
-        btn.addEventListener('click', () => deleteMessage(btn.dataset.id));
-    });
-
-    isInitialMessagesLoad = false;
+    document.querySelectorAll('.view-msg-btn').forEach(btn => btn.addEventListener('click', () => {
+        const msg = snapshot.docs.find(d => d.id === btn.dataset.id).data();
+        alert(`From: ${msg.name} (${msg.email})\n\nMessage: ${msg.message}`);
+    }));
+    document.querySelectorAll('.delete-msg-btn').forEach(btn => btn.addEventListener('click', () => deleteMessage(btn.dataset.id)));
 }
 
-// Pagination Listeners
-document.getElementById('next-messages-btn').addEventListener('click', () => {
-    loadMessages('next');
-    document.getElementById('prev-messages-btn').disabled = false;
-});
-
-document.getElementById('prev-messages-btn').addEventListener('click', () => {
-    loadMessages('prev');
-});
-
-
-function viewMessage(id, snapshot) {
-    const msg = snapshot.docs.find(d => d.id === id).data();
-    alert(`From: ${msg.name} (${msg.email})\n\nMessage: ${msg.message}`);
-}
+const nextMsgBtn = document.getElementById('next-messages-btn');
+const prevMsgBtn = document.getElementById('prev-messages-btn');
+if (nextMsgBtn) nextMsgBtn.addEventListener('click', () => { loadMessages('next'); if (prevMsgBtn) prevMsgBtn.disabled = false; });
+if (prevMsgBtn) prevMsgBtn.addEventListener('click', () => loadMessages('prev'));
 
 async function deleteMessage(id) {
-    if (confirm("Delete this message?")) {
-        await deleteDoc(doc(db, "messages", id));
-    }
+    if (confirm("Delete this message?")) await deleteDoc(doc(db, "messages", id));
 }
 
 // ANALYTICS LOGIC
 function loadAnalytics() {
+    if (!totalVisitsCount) return;
     onSnapshot(collection(db, "visits"), (snapshot) => {
         const total = snapshot.size;
         totalVisitsCount.textContent = total;
-
-        const sources = {};
-        const countries = {};
-
+        const sources = {}, countries = {};
         snapshot.forEach(docSnap => {
             const data = docSnap.data();
-            const source = data.source || 'Unknown';
-            const country = data.country || 'Unknown';
-
-            sources[source] = (sources[source] || 0) + 1;
-            countries[country] = (countries[country] || 0) + 1;
+            sources[data.source || 'Unknown'] = (sources[data.source || 'Unknown'] || 0) + 1;
+            countries[data.country || 'Unknown'] = (countries[data.country || 'Unknown'] || 0) + 1;
         });
-
-        // Get Top Source
-        const topSource = Object.keys(sources).reduce((a, b) => sources[a] > sources[b] ? a : b, 'N/A');
-        topSourceEl.textContent = topSource;
-
-        // Get Top Country
-        const topCountry = Object.keys(countries).reduce((a, b) => countries[a] > countries[b] ? a : b, 'N/A');
-        topCountryEl.textContent = topCountry;
-
-        // Render Lists
-        renderAnalyticsList(sourceList, sources, total);
-        renderAnalyticsList(countryList, countries, total);
+        if (topSourceEl) topSourceEl.textContent = Object.keys(sources).reduce((a, b) => sources[a] > sources[b] ? a : b, 'N/A');
+        if (topCountryEl) topCountryEl.textContent = Object.keys(countries).reduce((a, b) => countries[a] > countries[b] ? a : b, 'N/A');
+        if (sourceList) renderAnalyticsList(sourceList, sources, total);
+        if (countryList) renderAnalyticsList(countryList, countries, total);
     });
 }
 
 function renderAnalyticsList(el, data, total) {
     el.innerHTML = '';
-    const sorted = Object.entries(data).sort((a, b) => b[1] - a[1]);
-    
-    sorted.forEach(([name, count]) => {
+    Object.entries(data).sort((a, b) => b[1] - a[1]).forEach(([name, count]) => {
         const percent = Math.round((count / total) * 100);
         const item = document.createElement('div');
         item.style.marginBottom = '1rem';
         item.innerHTML = `
-            <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem;">
-                <span style="font-size: 0.9rem;">${name}</span>
-                <span style="font-size: 0.85rem; color: var(--text-light);">${count} (${percent}%)</span>
-            </div>
-            <div style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
-                <div style="height: 100%; width: ${percent}%; background: var(--accent-color);"></div>
-            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem;"><span style="font-size: 0.9rem;">${name}</span><span style="font-size: 0.85rem; color: var(--text-light);">${count} (${percent}%)</span></div>
+            <div style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;"><div style="height: 100%; width: ${percent}%; background: var(--accent-color);"></div></div>
         `;
         el.appendChild(item);
     });
@@ -480,155 +318,120 @@ function renderAnalyticsList(el, data, total) {
 
 // SETTINGS LOGIC
 const settingsForm = document.getElementById('settings-form');
-const settingsMsg = document.getElementById('settings-msg');
-const updatePasswordBtn = document.getElementById('update-password-btn');
-
-settingsForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const newPassword = document.getElementById('new-password').value;
-    const confirmPassword = document.getElementById('confirm-password').value;
-
-    if (newPassword !== confirmPassword) {
-        settingsMsg.textContent = "Passwords do not match.";
-        settingsMsg.style.color = "var(--error-color)";
-        settingsMsg.classList.remove('hidden');
-        return;
-    }
-
-    if (newPassword.length < 6) {
-        settingsMsg.textContent = "Password must be at least 6 characters.";
-        settingsMsg.style.color = "var(--error-color)";
-        settingsMsg.classList.remove('hidden');
-        return;
-    }
-
-    const btnText = updatePasswordBtn.querySelector('.btn-text');
-    const loader = updatePasswordBtn.querySelector('.loader');
-
-    btnText.classList.add('hidden');
-    loader.classList.remove('hidden');
-    updatePasswordBtn.disabled = true;
-    settingsMsg.classList.add('hidden');
-
-    try {
-        await updatePassword(auth.currentUser, newPassword);
-        settingsMsg.textContent = "Password updated successfully!";
-        settingsMsg.style.color = "var(--success-color)";
-        settingsMsg.classList.remove('hidden');
-        settingsForm.reset();
-    } catch (error) {
-        console.error(error);
-        settingsMsg.textContent = "Error updating password. You may need to re-login.";
-        settingsMsg.style.color = "var(--error-color)";
-        settingsMsg.classList.remove('hidden');
-    } finally {
-        btnText.classList.remove('hidden');
-        loader.classList.add('hidden');
-        updatePasswordBtn.disabled = false;
-    }
-});
+if (settingsForm) {
+    settingsForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const newPass = document.getElementById('new-password').value;
+        const confPass = document.getElementById('confirm-password').value;
+        const msgEl = document.getElementById('settings-msg');
+        if (newPass !== confPass) { msgEl.textContent = "Passwords do not match."; msgEl.style.color = "var(--error-color)"; msgEl.classList.remove('hidden'); return; }
+        const btn = document.getElementById('update-password-btn');
+        btn.disabled = true;
+        try {
+            await updatePassword(auth.currentUser, newPass);
+            msgEl.textContent = "Password updated successfully!"; msgEl.style.color = "var(--success-color)"; msgEl.classList.remove('hidden');
+            settingsForm.reset();
+        } catch (error) {
+            console.error(error);
+            msgEl.textContent = "Error updating password. Re-login may be required."; msgEl.style.color = "var(--error-color)"; msgEl.classList.remove('hidden');
+        } finally { btn.disabled = false; }
+    });
+}
 
 // VISITORS LOGIC
 async function loadVisitors() {
-    console.log("Loading visitors...");
-    const visitorsTableBody = document.getElementById('visitors-table-body');
-    const totalVisitorsEl = document.getElementById('total-visitors-count');
-    
+    const table = document.getElementById('visitors-table-body');
+    const totalEl = document.getElementById('total-visitors-count');
+    if (!table) return;
+
     onSnapshot(query(collection(db, "visits"), orderBy("timestamp", "desc"), limit(50)), (snapshot) => {
-        if (visitorsTableBody) {
-            visitorsTableBody.innerHTML = '';
-            snapshot.forEach(docSnap => {
-                const data = docSnap.data();
-                const tr = document.createElement('tr');
-                let date = 'Unknown';
-                if (data.timestamp) {
-                    date = data.timestamp.toDate ? data.timestamp.toDate().toLocaleString() : new Date(data.timestamp).toLocaleString();
-                }
-                
-                tr.innerHTML = `
-                    <td>${date}</td>
-                    <td>${data.country || 'Unknown'}</td>
-                    <td>${data.city || 'Unknown'}</td>
-                    <td>${data.source || 'Direct'}</td>
-                    <td><span class="page-tag">${data.page || '/'}</span></td>
-                    <td class="ua-text" title="${data.userAgent}">${data.userAgent ? data.userAgent.substring(0, 30) + '...' : 'Unknown'}</td>
-                `;
-                visitorsTableBody.appendChild(tr);
-            });
-        }
+        table.innerHTML = '';
+        snapshot.forEach(docSnap => {
+            const data = docSnap.data();
+            const date = data.timestamp ? (data.timestamp.toDate ? data.timestamp.toDate().toLocaleString() : new Date(data.timestamp).toLocaleString()) : 'Unknown';
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${date}</td><td>${data.country || 'Unknown'}</td><td>${data.city || 'Unknown'}</td><td>${data.source || 'Direct'}</td><td><span class="page-tag">${data.page || '/'}</span></td><td class="ua-text" title="${data.userAgent}">${data.userAgent ? data.userAgent.substring(0, 30) + '...' : 'Unknown'}</td>`;
+            table.appendChild(tr);
+        });
     });
 
-    // Graph Logic
     onSnapshot(collection(db, "visits"), (snapshot) => {
-        if (totalVisitorsEl) totalVisitorsEl.textContent = snapshot.size;
+        if (totalEl) totalEl.textContent = snapshot.size;
         renderVisitsGraph(snapshot);
     });
 }
 
 function renderVisitsGraph(snapshot) {
     const canvas = document.getElementById('visits-chart');
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
+    if (!canvas || !window.Chart) return;
     const days = {};
-    
-    // Group by day for last 7 days
     const now = new Date();
     for (let i = 6; i >= 0; i--) {
-        const d = new Date(now);
-        d.setDate(d.getDate() - i);
+        const d = new Date(now); d.setDate(d.getDate() - i);
         days[d.toLocaleDateString()] = 0;
     }
-
     snapshot.forEach(docSnap => {
         const data = docSnap.data();
         if (data.timestamp) {
             const date = data.timestamp.toDate ? data.timestamp.toDate().toLocaleDateString() : new Date(data.timestamp).toLocaleDateString();
-            if (days[date] !== undefined) {
-                days[date]++;
-            }
+            if (days[date] !== undefined) days[date]++;
         }
     });
-
     if (window.myChart) window.myChart.destroy();
-
-    window.myChart = new Chart(ctx, {
+    window.myChart = new Chart(canvas.getContext('2d'), {
         type: 'line',
         data: {
             labels: Object.keys(days),
-            datasets: [{
-                label: 'Visits',
-                data: Object.values(days),
-                borderColor: '#D4AF37',
-                backgroundColor: 'rgba(212, 175, 55, 0.1)',
-                borderWidth: 3,
-                tension: 0.4,
-                fill: true,
-                pointBackgroundColor: '#D4AF37',
-                pointRadius: 4
-            }]
+            datasets: [{ label: 'Visits', data: Object.values(days), borderColor: '#D4AF37', backgroundColor: 'rgba(212, 175, 55, 0.1)', borderWidth: 3, tension: 0.4, fill: true, pointBackgroundColor: '#D4AF37', pointRadius: 4 }]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: 'rgba(255,255,255,0.05)' },
-                    ticks: { color: '#9a9a9a' }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: { color: '#9a9a9a' }
-                }
-            },
-            plugins: {
-                legend: { display: false }
-            }
-        }
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9a9a9a' } }, x: { grid: { display: false }, ticks: { color: '#9a9a9a' } } }, plugins: { legend: { display: false } } }
     });
 }
 
-// Modal Logic
-// ... rest of the file
+// MODAL LOGIC
+if (addProjectBtn) {
+    addProjectBtn.addEventListener('click', () => {
+        modalTitle.textContent = 'Add New Project';
+        projectForm.reset();
+        document.getElementById('project-id').value = '';
+        projectModal.classList.remove('hidden');
+    });
+}
+if (closeModalBtns) closeModalBtns.forEach(btn => btn.addEventListener('click', () => projectModal.classList.add('hidden')));
+if (projectForm) {
+    projectForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('project-id').value;
+        const projectData = {
+            title: document.getElementById('project-title').value,
+            description: document.getElementById('project-desc').value,
+            image: document.getElementById('project-image').value,
+            tags: document.getElementById('project-tags').value.split(',').map(tag => tag.trim()),
+            liveLink: document.getElementById('project-live').value,
+            githubLink: document.getElementById('project-github').value,
+            updatedAt: new Date()
+        };
+        try {
+            if (id) await updateDoc(doc(db, "projects", id), projectData);
+            else { projectData.createdAt = new Date(); await addDoc(collection(db, "projects"), projectData); }
+            projectModal.classList.add('hidden');
+        } catch (e) { console.error(e); alert("Error saving project."); }
+    });
+}
 
+function openEditModal(id, snapshot) {
+    const docData = snapshot.docs.find(d => d.id === id).data();
+    modalTitle.textContent = 'Edit Project';
+    document.getElementById('project-id').value = id;
+    document.getElementById('project-title').value = docData.title;
+    document.getElementById('project-desc').value = docData.description;
+    document.getElementById('project-image').value = docData.image;
+    document.getElementById('project-tags').value = docData.tags.join(', ');
+    document.getElementById('project-live').value = docData.liveLink || '';
+    document.getElementById('project-github').value = docData.githubLink || '';
+    projectModal.classList.remove('hidden');
+}
+
+async function deleteProject(id) {
+    if (confirm("Delete this project?")) await deleteDoc(doc(db, "projects", id));
+}

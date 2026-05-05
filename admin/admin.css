@@ -644,3 +644,48 @@ td {
     background: rgba(255, 255, 255, 0.05);
     color: var(--text-light);
 }
+
+/* Visitors Table Styles */
+.page-tag {
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--accent-color);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-family: monospace;
+}
+
+.ua-text {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: help;
+}
+
+/* Sidebar Active State Fix */
+.nav-links li.active a {
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--accent-color);
+    border-left: 3px solid var(--accent-color);
+    padding-left: calc(1.5rem - 3px);
+}
+
+.nav-links li.active svg {
+    color: var(--accent-color);
+}
+
+/* Pagination Styling */
+.pagination-controls .btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Analytics List Progress Bar Fix */
+.analytics-list > div {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
