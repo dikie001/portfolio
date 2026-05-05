@@ -988,6 +988,24 @@ td {
     animation: spin 0.8s linear infinite;
 }
 
+.status-ticks {
+    display: flex;
+    align-items: center;
+    color: #8696a0; /* Grey for unread */
+}
+
+.status-ticks.read {
+    color: #53bdeb; /* Blue for read */
+}
+
+.status-ticks svg {
+    margin-right: -8px;
+}
+
+.status-ticks svg:last-child {
+    margin-right: 0;
+}
+
 .unread-row {
     background: rgba(212, 175, 55, 0.05);
 }

@@ -32,6 +32,8 @@ const modalTitle = document.getElementById('modal-title');
 const totalProjectsCount = document.getElementById('total-projects-count');
 const liveProjectsCount = document.getElementById('live-projects-count');
 const unreadCountBadge = document.getElementById('unread-count');
+const unreadMessagesCount = document.getElementById('unread-messages-count');
+const readMessagesCount = document.getElementById('read-messages-count');
 
 // Analytics Elements
 const totalVisitsCount = document.getElementById('total-visits-count');
@@ -254,12 +256,20 @@ async function loadDashboard() {
                 const item = document.createElement('div');
                 item.className = 'latest-message-item';
                 item.style.padding = '1rem 1.5rem';
+                const isRead = msg.status === 'read';
+                const ticks = `
+                    <div class="status-ticks ${isRead ? 'read' : ''}" style="margin-top: 0.5rem; justify-content: flex-end;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </div>
+                `;
                 item.innerHTML = `
                     <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
                         <strong style="font-weight: 600;">${msg.name}</strong>
                         <span style="font-size: 0.7rem; color: var(--text-light); opacity: 0.6;">${msg.createdAt ? (msg.createdAt.toDate ? msg.createdAt.toDate().toLocaleDateString() : new Date(msg.createdAt).toLocaleDateString()) : 'Recently'}</span>
                     </div>
                     <p style="margin: 0; line-height: 1.4;">${msg.message}</p>
+                    ${ticks}
                 `;
                 dashLatestMessages.appendChild(item);
             });
@@ -443,8 +453,25 @@ async function loadMessages(direction = 'initial') {
 
     try {
         const snapshot = await getDocs(q);
+        
+        // Fetch total counts for stat cards
+        const allMessages = await getDocs(messagesCollection);
+        let unread = 0;
+        let read = 0;
+        allMessages.forEach(doc => {
+            if (doc.data().status === 'read') read++;
+            else unread++;
+        });
+
+        if (unreadMessagesCount) unreadMessagesCount.innerText = unread;
+        if (readMessagesCount) readMessagesCount.innerText = read;
+        if (unreadCountBadge) {
+            unreadCountBadge.innerText = unread + ' New';
+            unreadCountBadge.style.display = unread > 0 ? 'inline-block' : 'none';
+        }
+
         if (snapshot.empty) {
-            if (direction === 'initial') messagesTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">No messages found.</td></tr>';
+            if (direction === 'initial') messagesTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">No messages found.</td></tr>';
             return;
         }
         firstVisibleMessage = snapshot.docs[0];
@@ -468,15 +495,24 @@ function renderMessages(snapshot) {
     snapshot.forEach((docSnap) => {
         const msg = docSnap.data();
         const id = docSnap.id;
+        const isRead = msg.status === 'read';
         const date = msg.createdAt ? (msg.createdAt.toDate ? msg.createdAt.toDate().toLocaleDateString() : new Date(msg.createdAt).toLocaleDateString()) : 'Just now';
         
         const tr = document.createElement('tr');
-        tr.className = 'clickable';
+        tr.className = `clickable ${!isRead ? 'unread-row' : ''}`;
         tr.onclick = (e) => {
             if (!e.target.closest('.action-dropdown')) window.viewMessage(id);
         };
         
+        const ticks = `
+            <div class="status-ticks ${isRead ? 'read' : ''}" title="${isRead ? 'Read' : 'Unread'}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+        `;
+
         tr.innerHTML = `
+            <td>${ticks}</td>
             <td data-label="Date">${date}</td>
             <td data-label="Sender"><strong>${msg.name}</strong></td>
             <td data-label="Phone">${msg.phone || 'N/A'}</td>
@@ -491,6 +527,11 @@ function renderMessages(snapshot) {
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                             View Details
                         </button>
+                        ${!isRead ? `
+                        <button onclick="event.stopPropagation(); window.markAsRead('${id}')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Mark as Read
+                        </button>` : ''}
                         <a href="tel:${msg.phone}" onclick="event.stopPropagation()">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
                             Call Now
@@ -543,8 +584,25 @@ window.viewMessage = async (id) => {
         
         const modal = document.getElementById('view-message-modal');
         if (modal) modal.classList.remove('hidden');
+
+        // Automatically mark as read when viewed
+        if (msg.status !== 'read') {
+            await window.markAsRead(id, false); // false means don't refresh yet, we'll refresh when modal closes or just refresh now
+            loadMessages();
+        }
     } catch (error) {
         console.error("Error viewing message:", error);
+    }
+};
+
+window.markAsRead = async (id, refresh = true) => {
+    try {
+        await updateDoc(doc(db, "messages", id), {
+            status: 'read'
+        });
+        if (refresh) loadMessages();
+    } catch (error) {
+        console.error("Error marking as read:", error);
     }
 };
 
