@@ -462,9 +462,9 @@ function setupRealtimeNotifications() {
     }
 
     let isInitialLoad = true;
-    // Listen for all unread messages for the badge
-    onSnapshot(query(collection(db, "messages"), where("status", "!=", "read"), orderBy("createdAt", "desc")), (snapshot) => {
-        const unreadCount = snapshot.size;
+
+    const handleSnapshot = (snapshot) => {
+        const unreadCount = snapshot.size || snapshot.docs?.filter(d => d.data().status !== 'read').length || 0;
         
         if (navBadge) {
             navBadge.innerText = unreadCount > 9 ? '9+' : unreadCount;
@@ -476,7 +476,8 @@ function setupRealtimeNotifications() {
                 navList.innerHTML = '<div class="no-notifications">No new messages</div>';
             } else {
                 navList.innerHTML = '';
-                snapshot.docs.slice(0, 5).forEach(doc => {
+                const docs = snapshot.docs || [];
+                docs.filter(d => d.data().status !== 'read').slice(0, 5).forEach(doc => {
                     const msg = doc.data();
                     const item = document.createElement('div');
                     item.className = 'notification-item unread';
@@ -496,25 +497,38 @@ function setupRealtimeNotifications() {
             return;
         }
 
-        snapshot.docChanges().forEach((change) => {
-            if (change.type === "added") {
-                const msg = change.doc.data();
-                showNotificationToast("New Inquiry: " + msg.name, msg.message.substring(0, 100) + "...");
-                
-                if ("Notification" in window && Notification.permission === "granted") {
-                    const options = {
-                        body: msg.message.substring(0, 100) + "...",
-                        icon: "../images/logo.png",
-                        badge: "../images/logo.png",
-                        data: { url: '/admin/messages.html' }
-                    };
-                    if (navigator.serviceWorker && navigator.serviceWorker.ready) {
-                        navigator.serviceWorker.ready.then(reg => reg.showNotification("New Message from " + msg.name, options));
+        // Only show toast/push for new additions
+        if (snapshot.docChanges) {
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === "added") {
+                    const msg = change.doc.data();
+                    showNotificationToast("New Inquiry: " + msg.name, msg.message.substring(0, 100) + "...");
+                    
+                    if ("Notification" in window && Notification.permission === "granted") {
+                        const options = {
+                            body: msg.message.substring(0, 100) + "...",
+                            icon: "../images/logo.png",
+                            badge: "../images/logo.png",
+                            data: { url: '/admin/messages.html' }
+                        };
+                        if (navigator.serviceWorker && navigator.serviceWorker.ready) {
+                            navigator.serviceWorker.ready.then(reg => reg.showNotification("New Message from " + msg.name, options));
+                        }
                     }
                 }
-            }
-        });
-    });
+            });
+        }
+    };
+
+    // Main Listener
+    onSnapshot(query(collection(db, "messages"), where("status", "!=", "read"), orderBy("createdAt", "desc")), 
+        handleSnapshot, 
+        (error) => {
+            console.warn("Complex notification query failed (missing index?). Using fallback.");
+            // Fallback for missing index: just listen for latest 20 messages
+            onSnapshot(query(collection(db, "messages"), orderBy("createdAt", "desc"), limit(20)), handleSnapshot);
+        }
+    );
 }
 
 async function loadMessages(direction = 'initial') {
