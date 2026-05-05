@@ -135,8 +135,6 @@ function initDashboard() {
         document.addEventListener('click', () => profileDropdown.classList.add('hidden'));
     }
 
-    setupMobileMenu();
-
     // Fix for local development clean URLs
     if (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') {
         document.querySelectorAll('.nav-links a, .dropdown-menu a').forEach(link => {
@@ -168,6 +166,9 @@ function initDashboard() {
         setupRealtimeNotifications();
     }
 }
+
+// Immediate Mobile Menu Setup to avoid delay
+setupMobileMenu();
 
 function setupMobileMenu() {
     const topNavbar = document.querySelector('.top-navbar');
