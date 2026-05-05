@@ -560,14 +560,7 @@
       </div>
     </section>
 
-    <!-- EmailJS for Notifications -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script type="text/javascript">
-      (function() {
-          // USER: Replace with your actual Public Key from EmailJS dashboard
-          emailjs.init("YOUR_PUBLIC_KEY");
-      })();
-    </script>
+
 
     <!-- Firebase Contact Logic -->
     <script type="module">
@@ -626,18 +619,7 @@
           statusMsg.classList.remove("hidden");
           contactForm.reset();
 
-          // Optional: Send Email Notification via EmailJS
-          // This ensures the admin gets an email immediately
-          try {
-            emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
-              from_name: formData.name,
-              from_phone: formData.phone,
-              message: formData.message,
-              reply_to: formData.phone,
-            });
-          } catch (emailErr) {
-            console.warn("Email notification failed, but message saved to database:", emailErr);
-          }
+
 
           // Visual reward: temporary glow on form
           const formContainer = contactForm.closest(".contact-form-container");
@@ -653,7 +635,7 @@
             "Oops! Something went wrong on our end. Please try again later.";
           if (error.code === "permission-denied") {
             errorText =
-              "Access denied. Please contact me directly via WhatsApp while I fix this!";
+              "Error detected. Please contact me directly via WhatsApp while I fix this!";
           } else if (!navigator.onLine) {
             errorText =
               "No internet connection detected. Please check your network.";
