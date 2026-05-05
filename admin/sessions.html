@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Messages | Admin Portal</title>
+    <title>Active Sessions | Admin Portal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -35,11 +35,11 @@
                 </li>
                 <li>
                     <a href="projects.html" id="projects-nav">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
                         Projects
                     </a>
                 </li>
-                <li class="active">
+                <li>
                     <a href="messages.html" id="messages-nav">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
                         Messages
@@ -57,7 +57,7 @@
                         Analytics
                     </a>
                 </li>
-                <li>
+                <li class="active">
                     <a href="sessions.html" id="sessions-nav">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
                         Sessions
@@ -82,7 +82,7 @@
         <!-- Top Navbar -->
         <nav class="top-navbar fade-in">
             <div class="view-info">
-                <h2 id="current-view-title">Client Inquiries</h2>
+                <h2 id="current-view-title">Security & Sessions</h2>
             </div>
             <div class="navbar-actions">
                 <div class="notification-bell">
@@ -116,69 +116,30 @@
             </div>
         </nav>
 
-        <!-- Messages View -->
-        <div id="messages-view">
+        <!-- Sessions View -->
+        <div id="sessions-view">
             <header class="content-header fade-in">
-                <h1>Messages</h1>
+                <h1>Active Sessions</h1>
             </header>
 
             <div class="data-card fade-in">
                 <div class="card-header">
-                    <h2>Inbox</h2>
-                    <span id="unread-count" class="tier-label" style="color: var(--accent-color); border-color: var(--accent-color);">0 New</span>
+                    <h2>Logged Devices</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.5rem;">These are the devices that are currently logged into your admin account. You can revoke access for any device you don't recognize.</p>
                 </div>
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Sender</th>
-                                <th>Email</th>
-                                <th>Message</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="messages-table-body">
-                            <!-- Messages will be loaded here -->
-                        </tbody>
-                    </table>
+                <div id="sessions-list" style="margin-top: 2rem;">
+                    <!-- Sessions will be loaded here -->
                 </div>
-                <div class="pagination-controls" style="display: flex; justify-content: flex-end; gap: 1rem; padding: 1rem;">
-                    <button id="prev-messages-btn" class="btn btn-outline" disabled style="padding: 0.4rem 1rem; font-size: 0.8rem;">Previous</button>
-                    <button id="next-messages-btn" class="btn btn-outline" disabled style="padding: 0.4rem 1rem; font-size: 0.8rem;">Next</button>
+            </div>
+
+            <div class="data-card fade-in" style="margin-top: 2rem; border-color: rgba(212, 175, 55, 0.2);">
+                <div class="card-header">
+                    <h2 style="color: var(--accent-color);">Security Tip</h2>
+                    <p style="font-size: 0.9rem; line-height: 1.6;">If you notice any suspicious activity, we recommend updating your password in the <a href="settings.html" style="color: var(--accent-color);">Settings</a> page. Revoking a session will immediately logout the user on that device.</p>
                 </div>
             </div>
         </div>
     </main>
-
-    <!-- View Message Modal -->
-    <div id="view-message-modal" class="modal hidden">
-        <div class="modal-content" style="max-width: 600px;">
-            <div class="modal-header">
-                <h2>Message Details</h2>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div id="message-details" style="padding: 1rem 1.5rem;">
-                <div class="modal-detail-group">
-                    <label class="modal-detail-label">From</label>
-                    <div id="msg-detail-name" class="modal-detail-value" style="font-weight: 600; font-size: 1.1rem;"></div>
-                    <div id="msg-detail-email" style="color: var(--accent-color); font-size: 0.9rem;"></div>
-                </div>
-                <div class="modal-detail-group">
-                    <label class="modal-detail-label">Date</label>
-                    <div id="msg-detail-date" class="modal-detail-value"></div>
-                </div>
-                <div class="modal-detail-group">
-                    <label class="modal-detail-label">Message</label>
-                    <div id="msg-detail-content" class="modal-detail-box"></div>
-                </div>
-            </div>
-            <div class="modal-actions">
-                <button class="btn btn-outline close-modal">Close</button>
-                <a id="msg-reply-btn" href="#" class="btn btn-primary">Reply via Email</a>
-            </div>
-        </div>
-    </div>
 
     <script type="module" src="admin.js"></script>
 </body>

@@ -81,13 +81,18 @@ onAuthStateChanged(auth, async (user) => {
             window.location.href = 'index.html';
             return;
         }
+
+        // Initialize Session Tracking
+        const sessionActive = await initializeSession(user.uid);
+        if (!sessionActive) return; // initializeSession handles redirect if revoked
+
         initDashboard();
         requestNotificationPermission();
     } catch (error) {
         console.error("Auth verification error:", error);
         window.location.href = 'index.html';
     } finally {
-        hideLoading(); // Ensure global loader is hidden once auth is settled
+        hideLoading();
     }
 });
 
@@ -673,7 +678,14 @@ if (addProjectBtn) {
         projectModal.classList.remove('hidden');
     });
 }
-if (closeModalBtns) closeModalBtns.forEach(btn => btn.addEventListener('click', () => projectModal.classList.add('hidden')));
+if (closeModalBtns) {
+    closeModalBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const modal = btn.closest('.modal');
+            if (modal) modal.classList.add('hidden');
+        });
+    });
+}
 if (projectForm) {
     projectForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -711,3 +723,140 @@ function openEditModal(id, snapshot) {
 async function deleteProject(id) {
     if (confirm("Delete this project?")) await deleteDoc(doc(db, "projects", id));
 }
+
+// SESSION MANAGEMENT LOGIC
+const sessionId = localStorage.getItem('admin_session_id') || crypto.randomUUID();
+localStorage.setItem('admin_session_id', sessionId);
+
+async function initializeSession(uid) {
+    const sessionRef = doc(db, 'sessions', sessionId);
+    const sessionSnap = await getDoc(sessionRef);
+
+    if (sessionSnap.exists()) {
+        const data = sessionSnap.data();
+        if (data.status === 'revoked') {
+            alert("This session has been revoked by another device.");
+            await signOut(auth);
+            window.location.href = 'index.html';
+            return false;
+        }
+        // Update last active
+        await updateDoc(sessionRef, { lastActive: new Date() });
+    } else {
+        await registerSession(uid);
+    }
+
+    // Listen for revocation in real-time
+    onSnapshot(sessionRef, (snap) => {
+        if (snap.exists() && snap.data().status === 'revoked') {
+            alert("This session has been revoked. You will be logged out.");
+            signOut(auth).then(() => window.location.href = 'index.html');
+        }
+    });
+
+    return true;
+}
+
+async function registerSession(uid) {
+    const userAgent = navigator.userAgent;
+    const isMobile = /Mobile|Android|iP(ad|hone)/.test(userAgent);
+    const browser = userAgent.includes('Chrome') ? 'Chrome' : userAgent.includes('Firefox') ? 'Firefox' : userAgent.includes('Safari') ? 'Safari' : 'Browser';
+    const os = userAgent.includes('Windows') ? 'Windows' : userAgent.includes('Mac') ? 'macOS' : userAgent.includes('Linux') ? 'Linux' : 'OS';
+
+    await updateDoc(doc(db, 'sessions', sessionId), {
+        uid,
+        sessionId,
+        deviceName: `${os} - ${browser}${isMobile ? ' (Mobile)' : ''}`,
+        userAgent,
+        loginAt: new Date(),
+        lastActive: new Date(),
+        status: 'active'
+    }, { merge: true }).catch(async () => {
+        // If update fails, it might not exist, so set it
+        const { setDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+        await setDoc(doc(db, 'sessions', sessionId), {
+            uid,
+            sessionId,
+            deviceName: `${os} - ${browser}${isMobile ? ' (Mobile)' : ''}`,
+            userAgent,
+            loginAt: new Date(),
+            lastActive: new Date(),
+            status: 'active'
+        });
+    });
+}
+
+function setupSessionNotifications() {
+    const q = query(collection(db, "sessions"), where("loginAt", ">", dashboardLoadTime), orderBy("loginAt", "desc"));
+    onSnapshot(q, (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+            if (change.type === "added") {
+                const session = change.doc.data();
+                if (session.sessionId !== sessionId) {
+                    showToast("New Device Logged In", `A new session was started on ${session.deviceName}`);
+                    if ("Notification" in window && Notification.permission === "granted") {
+                        new Notification("New Device Login", { body: `New login from ${session.deviceName}`, icon: "../images/logo.png" });
+                    }
+                }
+            }
+        });
+    });
+}
+
+// Global scope for revocation
+window.revokeSession = async (sId) => {
+    if (confirm("Are you sure you want to logout this device?")) {
+        try {
+            await updateDoc(doc(db, 'sessions', sId), { status: 'revoked' });
+            if (window.location.pathname.includes('sessions.html')) loadSessions();
+        } catch (error) {
+            console.error("Revocation error:", error);
+        }
+    }
+};
+
+async function loadSessions() {
+    const sessionsList = document.getElementById('sessions-list');
+    if (!sessionsList) return;
+
+    sessionsList.innerHTML = '<div class="skeleton" style="height: 100px; border-radius: 14px; margin-bottom: 1rem;"></div>'.repeat(3);
+
+    onSnapshot(query(collection(db, 'sessions'), where('status', '==', 'active'), orderBy('lastActive', 'desc')), (snapshot) => {
+        sessionsList.innerHTML = '';
+        if (snapshot.empty) {
+            sessionsList.innerHTML = '<p style="text-align: center; padding: 2rem; color: var(--text-light);">No active sessions found.</p>';
+            return;
+        }
+
+        snapshot.forEach(docSnap => {
+            const session = docSnap.data();
+            const isCurrent = session.sessionId === sessionId;
+            const item = document.createElement('div');
+            item.className = 'session-item';
+            item.innerHTML = `
+                <div class="session-info">
+                    <div class="session-device">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                        ${session.deviceName}
+                        ${isCurrent ? '<span class="current-badge">Current</span>' : ''}
+                    </div>
+                    <div class="session-meta">
+                        Last active: ${session.lastActive ? (session.lastActive.toDate ? session.lastActive.toDate().toLocaleString() : new Date(session.lastActive).toLocaleString()) : 'Unknown'}
+                    </div>
+                </div>
+                ${!isCurrent ? `<button class="btn btn-outline" style="border-color: var(--error-color); color: var(--error-color); padding: 0.4rem 1rem; font-size: 0.8rem;" onclick="window.revokeSession('${session.sessionId}')">Logout Device</button>` : ''}
+            `;
+            sessionsList.appendChild(item);
+        });
+    });
+}
+
+// Add loadSessions to initDashboard paths
+const originalInitDashboard = initDashboard;
+initDashboard = function() {
+    originalInitDashboard();
+    const path = window.location.pathname;
+    if (path.includes('sessions.html')) loadSessions();
+    setupSessionNotifications();
+};
+

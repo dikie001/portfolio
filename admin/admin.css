@@ -129,16 +129,16 @@ body {
 
 /* Buttons */
 .btn {
-    padding: 1rem 2rem;
-    border-radius: 12px;
-    font-weight: 600;
+    padding: 0.6rem 1.4rem;
+    border-radius: 10px;
+    font-weight: 500;
     cursor: pointer;
     transition: var(--transition);
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
-    font-size: 1rem;
+    font-size: 0.9rem;
     border: none;
 }
 
@@ -149,8 +149,8 @@ body {
 
 .btn-primary:hover {
     background: #e5c048;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px var(--accent-glow);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px var(--accent-glow);
 }
 
 .btn-outline {
@@ -162,6 +162,7 @@ body {
 .btn-outline:hover {
     border-color: var(--accent-color);
     color: var(--accent-color);
+    background: rgba(212, 175, 55, 0.05);
 }
 
 .w-100 {
@@ -659,29 +660,135 @@ td {
 }
 
 .modal-content {
-    background: #111;
+    background: #0f0f0f;
     border: 1px solid var(--border-color);
     width: 100%;
-    max-width: 600px;
-    padding: 3rem;
-    border-radius: 24px;
+    max-width: 550px;
+    padding: 2.5rem;
+    border-radius: 20px;
     max-height: 90vh;
     overflow-y: auto;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+    position: relative;
 }
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+
+.modal-header h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
 }
 
 .close-modal {
-    background: none;
+    background: rgba(255, 255, 255, 0.05);
     border: none;
     color: var(--text-light);
-    font-size: 1.5rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
     cursor: pointer;
+    transition: var(--transition);
+}
+
+.close-modal:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+}
+
+/* Modal Details View */
+.modal-detail-group {
+    margin-bottom: 1.5rem;
+}
+
+.modal-detail-label {
+    color: var(--text-light);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 0.4rem;
+}
+
+.modal-detail-value {
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+.modal-detail-box {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    padding: 1rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-top: 0.5rem;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Session Management UI */
+.session-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    margin-bottom: 1rem;
+    transition: var(--transition);
+}
+
+.session-item:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(212, 175, 55, 0.2);
+}
+
+.session-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.session-device {
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.session-meta {
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+.current-badge {
+    background: rgba(68, 255, 68, 0.1);
+    color: var(--success-color);
+    font-size: 0.7rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
 }
 
 /* Animations */
