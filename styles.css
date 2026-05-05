@@ -91,76 +91,194 @@ section {
   top: 0;
   left: 0;
   width: 100%;
-  padding: 1.5rem 5%;
+  padding: 1.2rem 5%;
   display: flex;
   align-items: center;
-  z-index: 100;
+  justify-content: space-between;
+  z-index: 1000;
+  background: rgba(8, 8, 8, 0.65);
+  backdrop-filter: blur(15px) saturate(180%);
+  -webkit-backdrop-filter: blur(15px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: var(--transition);
+}
+
+.header.scrolled {
+  padding: 0.8rem 5%;
   background: rgba(8, 8, 8, 0.85);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
-  gap: 2rem;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .logo {
-  font-size: 2rem;
-  font-weight: 600;
-  letter-spacing: 2px;
+  font-size: 1.8rem; /* Restored slightly larger size */
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--text-color);
+  white-space: nowrap;
+  display: flex;
+  align-items: center; /* Center instead of baseline for safer vertical alignment */
+  gap: 4px;
+  transition: transform 0.3s ease;
+  animation: logoFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes logoFade {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.logo:hover {
+  transform: scale(1.02);
+}
+
+.logo span {
   color: var(--accent-color);
+  font-size: 2.4rem;
+  line-height: 1;
+  display: inline-block;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { text-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
+  50% { text-shadow: 0 0 25px rgba(212, 175, 55, 0.6); }
+  100% { text-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
 }
 
 .navbar {
   display: flex;
-  gap: 3rem;
+  gap: 2.5rem;
   flex: 1;
   justify-content: center;
 }
 
 .navbar a {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-  position: relative;
-  color: var(--text-color);
+  letter-spacing: 2px;
+  color: var(--text-light);
+  transition: var(--transition);
+  padding: 0.5rem 0;
+  position: relative; /* Ensure after element works */
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: navLinkFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes navLinkFade {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.navbar a:nth-child(1) { animation-delay: 0.1s; }
+.navbar a:nth-child(2) { animation-delay: 0.2s; }
+.navbar a:nth-child(3) { animation-delay: 0.3s; }
+.navbar a:nth-child(4) { animation-delay: 0.4s; }
+.navbar a:nth-child(5) { animation-delay: 0.5s; }
+
+.navbar a:hover, 
+.navbar a.active {
+  color: var(--accent-color);
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
 }
 
 .navbar a::after {
   content: '';
   position: absolute;
-  bottom: -6px;
+  bottom: -4px;
   left: 0;
   width: 0%;
-  height: 1px;
-  background-color: var(--accent-color);
-  transition: var(--transition);
+  height: 2px;
+  background: var(--accent-color);
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 10px var(--accent-glow);
 }
 
-.navbar a:hover::after {
+.navbar a:hover::after,
+.navbar a.active::after {
   width: 100%;
 }
 
-.navbar a:hover {
-  color: var(--accent-color);
-}
-
-/* Header Actions (toggle + hamburger) */
+/* Header Actions */
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  flex-shrink: 0;
+  gap: 1.5rem;
 }
 
-#menu-icon,
-#cancel-icon {
-  display: none;
+.theme-toggle {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-light);
   cursor: pointer;
-  z-index: 101;
-  filter: invert(70%) sepia(35%) saturate(700%) hue-rotate(5deg) brightness(105%) contrast(85%);
+  transition: var(--transition);
 }
 
-.hidden {
-  display: none !important;
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.btn-nav {
+  padding: 0.7rem 1.5rem;
+  background: var(--accent-color);
+  color: #000;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 8px;
+  transition: var(--transition);
+  box-shadow: 0 4px 15px var(--accent-glow);
+}
+
+.btn-nav:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px var(--accent-glow);
+  background: #e5c048;
+}
+
+/* Animated Menu Icon */
+.menu-icon {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+  width: 30px;
+  z-index: 1001;
+}
+
+.menu-icon span {
+  width: 100%;
+  height: 2px;
+  background: var(--text-color);
+  transition: var(--transition);
+  border-radius: 2px;
+}
+
+.menu-icon span:last-child {
+  width: 70%;
+  align-self: flex-end;
+}
+
+.menu-icon.active span:first-child {
+  transform: translateY(4px) rotate(45deg);
+}
+
+.menu-icon.active span:last-child {
+  width: 100%;
+  transform: translateY(-4px) rotate(-45deg);
 }
 
 /* Animations */
@@ -1381,19 +1499,15 @@ html[data-theme='light'] .availability-card:hover {
   }
 
   .logo {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
   }
 
-  #menu-icon {
-    display: block;
-    width: 30px;
-    height: 30px;
+  .menu-icon {
+    display: flex;
   }
 
-  #cancel-icon {
-    display: block;
-    width: 22px;
-    height: 22px;
+  .btn-nav {
+    display: none; /* Hide button on very small screens to avoid clutter */
   }
 
   .navbar {
@@ -1410,15 +1524,20 @@ html[data-theme='light'] .availability-card:hover {
     justify-content: center;
     gap: 2rem;
     z-index: 100;
-    display: none;
+    transform: translateX(100%);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex; /* Always flex, but moved off-screen */
   }
 
   .navbar.active {
-    display: flex;
+    transform: translateX(0);
   }
 
   .navbar a {
-    font-size: 1.1rem;
+    font-size: 1.5rem;
+    opacity: 1; /* Reset for mobile */
+    transform: none; /* Reset for mobile */
+    animation: none; /* Reset for mobile */
   }
 
   .home {
