@@ -1567,7 +1567,7 @@ html[data-theme='light'] .availability-card:hover {
   .home {
     flex-direction: column-reverse;
     text-align: center;
-    padding-top: 8rem;
+    padding-top: 5rem; /* Reduced space from top */
     min-height: auto;
     gap: 2rem;
   }
@@ -1597,10 +1597,10 @@ html[data-theme='light'] .availability-card:hover {
   .home-img img {
     position: relative;
     bottom: 0;
-    width: 100%;
+    width: 110%; /* Slightly larger */
     height: auto;
-    max-width: 400px;
-    margin: 0 auto;
+    max-width: 500px; /* Increased max width */
+    margin: 0 -5% 0 -5%; /* Center it despite being wider than 100% */
     transform: none;
   }
 
