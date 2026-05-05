@@ -7,6 +7,7 @@ import {
     updateDoc, 
     deleteDoc, 
     doc, 
+    getDoc,
     query, 
     orderBy,
     onSnapshot,
@@ -16,6 +17,7 @@ import {
     endBefore,
     limitToLast
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
 
 
 // DOM Elements
@@ -58,9 +60,10 @@ onAuthStateChanged(auth, async (user) => {
     }
 
     try {
-        const idTokenResult = await user.getIdTokenResult();
-        if (!idTokenResult.claims.admin) {
-            console.error("User is not an admin.");
+        const adminDoc = await getDoc(doc(db, 'config', 'admin'));
+        
+        if (!adminDoc.exists() || adminDoc.data().uid !== user.uid) {
+            console.error("User is not the designated admin.");
             await signOut(auth);
             window.location.href = 'index.html';
             return;
@@ -74,6 +77,7 @@ onAuthStateChanged(auth, async (user) => {
         window.location.href = 'index.html';
     }
 });
+
 
 
 function requestNotificationPermission() {

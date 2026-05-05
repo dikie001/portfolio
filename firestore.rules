@@ -1,25 +1,36 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Messages collection: Public can write, only Admin can read/delete
+    // Helper to check if user is the designated admin
+    function isAdmin() {
+      return request.auth != null && request.auth.uid == get(/databases/$(database)/documents/config/admin).data.uid;
+    }
+
+    // Admin configuration: First user to log in sets this
+    match /config/admin {
+      allow read: if true; // Allow checking existence
+      allow create: if request.auth != null && !exists(/databases/$(database)/documents/config/admin);
+      allow update: if isAdmin();
+    }
+
+    // Messages collection
     match /messages/{messageId} {
       allow create: if request.resource.data.name is string &&
                       request.resource.data.email is string &&
                       request.resource.data.message is string &&
                       request.resource.data.createdAt is timestamp;
-      allow read, update, delete: if request.auth != null && request.auth.token.admin == true;
+      allow read, update, delete: if isAdmin();
     }
 
-    // Visits collection: Public can write (tracking), only Admin can read
+    // Visits collection
     match /visits/{visitId} {
       allow create: if true;
-      allow read, update, delete: if request.auth != null && request.auth.token.admin == true;
+      allow read, update, delete: if isAdmin();
     }
     
-    // Default rule for all other collections: Admin only
+    // Default rule for everything else
     match /{document=**} {
-      allow read, write: if request.auth != null && request.auth.token.admin == true;
+      allow read, write: if isAdmin();
     }
-
   }
 }

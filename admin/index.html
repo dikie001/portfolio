@@ -31,26 +31,47 @@
     </div>
 
     <script type="module">
-        import { auth, googleProvider } from '../firebase-config.js';
+        import { auth, db, googleProvider } from '../firebase-config.js';
         import { 
             signInWithPopup,
             onAuthStateChanged,
             signOut
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import {
+            doc,
+            getDoc,
+            setDoc
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const loginBtn = document.getElementById('login-btn');
         const loginError = document.getElementById('login-error');
         const btnText = loginBtn.querySelector('.btn-text');
         const loader = loginBtn.querySelector('.loader');
 
-        // Check if already logged in and has admin claim
+        // Check if already logged in and matches designated admin
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const idTokenResult = await user.getIdTokenResult();
-                if (idTokenResult.claims.admin) {
-                    window.location.href = 'dashboard.html';
-                } else {
-                    loginError.textContent = "Access Denied: You do not have admin privileges.";
+                try {
+                    const adminDoc = await getDoc(doc(db, 'config', 'admin'));
+                    
+                    if (!adminDoc.exists()) {
+                        // NO ADMIN YET - This user becomes the admin
+                        await setDoc(doc(db, 'config', 'admin'), {
+                            uid: user.uid,
+                            email: user.email,
+                            assignedAt: new Date()
+                        });
+                        window.location.href = 'dashboard.html';
+                    } else if (adminDoc.data().uid === user.uid) {
+                        // Matches current admin
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        // Access Denied
+                        throw new Error("Access Denied: Administrator already assigned.");
+                    }
+                } catch (error) {
+                    console.error(error);
+                    loginError.textContent = error.message;
                     loginError.classList.remove('hidden');
                     await signOut(auth);
                 }
@@ -64,20 +85,8 @@
             loginError.classList.add('hidden');
 
             try {
-                const result = await signInWithPopup(auth, googleProvider);
-                const idTokenResult = await result.user.getIdTokenResult();
-                
-                if (idTokenResult.claims.admin) {
-                    window.location.href = 'dashboard.html';
-                } else {
-                    // Force refresh token once in case claim was just assigned
-                    const freshToken = await result.user.getIdTokenResult(true);
-                    if (freshToken.claims.admin) {
-                        window.location.href = 'dashboard.html';
-                    } else {
-                        throw new Error("You do not have admin privileges.");
-                    }
-                }
+                await signInWithPopup(auth, googleProvider);
+                // The onAuthStateChanged listener above will handle the logic
             } catch (error) {
                 console.error(error);
                 loginError.textContent = error.message;
@@ -86,10 +95,10 @@
                 btnText.classList.remove('hidden');
                 loader.classList.add('hidden');
                 loginBtn.disabled = false;
-                await signOut(auth);
             }
         });
     </script>
+
 
 </body>
 </html>
