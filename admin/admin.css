@@ -10,6 +10,7 @@
     --border-color: rgba(255, 255, 255, 0.1);
     --error-color: #ff4d4d;
     --success-color: #44ff44;
+    --sidebar-bg: #0f0f0f; /* Solid sidebar color */
     --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -191,7 +192,8 @@ body {
     flex-direction: column;
     position: fixed;
     height: 100vh;
-    z-index: 10;
+    z-index: 1001; /* Ensure it stays above everything */
+    backdrop-filter: none; /* No blur/translucency */
 }
 
 .sidebar-header {
