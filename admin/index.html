@@ -30,20 +30,38 @@
                     <span class="btn-text">Sign In</span>
                     <span class="loader hidden"></span>
                 </button>
-                <p id="login-error" class="error-message hidden"></p>
+                <div class="auth-extras">
+                    <p id="login-error" class="error-message hidden"></p>
+                    <a href="#" id="toggle-auth" style="display: block; margin-top: 1rem; font-size: 0.8rem; color: var(--text-light); text-align: center; opacity: 0.5;">Need to create an account?</a>
+                </div>
             </form>
         </div>
     </div>
 
     <script type="module">
         import { auth } from '../firebase-config.js';
-        import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { 
+            signInWithEmailAndPassword, 
+            createUserWithEmailAndPassword,
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const loginForm = document.getElementById('login-form');
         const loginBtn = document.getElementById('login-btn');
         const loginError = document.getElementById('login-error');
+        const toggleAuth = document.getElementById('toggle-auth');
         const btnText = loginBtn.querySelector('.btn-text');
         const loader = loginBtn.querySelector('.loader');
+
+        let isLogin = true;
+
+        toggleAuth.addEventListener('click', (e) => {
+            e.preventDefault();
+            isLogin = !isLogin;
+            btnText.textContent = isLogin ? 'Sign In' : 'Create Account';
+            toggleAuth.textContent = isLogin ? 'Need to create an account?' : 'Back to Sign In';
+            document.querySelector('h1').textContent = isLogin ? 'Admin Portal' : 'Create Admin';
+        });
 
         // Check if already logged in
         onAuthStateChanged(auth, (user) => {
@@ -57,21 +75,25 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
-            // Show loader
             btnText.classList.add('hidden');
             loader.classList.remove('hidden');
             loginBtn.disabled = true;
             loginError.classList.add('hidden');
 
             try {
-                await signInWithEmailAndPassword(auth, email, password);
+                if (isLogin) {
+                    await signInWithEmailAndPassword(auth, email, password);
+                } else {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                }
                 window.location.href = 'dashboard.html';
             } catch (error) {
                 console.error(error);
-                loginError.textContent = "Invalid credentials. Please try again.";
+                loginError.textContent = error.message.includes('auth/email-already-in-use') 
+                    ? "Email already exists." 
+                    : "Action failed. Check credentials or Firebase rules.";
                 loginError.classList.remove('hidden');
                 
-                // Hide loader
                 btnText.classList.remove('hidden');
                 loader.classList.add('hidden');
                 loginBtn.disabled = false;

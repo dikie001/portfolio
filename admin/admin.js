@@ -1,5 +1,5 @@
 import { auth, db } from '../firebase-config.js';
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { onAuthStateChanged, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { 
     collection, 
     addDoc, 
@@ -28,8 +28,10 @@ const unreadCountBadge = document.getElementById('unread-count');
 // Navigation
 const projectsNav = document.querySelector('a[href="#projects"]');
 const messagesNav = document.querySelector('a[href="#messages"]');
+const settingsNav = document.querySelector('a[href="#settings"]');
 const projectsView = document.getElementById('projects-view');
 const messagesView = document.getElementById('messages-view');
+const settingsView = document.getElementById('settings-view');
 
 // Auth State Check
 onAuthStateChanged(auth, (user) => {
@@ -56,18 +58,27 @@ messagesNav.parentElement.addEventListener('click', (e) => {
     showView('messages');
 });
 
+settingsNav.parentElement.addEventListener('click', (e) => {
+    e.preventDefault();
+    showView('settings');
+});
+
 function showView(view) {
-    if (view === 'projects') {
-        projectsView.classList.remove('hidden');
-        messagesView.classList.add('hidden');
-        projectsNav.parentElement.classList.add('active');
-        messagesNav.parentElement.classList.remove('active');
-    } else {
-        projectsView.classList.add('hidden');
-        messagesView.classList.remove('hidden');
-        projectsNav.parentElement.classList.remove('active');
-        messagesNav.parentElement.classList.add('active');
-    }
+    const views = {
+        projects: { el: projectsView, nav: projectsNav },
+        messages: { el: messagesView, nav: messagesNav },
+        settings: { el: settingsView, nav: settingsNav }
+    };
+
+    Object.keys(views).forEach(key => {
+        if (key === view) {
+            views[key].el.classList.remove('hidden');
+            views[key].nav.parentElement.classList.add('active');
+        } else {
+            views[key].el.classList.add('hidden');
+            views[key].nav.parentElement.classList.remove('active');
+        }
+    });
 }
 
 // Logout
@@ -87,9 +98,9 @@ async function loadProjects() {
         let total = 0;
         let live = 0;
 
-        snapshot.forEach((doc) => {
-            const project = doc.data();
-            const id = doc.id;
+        snapshot.forEach((docSnap) => {
+            const project = docSnap.data();
+            const id = docSnap.id;
             total++;
             if (project.liveLink) live++;
 
@@ -114,7 +125,6 @@ async function loadProjects() {
         totalProjectsCount.textContent = total;
         liveProjectsCount.textContent = live;
 
-        // Re-attach listeners
         document.querySelectorAll('.edit-btn').forEach(btn => {
             btn.addEventListener('click', () => openEditModal(btn.dataset.id, snapshot));
         });
@@ -170,7 +180,6 @@ async function loadMessages() {
 function viewMessage(id, snapshot) {
     const msg = snapshot.docs.find(d => d.id === id).data();
     alert(`From: ${msg.name} (${msg.email})\n\nMessage: ${msg.message}`);
-    // Mark as read
     if (msg.status === 'unread') {
         updateDoc(doc(db, "messages", id), { status: 'read' });
     }
@@ -182,7 +191,57 @@ async function deleteMessage(id) {
     }
 }
 
-// Modal & Form Logic (same as before)
+// SETTINGS LOGIC
+const settingsForm = document.getElementById('settings-form');
+const settingsMsg = document.getElementById('settings-msg');
+const updatePasswordBtn = document.getElementById('update-password-btn');
+
+settingsForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const newPassword = document.getElementById('new-password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+
+    if (newPassword !== confirmPassword) {
+        settingsMsg.textContent = "Passwords do not match.";
+        settingsMsg.style.color = "var(--error-color)";
+        settingsMsg.classList.remove('hidden');
+        return;
+    }
+
+    if (newPassword.length < 6) {
+        settingsMsg.textContent = "Password must be at least 6 characters.";
+        settingsMsg.style.color = "var(--error-color)";
+        settingsMsg.classList.remove('hidden');
+        return;
+    }
+
+    const btnText = updatePasswordBtn.querySelector('.btn-text');
+    const loader = updatePasswordBtn.querySelector('.loader');
+
+    btnText.classList.add('hidden');
+    loader.classList.remove('hidden');
+    updatePasswordBtn.disabled = true;
+    settingsMsg.classList.add('hidden');
+
+    try {
+        await updatePassword(auth.currentUser, newPassword);
+        settingsMsg.textContent = "Password updated successfully!";
+        settingsMsg.style.color = "var(--success-color)";
+        settingsMsg.classList.remove('hidden');
+        settingsForm.reset();
+    } catch (error) {
+        console.error(error);
+        settingsMsg.textContent = "Error updating password. You may need to re-login to perform this sensitive action.";
+        settingsMsg.style.color = "var(--error-color)";
+        settingsMsg.classList.remove('hidden');
+    } finally {
+        btnText.classList.remove('hidden');
+        loader.classList.add('hidden');
+        updatePasswordBtn.disabled = false;
+    }
+});
+
+// Modal Logic
 addProjectBtn.addEventListener('click', () => {
     modalTitle.textContent = 'Add New Project';
     projectForm.reset();

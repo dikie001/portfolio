@@ -29,6 +29,12 @@
                         Messages
                     </a>
                 </li>
+                <li>
+                    <a href="#settings">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                        Settings
+                    </a>
+                </li>
             </ul>
         </nav>
         <button id="logout-btn" class="btn btn-outline logout-btn">
@@ -122,6 +128,36 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+        <!-- Settings View -->
+        <div id="settings-view" class="hidden">
+            <header class="content-header fade-in">
+                <div>
+                    <h1>Settings</h1>
+                    <p>Manage your account and site preferences.</p>
+                </div>
+            </header>
+
+            <div class="data-card fade-in" style="max-width: 500px;">
+                <div class="card-header">
+                    <h2>Update Password</h2>
+                </div>
+                <form id="settings-form">
+                    <div class="input-group">
+                        <input type="password" id="new-password" required placeholder=" ">
+                        <label for="new-password">New Password</label>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="confirm-password" required placeholder=" ">
+                        <label for="confirm-password">Confirm New Password</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100" id="update-password-btn">
+                        <span class="btn-text">Update Password</span>
+                        <span class="loader hidden"></span>
+                    </button>
+                    <p id="settings-msg" class="error-message hidden"></p>
+                </form>
             </div>
         </div>
     </main>
