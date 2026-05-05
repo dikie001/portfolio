@@ -26,7 +26,6 @@ body {
     color: var(--text-color);
     line-height: 1.6;
     min-height: 100vh;
-    overflow-x: hidden;
 }
 
 /* Login Page */
@@ -1218,7 +1217,7 @@ tr.clickable:hover {
         padding-top: 90px;
         min-width: 0;
         width: 100%;
-        overflow-x: hidden;
+        max-width: 100vw;
     }
 
     .top-navbar {
@@ -1329,6 +1328,68 @@ tr.clickable:hover {
         font-size: 1.5rem;
     }
 
+    /* Stacked Table Layout */
+    .table-responsive {
+        overflow-x: visible !important;
+    }
+
+    table, thead, tbody, th, td, tr {
+        display: block;
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    tr {
+        margin-bottom: 1.5rem;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 0.5rem;
+    }
+
+    td {
+        border: none !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+        position: relative;
+        padding: 1rem 1rem 1rem 45% !important;
+        text-align: right;
+        font-size: 0.85rem !important;
+        min-height: 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    td:last-child {
+        border-bottom: none !important;
+    }
+
+    td:before {
+        position: absolute;
+        left: 1rem;
+        width: 40%;
+        padding-right: 10px;
+        white-space: nowrap;
+        content: attr(data-label);
+        font-weight: 600;
+        text-align: left;
+        color: var(--accent-color);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+    }
+
+    .ua-text, .msg-preview {
+        max-width: 100% !important;
+        white-space: normal !important;
+        text-align: right;
+    }
+
     .modal-content {
         width: 95%;
         padding: 1.5rem;
@@ -1368,19 +1429,6 @@ tr.clickable:hover {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.8rem;
-    }
-
-    .table-responsive {
-        font-size: 0.85rem;
-    }
-
-    td, th {
-        padding: 1rem 0.8rem;
-    }
-
-    .project-thumb {
-        width: 45px;
-        height: 30px;
     }
 
     .chart-container {
