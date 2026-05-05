@@ -689,282 +689,76 @@ section {
   color: var(--accent-color);
 }
 
-/* Rates */
-.rates {
-  background-color: #111;
-  color: var(--white);
-  padding: 8rem 5%;
-  margin: 8rem 2rem;
+/* CTA Section */
+.cta-section {
+  padding: 10rem 5%;
+  text-align: center;
+}
+
+.cta-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  background: linear-gradient(145deg, #111, #080808);
+  padding: 6rem 4rem;
   border-radius: 40px;
-  max-width: calc(100% - 4rem);
-  border: 1px solid #1a1a1a;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-}
-
-.rates-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2.5rem;
-  margin-top: 4rem;
-  align-items: center;
-}
-
-.rate-card {
-  background-color: #0A0A0A;
-  border: 1px solid #222;
-  padding: 3.5rem 2.5rem 3rem;
-  border-radius: 20px;
+  border: 1px solid rgba(212, 175, 55, 0.15);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
   position: relative;
-  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
 }
 
-.rate-card:hover {
-  background-color: #111;
-  transform: translateY(-8px) scale(1.02);
-  border-color: var(--accent-color);
-  box-shadow: 0 20px 50px rgba(212, 175, 55, 0.15);
-}
-
-.rate-card.overdrive {
-  background: linear-gradient(180deg, #151515, #0A0A0A);
-  border: 1px solid var(--accent-color);
-  box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
-  transform: scale(1.05);
-  /* Make it pop by default */
-  z-index: 2;
-}
-
-.rate-card.overdrive:hover {
-  box-shadow: 0 25px 60px rgba(212, 175, 55, 0.35);
-  transform: translateY(-8px) scale(1.07);
-}
-
-/* Icon Badges */
-.card-icon-badge {
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 46px;
-  height: 46px;
-  background: #0A0A0A;
-  border: 1px solid #222;
-  border-radius: 50%;
-  border-top-color: var(--text-light);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 -5px 15px rgba(255, 255, 255, 0.05);
-  transition: var(--transition);
-}
-
-.inner-circle {
-  width: 14px;
-  height: 14px;
-  border: 3px solid var(--text-light);
-  border-radius: 50%;
-  transition: var(--transition);
-}
-
-.card-icon-badge.featured-badge {
-  width: 54px;
-  height: 54px;
-  top: -27px;
-  background: #111;
-  border-top-color: var(--accent-color);
-  /* Gold Glow */
-  box-shadow: 0 -5px 20px rgba(212, 175, 55, 0.2);
-}
-
-.featured-badge .inner-circle.triangle {
-  width: 0;
-  height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-bottom: 14px solid var(--accent-color);
-  border-radius: 0;
-  border-top: none;
-}
-
-.card-icon-badge.team-badge {
-  border-top-color: var(--text-light);
-  /* White Glow */
-  box-shadow: 0 -5px 15px rgba(255, 255, 255, 0.05);
-}
-
-.team-badge .inner-circle.hexagon {
-  width: 16px;
-  height: 10px;
-  background-color: var(--text-light);
-  position: relative;
-  border: none;
-  border-radius: 0;
-}
-
-.team-badge .inner-circle.hexagon::before,
-.team-badge .inner-circle.hexagon::after {
-  content: "";
-  position: absolute;
-  width: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-}
-
-.team-badge .inner-circle.hexagon::before {
-  bottom: 100%;
-  border-bottom: 5px solid var(--text-light);
-}
-
-.team-badge .inner-circle.hexagon::after {
-  top: 100%;
-  width: 0;
-  border-top: 5px solid var(--text-light);
-}
-
-.rate-card:hover .card-icon-badge {
-  transform: translateX(-50%) translateY(-5px);
-}
-
-.rate-card:hover .inner-circle {
-  transform: scale(1.2);
-}
-
-.tier-label {
-  text-align: center;
-  font-size: 0.75rem;
-  letter-spacing: 2px;
-  color: var(--text-light);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 0.3rem 1rem;
-  border-radius: 20px;
-  display: inline-block;
-  margin: 0 auto 1.5rem;
-  font-weight: 600;
-}
-
-.rate-card.overdrive .tier-label {
-  color: var(--accent-color);
-  border-color: rgba(212, 175, 55, 0.4);
-}
-
-.rate-card.team-badge .tier-label {
-  color: var(--text-light);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.price-wrapper {
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.price {
-  font-size: 4rem;
-  font-family: var(--font-heading);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #ffffff;
-  line-height: 1;
-  font-weight: 700;
-}
-
-.price span:first-child {
-  font-size: 1.2rem;
-  font-family: var(--font-body);
-  margin-right: 0.4rem;
-  color: var(--text-light);
-  font-weight: 500;
-  transform: translateY(-0.8rem);
-}
-
-.price span:last-child {
-  font-size: 1rem;
-  font-family: var(--font-body);
-  margin-left: 0.4rem;
-  color: var(--text-light);
-  font-weight: 500;
-  letter-spacing: 1px;
-}
-
-.price-alt {
-  font-size: 0.9rem;
-  color: var(--text-light);
-  font-weight: 500;
-  margin-top: 0.8rem;
-  letter-spacing: 1px;
-}
-
-.rate-desc {
-  font-size: 0.95rem;
-  color: var(--text-light);
-  margin-bottom: 2rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid #222;
-  text-align: center;
-}
-
-.rate-card.overdrive .rate-desc {
-  border-bottom-color: rgba(212, 175, 55, 0.3);
-}
-
-.features {
-  list-style: none;
-  margin-bottom: 3rem;
-  flex: 1;
-}
-
-.features li {
-  margin-bottom: 1.2rem;
-  font-size: 0.9rem;
-  position: relative;
-  padding-left: 2rem;
-  color: #ccc;
-}
-
-.features li::before {
+.cta-container::before {
   content: '';
   position: absolute;
-  left: 0;
-  top: 5px;
-  width: 16px;
-  height: 16px;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ffffff"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-  background-size: contain;
-  background-repeat: no-repeat;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.05) 0%, transparent 70%);
+  pointer-events: none;
 }
 
-.rate-card.overdrive .features li::before {
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23D4AF37"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+.cta-content h2 {
+  font-size: 4rem;
+  margin-bottom: 2rem;
+  line-height: 1.1;
 }
 
-/* Rate Cards Buttons update */
-.rate-card .btn-outline {
-  border-radius: 8px;
-  border-color: var(--text-light);
+.cta-content p {
   color: var(--text-light);
+  font-size: 1.25rem;
+  margin-bottom: 3.5rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
 }
 
-.rate-card .btn-outline:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  color: var(--text-color);
-  box-shadow: none;
+.italic-accent {
+  font-style: italic;
+  color: var(--accent-color);
+  font-family: var(--font-heading);
 }
 
-.rate-card .btn-primary {
-  border-radius: 8px;
-  background: var(--accent-color);
-  border: none;
-  color: #000;
-  font-weight: 600;
+.cta-actions {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
 }
 
-.rate-card .btn-primary:hover {
-  box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
-  background: #e5c048;
-  color: #000;
+@media (max-width: 768px) {
+  .cta-content h2 {
+    font-size: 2.8rem;
+  }
+  
+  .cta-actions {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .cta-container {
+    padding: 4rem 2rem;
+  }
 }
 
 /* Better Contact Section Redesign */
@@ -1524,10 +1318,7 @@ html[data-theme='light'] .availability-card:hover {
     order: 2;
   }
 
-  .rates {
-    margin: 1rem;
-    padding: 5rem 2rem;
-  }
+
 
   .about {
     margin: 1rem auto;
@@ -1664,52 +1455,7 @@ html[data-theme='light'] .availability-card:hover {
   }
 
   /* Rates section mobile enhancements */
-  .rates {
-    margin: 0;
-    max-width: 100%;
-    padding: 3rem 1rem;
-    border-radius: 0;
-    background: transparent;
-    border: none;
-    box-shadow: none;
 
-  }
-
-  .rates-container {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-
-  .rate-card {
-    padding: 2.5rem 1.5rem 2rem;
-    margin: 0;
-  }
-
-  .rate-card.overdrive {
-    transform: scale(1);
-  }
-
-  .animation-container {
-    display: none;
-  }
-
-  .price {
-    font-size: 2.5rem;
-  }
-
-  .price span:first-child {
-    font-size: 0.9rem;
-    transform: translateY(-0.5rem);
-  }
-
-  .price span:last-child {
-    font-size: 0.8rem;
-  }
-
-  .price-alt {
-    font-size: 0.85rem;
-  }
 
   .contact-form .input-row {
     grid-template-columns: 1fr;

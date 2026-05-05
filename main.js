@@ -99,21 +99,7 @@ fadeElements.forEach(el => {
 
 
 
-// Pre-fill contact form based on selected plan
-const planButtons = document.querySelectorAll('.plan-btn');
-const messageField = document.getElementById('message');
 
-planButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    const plan = btn.getAttribute('data-plan');
-    if (messageField) {
-      messageField.value = `I'm interested in the ${plan} package. Here are the details of my project:\n\n`;
-      setTimeout(() => {
-        messageField.focus();
-      }, 500);
-    }
-  });
-});
 
 // Local Time Updates
 function updateLocalTime() {
