@@ -135,6 +135,8 @@ function initDashboard() {
         document.addEventListener('click', () => profileDropdown.classList.add('hidden'));
     }
 
+    setupMobileMenu();
+
     // Fix for local development clean URLs
     if (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') {
         document.querySelectorAll('.nav-links a, .dropdown-menu a').forEach(link => {
@@ -164,6 +166,47 @@ function initDashboard() {
     // Global features
     if (!path.includes('index')) {
         setupRealtimeNotifications();
+    }
+}
+
+function setupMobileMenu() {
+    const topNavbar = document.querySelector('.top-navbar');
+    if (!topNavbar) return;
+
+    // Create Toggle Button if not exists
+    if (!document.querySelector('.menu-toggle')) {
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'menu-toggle';
+        toggleBtn.innerHTML = `
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        `;
+        topNavbar.prepend(toggleBtn);
+
+        // Create Overlay if not exists
+        const overlay = document.createElement('div');
+        overlay.className = 'sidebar-overlay';
+        document.body.appendChild(overlay);
+
+        // Toggle Event
+        toggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('sidebar-open');
+        });
+
+        // Close Event
+        overlay.addEventListener('click', () => {
+            document.body.classList.remove('sidebar-open');
+        });
+
+        // Close on Link Click
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.body.classList.remove('sidebar-open');
+            });
+        });
     }
 }
 
