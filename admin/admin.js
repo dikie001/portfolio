@@ -557,10 +557,8 @@ async function loadMessages(direction = 'initial') {
 
         if (unreadMessagesCount) unreadMessagesCount.innerText = unread;
         if (readMessagesCount) readMessagesCount.innerText = read;
-        if (unreadCountBadge) {
-            unreadCountBadge.innerText = unread + ' New';
-            unreadCountBadge.style.display = unread > 0 ? 'inline-block' : 'none';
-        }
+        // Handled by setupRealtimeNotifications globally
+
 
         if (snapshot.empty) {
             if (direction === 'initial') messagesTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">No messages found.</td></tr>';

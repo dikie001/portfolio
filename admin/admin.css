@@ -1674,25 +1674,28 @@ tr.clickable:hover {
     position: absolute;
     top: -5px;
     right: -5px;
-    background: var(--error-color);
-    color: white;
+    background: var(--accent-color);
+    color: #000;
     font-size: 0.65rem;
-    font-weight: 700;
-    padding: 2px 6px;
-    border-radius: 10px;
-    border: 2px solid var(--bg-color);
+    font-weight: 800;
+    padding: 2px 5px;
+    border-radius: 6px;
+    border: 1.5px solid var(--bg-color);
     display: none;
+    min-width: 18px;
+    text-align: center;
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+
+@keyframes pulse-gold {
+    0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
+    70% { box-shadow: 0 0 0 8px rgba(212, 175, 55, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
 }
 
 .notification-badge.active {
     display: block;
-    animation: pulse-red 2s infinite;
-}
-
-@keyframes pulse-red {
-    0% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0.7); }
-    70% { box-shadow: 0 0 0 8px rgba(255, 77, 77, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); }
+    animation: pulse-gold 2s infinite;
 }
 
 .notification-dropdown {
@@ -1735,7 +1738,29 @@ tr.clickable:hover {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    padding-right: 5px;
 }
+
+/* Golden Scrollbar */
+.notification-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.notification-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.notification-list::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 10px;
+    box-shadow: 0 0 5px var(--accent-glow);
+}
+
+.notification-list::-webkit-scrollbar-thumb:hover {
+    background: #e5c048;
+}
+
 
 .notification-item {
     padding: 0.8rem;
