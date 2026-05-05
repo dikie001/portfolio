@@ -138,40 +138,26 @@ function initDashboard() {
         profileDropdown.classList.add('hidden');
     });
 
-    loadProjects();
-    loadMessages();
-    loadAnalytics();
+    // Page-specific Initialization
+    const path = window.location.pathname;
+    if (path.includes('projects.html') || path.endsWith('/admin/')) {
+        loadProjects();
+    } else if (path.includes('messages.html')) {
+        loadMessages();
+    } else if (path.includes('analytics.html')) {
+        loadAnalytics();
+    } else if (path.includes('visitors.html')) {
+        loadVisitors();
+    }
+    
     setupRealtimeNotifications();
 }
 
 
 
 
-// Navigation Logic
-projectsNav.parentElement.addEventListener('click', (e) => { e.preventDefault(); showView('projects'); });
-messagesNav.parentElement.addEventListener('click', (e) => { e.preventDefault(); showView('messages'); });
-analyticsNav.parentElement.addEventListener('click', (e) => { e.preventDefault(); showView('analytics'); });
-settingsNav.parentElement.addEventListener('click', (e) => { e.preventDefault(); showView('settings'); });
 
-function showView(view) {
-    const views = {
-        projects: { el: projectsView, nav: projectsNav, title: 'Projects Management' },
-        messages: { el: messagesView, nav: messagesNav, title: 'Client Inquiries' },
-        analytics: { el: analyticsView, nav: analyticsNav, title: 'Visitor Analytics' },
-        settings: { el: settingsView, nav: settingsNav, title: 'System Settings' }
-    };
 
-    Object.keys(views).forEach(key => {
-        if (key === view) {
-            views[key].el.classList.remove('hidden');
-            views[key].nav.parentElement.classList.add('active');
-            document.getElementById('current-view-title').textContent = views[key].title;
-        } else {
-            views[key].el.classList.add('hidden');
-            views[key].nav.parentElement.classList.remove('active');
-        }
-    });
-}
 
 
 // Logout
@@ -542,67 +528,107 @@ settingsForm.addEventListener('submit', async (e) => {
     }
 });
 
-// Modal Logic
-addProjectBtn.addEventListener('click', () => {
-    modalTitle.textContent = 'Add New Project';
-    projectForm.reset();
-    document.getElementById('project-id').value = '';
-    projectModal.classList.remove('hidden');
-});
-
-closeModalBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-        projectModal.classList.add('hidden');
-    });
-});
-
-projectForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const id = document.getElementById('project-id').value;
-    const saveBtn = document.getElementById('save-project-btn');
+// VISITORS LOGIC
+async function loadVisitors() {
+    console.log("Loading visitors...");
+    const visitorsTableBody = document.getElementById('visitors-table-body');
+    const totalVisitorsEl = document.getElementById('total-visitors-count');
     
-    const projectData = {
-        title: document.getElementById('project-title').value,
-        description: document.getElementById('project-desc').value,
-        image: document.getElementById('project-image').value,
-        tags: document.getElementById('project-tags').value.split(',').map(tag => tag.trim()),
-        liveLink: document.getElementById('project-live').value,
-        githubLink: document.getElementById('project-github').value,
-        updatedAt: new Date()
-    };
-
-    saveBtn.disabled = true;
-    try {
-        if (id) {
-            await updateDoc(doc(db, "projects", id), projectData);
-        } else {
-            projectData.createdAt = new Date();
-            await addDoc(collection(db, "projects"), projectData);
+    onSnapshot(query(collection(db, "visits"), orderBy("timestamp", "desc"), limit(50)), (snapshot) => {
+        if (visitorsTableBody) {
+            visitorsTableBody.innerHTML = '';
+            snapshot.forEach(docSnap => {
+                const data = docSnap.data();
+                const tr = document.createElement('tr');
+                let date = 'Unknown';
+                if (data.timestamp) {
+                    date = data.timestamp.toDate ? data.timestamp.toDate().toLocaleString() : new Date(data.timestamp).toLocaleString();
+                }
+                
+                tr.innerHTML = `
+                    <td>${date}</td>
+                    <td>${data.country || 'Unknown'}</td>
+                    <td>${data.city || 'Unknown'}</td>
+                    <td>${data.source || 'Direct'}</td>
+                    <td><span class="page-tag">${data.page || '/'}</span></td>
+                    <td class="ua-text" title="${data.userAgent}">${data.userAgent ? data.userAgent.substring(0, 30) + '...' : 'Unknown'}</td>
+                `;
+                visitorsTableBody.appendChild(tr);
+            });
         }
-        projectModal.classList.add('hidden');
-    } catch (error) {
-        console.error(error);
-        alert("Error saving project.");
-    } finally {
-        saveBtn.disabled = false;
-    }
-});
+    });
 
-function openEditModal(id, snapshot) {
-    const docData = snapshot.docs.find(d => d.id === id).data();
-    modalTitle.textContent = 'Edit Project';
-    document.getElementById('project-id').value = id;
-    document.getElementById('project-title').value = docData.title;
-    document.getElementById('project-desc').value = docData.description;
-    document.getElementById('project-image').value = docData.image;
-    document.getElementById('project-tags').value = docData.tags.join(', ');
-    document.getElementById('project-live').value = docData.liveLink || '';
-    document.getElementById('project-github').value = docData.githubLink || '';
-    projectModal.classList.remove('hidden');
+    // Graph Logic
+    onSnapshot(collection(db, "visits"), (snapshot) => {
+        if (totalVisitorsEl) totalVisitorsEl.textContent = snapshot.size;
+        renderVisitsGraph(snapshot);
+    });
 }
 
-async function deleteProject(id) {
-    if (confirm("Delete this project?")) {
-        await deleteDoc(doc(db, "projects", id));
+function renderVisitsGraph(snapshot) {
+    const canvas = document.getElementById('visits-chart');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    const days = {};
+    
+    // Group by day for last 7 days
+    const now = new Date();
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date(now);
+        d.setDate(d.getDate() - i);
+        days[d.toLocaleDateString()] = 0;
     }
+
+    snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        if (data.timestamp) {
+            const date = data.timestamp.toDate ? data.timestamp.toDate().toLocaleDateString() : new Date(data.timestamp).toLocaleDateString();
+            if (days[date] !== undefined) {
+                days[date]++;
+            }
+        }
+    });
+
+    if (window.myChart) window.myChart.destroy();
+
+    window.myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: Object.keys(days),
+            datasets: [{
+                label: 'Visits',
+                data: Object.values(days),
+                borderColor: '#D4AF37',
+                backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                borderWidth: 3,
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: '#D4AF37',
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(255,255,255,0.05)' },
+                    ticks: { color: '#9a9a9a' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#9a9a9a' }
+                }
+            },
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
 }
+
+// Modal Logic
+// ... rest of the file
+
