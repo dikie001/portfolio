@@ -1714,7 +1714,6 @@ tr.clickable:hover {
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
     z-index: 1000;
     display: none;
-    animation: dropdownScale 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .notification-dropdown.active {
@@ -1767,12 +1766,12 @@ tr.clickable:hover {
 
 .notification-item {
     position: relative;
-    padding: 1rem;
-    padding-right: 3rem;
-    border-radius: 12px;
+    padding: 0.7rem 0.8rem;
+    padding-right: 2.8rem;
+    border-radius: 10px;
     background: rgba(255, 255, 255, 0.02);
-    transition: var(--transition);
     border: 1px solid var(--border-color);
+    margin-bottom: 0.4rem;
 }
 
 .notification-item.unread {
@@ -1781,14 +1780,14 @@ tr.clickable:hover {
 }
 
 .notification-item h4 {
-    font-size: 0.85rem;
-    margin-bottom: 0.2rem;
+    font-size: 0.8rem;
+    margin-bottom: 0.1rem;
     color: var(--text-color);
     font-weight: 600;
 }
 
 .notification-item p {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     color: var(--text-light);
     white-space: nowrap;
     overflow: hidden;
@@ -1799,7 +1798,7 @@ tr.clickable:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 0.6rem;
+    margin-top: 0.4rem;
 }
 
 .notification-item .time {
@@ -1818,7 +1817,6 @@ tr.clickable:hover {
 
 .notification-item .status-ticks:hover {
     opacity: 1;
-    transform: scale(1.1);
 }
 
 .notification-item .status-ticks.read {
