@@ -81,10 +81,10 @@
                             email: user.email,
                             assignedAt: new Date()
                         });
-                        window.location.href = 'dashboard';
+                        window.location.href = 'dashboard.html';
                     } else if (adminDoc.data().uid === user.uid) {
                         // Matches current admin
-                        window.location.href = 'dashboard';
+                        window.location.href = 'dashboard.html';
                     } else {
                         // Access Denied
                         throw new Error("Access Denied: Administrator already assigned.");

@@ -135,34 +135,27 @@ function initDashboard() {
         document.addEventListener('click', () => profileDropdown.classList.add('hidden'));
     }
 
-    // Fix for local development clean URLs
-    if (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') {
-        document.querySelectorAll('.nav-links a, .dropdown-menu a').forEach(link => {
-            const href = link.getAttribute('href');
-            if (href && !href.includes('.') && !href.startsWith('http') && !href.startsWith('#') && !href.startsWith('mailto:')) {
-                link.setAttribute('href', href + '.html');
-            }
-        });
-    }
-
+    // Initialize Navigation Links (Highlight active page)
     const path = window.location.pathname;
-    if (path.includes('dashboard')) {
+    if (path.includes('dashboard.html')) {
         loadDashboard();
-    } else if (path.includes('projects') || path.endsWith('/admin/')) {
+    } else if (path.includes('projects.html') || path.endsWith('/admin/')) {
         loadProjects();
-    } else if (path.includes('messages')) {
+    } else if (path.includes('messages.html')) {
         loadMessages();
-    } else if (path.includes('analytics')) {
+    } else if (path.includes('analytics.html')) {
         loadAnalytics();
-    } else if (path.includes('visitors')) {
+    } else if (path.includes('visitors.html')) {
         loadVisitors();
-    } else if (path.includes('sessions')) {
+    } else if (path.includes('sessions.html')) {
         loadSessions();
         setupSessionNotifications();
+    } else if (path.includes('settings.html')) {
+        // Settings logic already handled via event listeners
     }
     
     // Global features
-    if (!path.includes('index')) {
+    if (!path.includes('index.html')) {
         setupRealtimeNotifications();
     }
 }
