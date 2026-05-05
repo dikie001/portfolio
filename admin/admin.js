@@ -834,7 +834,8 @@ async function loadSessions() {
 
     sessionsList.innerHTML = '<div class="skeleton" style="height: 100px; border-radius: 14px; margin-bottom: 1rem;"></div>'.repeat(3);
 
-    const q = query(collection(db, 'sessions'), where('status', '==', 'active'), orderBy('lastActive', 'desc'));
+    // Fetch active sessions without orderBy to avoid index requirement
+    const q = query(collection(db, 'sessions'), where('status', '==', 'active'));
 
     onSnapshot(q, (snapshot) => {
         sessionsList.innerHTML = '';
@@ -843,7 +844,14 @@ async function loadSessions() {
             return;
         }
 
-        snapshot.forEach(docSnap => {
+        // Sort on client side to avoid composite index requirement
+        const sortedDocs = snapshot.docs.sort((a, b) => {
+            const timeA = a.data().lastActive?.seconds || 0;
+            const timeB = b.data().lastActive?.seconds || 0;
+            return timeB - timeA;
+        });
+
+        sortedDocs.forEach(docSnap => {
             const session = docSnap.data();
             const isCurrent = session.sessionId === sessionId;
             const item = document.createElement('div');
@@ -865,16 +873,7 @@ async function loadSessions() {
         });
     }, (error) => {
         console.error("Sessions onSnapshot error:", error);
-        if (error.code === 'failed-precondition') {
-            sessionsList.innerHTML = `
-                <div style="padding: 2rem; text-align: center; background: rgba(255, 77, 77, 0.05); border-radius: 16px; border: 1px solid var(--error-color);">
-                    <p style="color: var(--error-color); margin-bottom: 1rem;">Missing Firestore Index</p>
-                    <p style="font-size: 0.9rem; color: var(--text-light); line-height: 1.5;">The sessions query requires a composite index. Please check your browser console for the direct link to create it in the Firebase Console.</p>
-                </div>
-            `;
-        } else {
-            sessionsList.innerHTML = '<p style="text-align: center; padding: 2rem; color: var(--error-color);">Error loading sessions. Check console.</p>';
-        }
+        sessionsList.innerHTML = '<p style="text-align: center; padding: 2rem; color: var(--error-color);">Error loading sessions. Check console.</p>';
     });
 }
 
