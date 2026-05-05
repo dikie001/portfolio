@@ -8,6 +8,7 @@ import {
     deleteDoc, 
     doc, 
     getDoc,
+    setDoc,
     query, 
     orderBy,
     onSnapshot,
@@ -82,10 +83,9 @@ onAuthStateChanged(auth, async (user) => {
             return;
         }
 
-        // Initialize Session Tracking
-        const sessionActive = await initializeSession(user.uid);
-        if (!sessionActive) return; // initializeSession handles redirect if revoked
-
+        // Initialize Session Tracking (don't wait for it to block the whole UI if possible)
+        initializeSession(user.uid).catch(err => console.error("Session init failed:", err));
+        
         initDashboard();
         requestNotificationPermission();
     } catch (error) {
@@ -148,11 +148,13 @@ function initDashboard() {
         loadVisitors();
     } else if (path.includes('sessions')) {
         loadSessions();
-    } else if (path.includes('settings')) {
-        // Settings logic is handled via event listeners
+        setupSessionNotifications();
     }
     
-    setupRealtimeNotifications();
+    // Global features
+    if (!path.includes('index')) {
+        setupRealtimeNotifications();
+    }
 }
 
 async function loadDashboard() {
@@ -161,8 +163,12 @@ async function loadDashboard() {
     showGraphSkeleton('dash-visits-chart');
     if (dashLatestMessages) dashLatestMessages.innerHTML = '<div class="skeleton" style="height: 200px; border-radius: 12px;"></div>';
 
-    // Fetch Unique Visitors
-    onSnapshot(collection(db, "visitors"), (snapshot) => {
+    // Fetch Visitors (only last 7 days for performance)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const vQuery = query(collection(db, "visitors"), where("lastVisit", ">=", sevenDaysAgo));
+
+    onSnapshot(vQuery, (snapshot) => {
         if (dashUniqueVisitors) dashUniqueVisitors.textContent = snapshot.size;
         if (dashActiveUsers) dashActiveUsers.textContent = Math.floor(Math.random() * 3) + 1;
         hideGraphSkeleton('dash-visits-chart');
@@ -485,7 +491,12 @@ window.deleteMessage = deleteMessage;
 function loadAnalytics() {
     if (!totalVisitsCount) return;
     showStatsSkeleton();
-    onSnapshot(collection(db, "visitors"), (snapshot) => {
+    
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 30); // Show last 30 days for analytics
+    const vQuery = query(collection(db, "visitors"), where("lastVisit", ">=", sevenDaysAgo));
+
+    onSnapshot(vQuery, (snapshot) => {
         let totalUniqueVisits = 0;
         let totalSessions = 0;
         const sources = {}, countries = {};
@@ -767,7 +778,7 @@ async function registerSession(uid) {
     const browser = userAgent.includes('Chrome') ? 'Chrome' : userAgent.includes('Firefox') ? 'Firefox' : userAgent.includes('Safari') ? 'Safari' : 'Browser';
     const os = userAgent.includes('Windows') ? 'Windows' : userAgent.includes('Mac') ? 'macOS' : userAgent.includes('Linux') ? 'Linux' : 'OS';
 
-    await updateDoc(doc(db, 'sessions', sessionId), {
+    await setDoc(doc(db, 'sessions', sessionId), {
         uid,
         sessionId,
         deviceName: `${os} - ${browser}${isMobile ? ' (Mobile)' : ''}`,
@@ -775,19 +786,7 @@ async function registerSession(uid) {
         loginAt: new Date(),
         lastActive: new Date(),
         status: 'active'
-    }, { merge: true }).catch(async () => {
-        // If update fails, it might not exist, so set it
-        const { setDoc } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
-        await setDoc(doc(db, 'sessions', sessionId), {
-            uid,
-            sessionId,
-            deviceName: `${os} - ${browser}${isMobile ? ' (Mobile)' : ''}`,
-            userAgent,
-            loginAt: new Date(),
-            lastActive: new Date(),
-            status: 'active'
-        });
-    });
+    }, { merge: true });
 }
 
 function setupSessionNotifications() {
@@ -825,7 +824,9 @@ async function loadSessions() {
 
     sessionsList.innerHTML = '<div class="skeleton" style="height: 100px; border-radius: 14px; margin-bottom: 1rem;"></div>'.repeat(3);
 
-    onSnapshot(query(collection(db, 'sessions'), where('status', '==', 'active'), orderBy('lastActive', 'desc')), (snapshot) => {
+    const q = query(collection(db, 'sessions'), where('status', '==', 'active'), orderBy('lastActive', 'desc'));
+
+    onSnapshot(q, (snapshot) => {
         sessionsList.innerHTML = '';
         if (snapshot.empty) {
             sessionsList.innerHTML = '<p style="text-align: center; padding: 2rem; color: var(--text-light);">No active sessions found.</p>';
@@ -841,7 +842,7 @@ async function loadSessions() {
                 <div class="session-info">
                     <div class="session-device">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
-                        ${session.deviceName}
+                        ${session.deviceName || 'Unknown Device'}
                         ${isCurrent ? '<span class="current-badge">Current</span>' : ''}
                     </div>
                     <div class="session-meta">
@@ -852,15 +853,18 @@ async function loadSessions() {
             `;
             sessionsList.appendChild(item);
         });
+    }, (error) => {
+        console.error("Sessions onSnapshot error:", error);
+        if (error.code === 'failed-precondition') {
+            sessionsList.innerHTML = `
+                <div style="padding: 2rem; text-align: center; background: rgba(255, 77, 77, 0.05); border-radius: 16px; border: 1px solid var(--error-color);">
+                    <p style="color: var(--error-color); margin-bottom: 1rem;">Missing Firestore Index</p>
+                    <p style="font-size: 0.9rem; color: var(--text-light); line-height: 1.5;">The sessions query requires a composite index. Please check your browser console for the direct link to create it in the Firebase Console.</p>
+                </div>
+            `;
+        } else {
+            sessionsList.innerHTML = '<p style="text-align: center; padding: 2rem; color: var(--error-color);">Error loading sessions. Check console.</p>';
+        }
     });
 }
-
-// Add loadSessions to initDashboard paths
-const originalInitDashboard = initDashboard;
-initDashboard = function() {
-    originalInitDashboard();
-    const path = window.location.pathname;
-    if (path.includes('sessions.html')) loadSessions();
-    setupSessionNotifications();
-};
 
