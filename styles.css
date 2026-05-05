@@ -559,6 +559,21 @@ section {
   color: var(--accent-color);
 }
 
+.stack-display {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-bottom: 0.8rem;
+}
+
+.stack-display span {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-style: italic;
+  color: var(--accent-color);
+  line-height: 1.2;
+}
+
 .stat-item p {
   font-size: 0.85rem;
   text-transform: uppercase;
