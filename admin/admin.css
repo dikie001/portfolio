@@ -1201,12 +1201,16 @@ tr.clickable:hover {
         justify-content: center;
         width: 40px;
         height: 40px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid var(--border-color);
-        border-radius: 10px;
+        background: transparent;
+        border: none;
         color: var(--text-color);
         cursor: pointer;
-        margin-right: 1rem;
+        margin-right: 0.5rem;
+        padding: 0;
+    }
+
+    .view-info {
+        display: none;
     }
 
     .dashboard-grid {
@@ -1217,7 +1221,21 @@ tr.clickable:hover {
 
 @media (max-width: 768px) {
     .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.8rem;
+    }
+
+    .stat-card {
+        padding: 1rem;
+    }
+
+    .stat-card h3 {
+        font-size: 0.65rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .stat-card .value {
+        font-size: 1.4rem;
     }
 
     .content-header {
@@ -1287,7 +1305,7 @@ tr.clickable:hover {
 
 @media (max-width: 480px) {
     .stats-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr) !important;
     }
 
     .main-content {
