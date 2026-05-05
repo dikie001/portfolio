@@ -366,7 +366,7 @@ section {
 .home {
   min-height: 100vh;
   display: flex;
-  align-items: center;
+  align-items: center; /* Back to centering for stability */
   justify-content: space-between;
   gap: 5rem;
   padding-top: 8rem;
@@ -374,6 +374,9 @@ section {
 
 .home-content {
   flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center content vertically */
 }
 
 .subtitle {
@@ -429,25 +432,38 @@ section {
 }
 
 .home-img {
-  flex: 1;
+  flex: 1.5; /* Give even more room to the image */
   display: flex;
   justify-content: flex-end;
+  align-items: flex-end;
+  position: relative;
+  overflow: visible; /* Ensure scale doesn't clip */
 }
 
 .home-img img {
-  width: 90%;
-  aspect-ratio: 4/5;
-  object-fit: cover;
-  border-radius: 200px 200px 0 0;
-  filter: grayscale(80%) sepia(30%) hue-rotate(5deg);
-  border: 1px solid var(--border-color);
-  box-shadow: 0 0 40px rgba(212, 175, 55, 0.1);
-  transition: transform 0.6s ease;
+  width: auto;
+  height: 90vh; /* Fill most of the screen height */
+  object-fit: contain;
+  filter: drop-shadow(0 0 50px rgba(212, 175, 55, 0.2)) brightness(1.1) contrast(1.05);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 2;
+  margin-bottom: -12rem; /* Pull deep into the base */
+  transform: scale(1.4); /* Commanding presence */
+  transform-origin: bottom right;
+}
+
+.home-img::before {
+  content: '';
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: 1;
 }
 
 .home-img img:hover {
-  transform: scale(1.02);
-  filter: grayscale(20%) sepia(10%);
+  transform: scale(1.05) translateY(-10px);
 }
 
 /* About Section */
@@ -474,9 +490,8 @@ section {
   aspect-ratio: 3/4;
   object-fit: cover;
   border-radius: 20px;
-  filter: grayscale(70%) sepia(20%);
-  border: 1px solid var(--border-color);
-  transition: transform 0.6s ease;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
 .about-img img:hover {
@@ -1562,9 +1577,19 @@ html[data-theme='light'] .availability-card:hover {
     justify-content: center;
   }
 
+  .home-img {
+    height: auto;
+    min-height: unset;
+  }
+
   .home-img img {
+    position: relative;
+    bottom: 0;
     width: 100%;
-    border-radius: 60px 60px 0 0;
+    height: auto;
+    max-width: 400px;
+    margin: 0 auto;
+    transform: none;
   }
 
   /* Works section mobile enhancements */
