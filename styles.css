@@ -1098,13 +1098,15 @@ html[data-theme='light'] .availability-card:hover {
 }
 
 .contact-form-container {
-  background: linear-gradient(145deg, #111, #0a0a0a);
-  border: 1px solid #222;
-  padding: 4rem 3.5rem;
-  border-radius: 20px;
+  background: rgba(17, 17, 17, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 3rem 2.5rem;
+  border-radius: 24px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 .contact-form-container::before {
@@ -1122,38 +1124,40 @@ html[data-theme='light'] .availability-card:hover {
 }
 
 .contact-form h3 {
-  font-size: 2.2rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.8rem;
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.5px;
 }
 
 .form-subtitle {
   color: var(--text-light);
-  margin-bottom: 3rem;
-  font-size: 1rem;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+  opacity: 0.8;
 }
 
 .contact-form .input-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 .input-group {
   position: relative;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.8rem;
 }
 
 .input-group input,
 .input-group textarea {
   width: 100%;
-  padding: 1rem 0;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid #333;
+  padding: 1.2rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
   font-family: var(--font-body);
-  font-size: 1.05rem;
+  font-size: 1rem;
   color: var(--text-color);
-  transition: var(--transition);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .input-group textarea {
@@ -1163,30 +1167,36 @@ html[data-theme='light'] .availability-card:hover {
 
 .input-group label {
   position: absolute;
-  top: 1rem;
-  left: 0;
-  font-size: 0.95rem;
+  top: 1.2rem;
+  left: 1rem;
+  font-size: 0.9rem;
   color: var(--text-light);
   pointer-events: none;
-  transition: var(--transition);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-transform: none;
-  letter-spacing: 0.5px;
+  letter-spacing: 0;
 }
 
 .input-group input:focus,
 .input-group textarea:focus {
-  border-bottom-color: var(--accent-color);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
 }
 
 .input-group input:focus+label,
 .input-group input:not(:placeholder-shown)+label,
 .input-group textarea:focus+label,
 .input-group textarea:not(:placeholder-shown)+label {
-  top: -1.2rem;
-  font-size: 0.75rem;
+  top: -0.8rem;
+  left: 0.8rem;
+  font-size: 0.7rem;
   color: var(--accent-color);
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 1px;
+  background: var(--bg-color);
+  padding: 0 0.5rem;
+  border-radius: 4px;
 }
 
 .contact-form .btn {
@@ -1219,14 +1229,15 @@ html[data-theme='light'] .availability-card:hover {
 
 /* Form Status Alerts */
 .form-status {
-  margin-top: 2rem;
-  padding: 1.2rem;
-  border-radius: 8px;
-  font-size: 0.95rem;
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
   text-align: center;
-  transition: var(--transition);
+  transition: all 0.3s ease;
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(5px);
+  font-weight: 500;
 }
 
 .form-status:not(.hidden) {
