@@ -417,6 +417,42 @@ section {
   transform: scale(1.1);
 }
 
+/* Contact Social Grid */
+.social-grid {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: var(--text-light);
+  transition: var(--transition);
+}
+
+.social-icon:hover {
+  color: var(--accent-color);
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--accent-color);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(212, 175, 55, 0.1);
+}
+
+.social-icon svg {
+  transition: transform 0.4s ease;
+}
+
+.social-icon:hover svg {
+  transform: scale(1.1);
+}
+
 .home-img {
   flex: 1.5; /* Give even more room to the image */
   display: flex;
@@ -1430,10 +1466,14 @@ html[data-theme='light'] .availability-card:hover {
   margin-bottom: 4rem;
 }
 
-.footer-links,
-.footer-social {
+.footer-links {
   display: flex;
   gap: 3rem;
+}
+
+.footer-social {
+  display: flex;
+  gap: 1.5rem;
 }
 
 .footer-links a,
@@ -1443,11 +1483,16 @@ html[data-theme='light'] .availability-card:hover {
   letter-spacing: 1.5px;
   color: var(--text-light);
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
 }
 
 .footer-links a:hover,
 .footer-social a:hover {
   color: var(--accent-color);
+  transform: translateY(-3px);
 }
 
 .copyright {
