@@ -517,6 +517,31 @@ body {
 
 
 
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    gap: 1.5rem;
+}
+
+.card-header-content {
+    flex: 1;
+}
+
+.card-header h2 {
+    font-size: 1.1rem;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+.card-header p {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    line-height: 1.5;
+}
+
 .content-header {
     display: flex;
     justify-content: space-between;
@@ -580,20 +605,6 @@ body {
     border-radius: 16px;
     padding: 1.2rem;
     overflow: hidden;
-}
-
-.data-card h2 {
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
-    font-weight: 600;
-    opacity: 0.9;
-}
-
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
 }
 
 .table-responsive {
