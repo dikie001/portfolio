@@ -145,9 +145,9 @@ section {
   text-transform: uppercase;
   letter-spacing: 2px;
   color: var(--text-light);
-  transition: var(--transition);
+  transition: color 0.3s ease, text-shadow 0.3s ease;
   padding: 0.5rem 0;
-  position: relative; /* Ensure after element works */
+  position: relative;
   opacity: 0;
   transform: translateY(-10px);
   animation: navLinkFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -177,14 +177,13 @@ section {
   position: absolute;
   bottom: -4px;
   left: 0;
-  width: 0%;
+  width: 0;
   height: 2px;
   background: var(--accent-color);
-  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 0 10px var(--accent-glow);
 }
 
-.navbar a:hover::after,
 .navbar a.active::after {
   width: 100%;
 }

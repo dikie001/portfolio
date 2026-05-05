@@ -11,6 +11,10 @@ menuIcon.onclick = () => {
 };
 
 // Header Scroll Effect & Active Link Highlighter (Scroll Spy)
+let lastActiveSection = "";
+let isManualScroll = false;
+let scrollTimeout;
+
 window.onscroll = () => {
   // Header background effect
   if (window.scrollY > 50) {
@@ -19,27 +23,38 @@ window.onscroll = () => {
     header.classList.remove("scrolled");
   }
 
+  // Skip scroll spy if we are scrolling manually via a click
+  if (isManualScroll) return;
+
   // Active link highlighting on scroll
-  let current = "home"; // Default to home at the very top
+  let current = "home"; 
   sections.forEach((section) => {
     const sectionTop = section.offsetTop;
-    if (window.scrollY >= sectionTop - 200) {
+    if (window.scrollY >= sectionTop - 250) {
       current = section.getAttribute("id");
     }
   });
 
-  navLinks.forEach((link) => {
-    link.classList.remove("active");
-    const href = link.getAttribute("href").substring(1);
-    if (href === current) {
-      link.classList.add("active");
-    }
-  });
+  // Only update if the section has changed
+  if (current !== lastActiveSection) {
+    lastActiveSection = current;
+    navLinks.forEach((link) => {
+      link.classList.remove("active");
+      const href = link.getAttribute("href").substring(1);
+      if (href === current) {
+        link.classList.add("active");
+      }
+    });
+  }
 };
 
 // Manual Active Link Highlighting on Click
 navLinks.forEach(link => {
   link.addEventListener("click", () => {
+    // Prevent scroll spy from interfering during smooth scroll
+    isManualScroll = true;
+    clearTimeout(scrollTimeout);
+    
     // Mobile menu close
     menuIcon.classList.remove("active");
     navbar.classList.remove("active");
@@ -47,6 +62,13 @@ navLinks.forEach(link => {
     // Active class update
     navLinks.forEach(l => l.classList.remove("active"));
     link.classList.add("active");
+
+    // Reset manual scroll flag after the smooth scroll completes
+    scrollTimeout = setTimeout(() => {
+      isManualScroll = false;
+      // Also update the lastActiveSection to match the clicked one
+      lastActiveSection = link.getAttribute("href").substring(1);
+    }, 1000); // 1s is usually enough for smooth scroll to finish
   });
 });
 
