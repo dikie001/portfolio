@@ -508,51 +508,45 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .content-header h1 {
-    font-size: 2.2rem;
+    font-size: 1.8rem;
     font-weight: 700;
-    letter-spacing: -1px;
+    letter-spacing: -0.5px;
 }
 
 /* Stats Grid */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .stat-card {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
-    padding: 1.8rem;
-    border-radius: 20px;
+    padding: 1.2rem 1.5rem;
+    border-radius: 16px;
     transition: var(--transition);
 }
 
-.stat-card:hover {
-    border-color: rgba(212, 175, 55, 0.3);
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
-
 .stat-card h3 {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     color: var(--text-light);
     text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin-bottom: 1rem;
-    opacity: 0.8;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+    opacity: 0.7;
 }
 
 .stat-card .value {
-    font-size: 2.2rem;
+    font-size: 1.8rem;
     font-weight: 700;
     color: var(--accent-color);
-    line-height: 1;
+    line-height: 1.2;
 }
 
 /* For longer text values in stats */
@@ -570,15 +564,15 @@ body {
 .data-card {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
-    border-radius: 24px;
-    padding: 2.5rem;
+    border-radius: 20px;
+    padding: 1.5rem;
     overflow: hidden;
 }
 
 .data-card h2 {
-    font-size: 1.5rem;
-    margin-bottom: 2rem;
-    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 1.2rem;
+    font-weight: 600;
 }
 
 .card-header {
@@ -885,8 +879,7 @@ td {
 .nav-links li.active a {
     background: rgba(212, 175, 55, 0.1);
     color: var(--accent-color);
-    border-left: 3px solid var(--accent-color);
-    padding-left: calc(1.5rem - 3px);
+    padding-left: 1.2rem;
 }
 
 .nav-links li.active svg {

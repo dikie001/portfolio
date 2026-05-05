@@ -120,39 +120,39 @@
             <div class="stats-grid fade-in">
                 <div class="stat-card">
                     <h3>Unique Visitors</h3>
-                    <div class="value" id="dash-unique-visitors">0</div>
+                    <div class="value" id="dash-unique-visitors"><div class="skeleton skeleton-text" style="width: 40px; height: 1.8rem; margin: 0;"></div></div>
                 </div>
                 <div class="stat-card">
                     <h3>Total Projects</h3>
-                    <div class="value" id="dash-total-projects">0</div>
+                    <div class="value" id="dash-total-projects"><div class="skeleton skeleton-text" style="width: 40px; height: 1.8rem; margin: 0;"></div></div>
                 </div>
                 <div class="stat-card">
                     <h3>Total Messages</h3>
-                    <div class="value" id="dash-total-messages">0</div>
+                    <div class="value" id="dash-total-messages"><div class="skeleton skeleton-text" style="width: 40px; height: 1.8rem; margin: 0;"></div></div>
                 </div>
                 <div class="stat-card">
                     <h3>Active Users</h3>
-                    <div class="value" id="dash-active-users">1</div>
+                    <div class="value" id="dash-active-users"><div class="skeleton skeleton-text" style="width: 40px; height: 1.8rem; margin: 0;"></div></div>
                 </div>
             </div>
 
             <div class="dashboard-grid fade-in" style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-top: 2rem;">
                 <!-- Traffic Overview -->
                 <div class="data-card">
-                    <div class="card-header">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                         <h2>Traffic Analytics</h2>
-                        <a href="visitors.html" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.8rem;">View Detailed</a>
+                        <a href="visitors.html" style="color: var(--accent-color); font-size: 0.85rem; text-decoration: none; font-weight: 500;">View Detailed &rarr;</a>
                     </div>
-                    <div class="chart-container" style="height: 300px; position: relative;">
+                    <div class="chart-container" style="height: 320px; position: relative;">
                         <canvas id="dash-visits-chart"></canvas>
                     </div>
                 </div>
 
                 <!-- Latest Messages -->
                 <div class="data-card">
-                    <div class="card-header">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                         <h2>Latest Inquiries</h2>
-                        <a href="messages.html" class="btn btn-outline" style="padding: 0.5rem 1rem; font-size: 0.8rem;">All Messages</a>
+                        <a href="messages.html" style="color: var(--accent-color); font-size: 0.85rem; text-decoration: none; font-weight: 500;">All Messages &rarr;</a>
                     </div>
                     <div id="dash-latest-messages" class="latest-items">
                         <!-- Messages will load here -->

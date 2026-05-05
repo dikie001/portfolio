@@ -184,13 +184,13 @@ async function loadDashboard() {
                 const msg = docSnap.data();
                 const item = document.createElement('div');
                 item.className = 'latest-message-item';
-                item.style.padding = '1.2rem';
+                item.style.padding = '1rem 1.5rem';
                 item.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem;">
-                        <strong>${msg.name}</strong>
-                        <span style="font-size: 0.75rem; color: var(--text-light); opacity: 0.7;">${msg.createdAt ? (msg.createdAt.toDate ? msg.createdAt.toDate().toLocaleDateString() : new Date(msg.createdAt).toLocaleDateString()) : 'Recently'}</span>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+                        <strong style="font-weight: 600;">${msg.name}</strong>
+                        <span style="font-size: 0.7rem; color: var(--text-light); opacity: 0.6;">${msg.createdAt ? (msg.createdAt.toDate ? msg.createdAt.toDate().toLocaleDateString() : new Date(msg.createdAt).toLocaleDateString()) : 'Recently'}</span>
                     </div>
-                    <p>${msg.message}</p>
+                    <p style="margin: 0; line-height: 1.4;">${msg.message}</p>
                 `;
                 dashLatestMessages.appendChild(item);
             });
@@ -552,7 +552,10 @@ function renderVisitsGraph(snapshot, canvasId = 'visits-chart') {
     window[chartKey] = new Chart(canvas.getContext('2d'), {
         type: 'line',
         data: {
-            labels: Object.keys(days),
+            labels: Object.keys(days).map(d => {
+                const date = new Date(d);
+                return date.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+            }),
             datasets: [{ 
                 label: 'Unique Visits', 
                 data: Object.values(days), 
@@ -562,10 +565,47 @@ function renderVisitsGraph(snapshot, canvasId = 'visits-chart') {
                 tension: 0.4, 
                 fill: true, 
                 pointBackgroundColor: '#D4AF37', 
-                pointRadius: 4 
+                pointRadius: 4,
+                pointHoverRadius: 6
             }]
         },
-        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9a9a9a' } }, x: { grid: { display: false }, ticks: { color: '#9a9a9a' } } }, plugins: { legend: { display: false } } }
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            scales: { 
+                y: { 
+                    beginAtZero: true, 
+                    grid: { color: 'rgba(255,255,255,0.05)' }, 
+                    ticks: { 
+                        color: '#9a9a9a',
+                        stepSize: 1,
+                        precision: 0,
+                        callback: function(value) { if (value % 1 === 0) return value; }
+                    } 
+                }, 
+                x: { 
+                    grid: { display: false }, 
+                    ticks: { 
+                        color: '#9a9a9a',
+                        maxRotation: 0,
+                        autoSkip: true,
+                        maxTicksLimit: 7
+                    } 
+                } 
+            }, 
+            plugins: { 
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(20, 20, 20, 0.9)',
+                    titleColor: '#D4AF37',
+                    bodyColor: '#fff',
+                    borderColor: 'rgba(212, 175, 55, 0.3)',
+                    borderWidth: 1,
+                    padding: 10,
+                    displayColors: false
+                }
+            } 
+        }
     });
 }
 
