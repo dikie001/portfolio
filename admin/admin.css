@@ -1174,6 +1174,8 @@ tr.clickable:hover {
     .top-navbar {
         left: 0;
         padding: 0 1.5rem;
+        background: var(--bg-color); /* Solid background */
+        backdrop-filter: none; /* Remove translucency */
     }
 
     .sidebar-overlay {
