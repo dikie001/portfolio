@@ -385,20 +385,36 @@ section {
 
 .social-links-hero {
   display: flex;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 .social-links-hero a {
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
   color: var(--text-light);
-  border-bottom: 1px solid transparent;
+  transition: var(--transition);
 }
 
 .social-links-hero a:hover {
   color: var(--accent-color);
-  border-bottom: 1px solid var(--accent-color);
+  background: rgba(212, 175, 55, 0.1);
+  border-color: var(--accent-color);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(212, 175, 55, 0.15);
+}
+
+.social-links-hero svg {
+  transition: transform 0.4s ease;
+}
+
+.social-links-hero a:hover svg {
+  transform: scale(1.1);
 }
 
 .home-img {
