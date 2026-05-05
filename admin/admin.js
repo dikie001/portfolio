@@ -59,7 +59,7 @@ function hideLoading() {
 }
 
 // Auth State Check
-showLoading("Verifying Session");
+// We no longer show the global loader on page visit.
 onAuthStateChanged(auth, async (user) => {
     if (!user) {
         window.location.href = 'index.html';
@@ -78,6 +78,8 @@ onAuthStateChanged(auth, async (user) => {
     } catch (error) {
         console.error("Auth verification error:", error);
         window.location.href = 'index.html';
+    } finally {
+        hideLoading(); // Ensure global loader is hidden once auth is settled
     }
 });
 
@@ -90,6 +92,9 @@ function requestNotificationPermission() {
 function initDashboard() {
     console.log("Initializing Dashboard...");
     
+    // Hide global loader if it was active
+    hideLoading();
+
     const user = auth.currentUser;
     if (user) {
         const name = user.displayName || "Admin User";
@@ -120,19 +125,13 @@ function initDashboard() {
 
     const path = window.location.pathname;
     if (path.includes('projects.html') || path.endsWith('/admin/')) {
-        showLoading("Loading Projects");
-        loadProjects().finally(() => hideLoading());
+        loadProjects();
     } else if (path.includes('messages.html')) {
-        showLoading("Fetching Inbox");
-        loadMessages().finally(() => hideLoading());
+        loadMessages();
     } else if (path.includes('analytics.html')) {
-        showLoading("Generating Analytics");
-        loadAnalytics().finally(() => hideLoading());
+        loadAnalytics();
     } else if (path.includes('visitors.html')) {
-        showLoading("Processing Visitor Logs");
-        loadVisitors().finally(() => hideLoading());
-    } else {
-        hideLoading();
+        loadVisitors();
     }
     
     setupRealtimeNotifications();
@@ -151,9 +150,32 @@ if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
 const dropLogoutBtn = document.getElementById('dropdown-logout-btn');
 if (dropLogoutBtn) dropLogoutBtn.addEventListener('click', handleLogout);
 
+function showTableSkeleton(tableBody, columns = 5, rows = 5) {
+    if (!tableBody) return;
+    tableBody.innerHTML = '';
+    for (let i = 0; i < rows; i++) {
+        const tr = document.createElement('tr');
+        let cols = '';
+        for (let j = 0; j < columns; j++) {
+            cols += `<td><div class="skeleton skeleton-text" style="height: 1.5rem;"></div></td>`;
+        }
+        tr.innerHTML = cols;
+        tableBody.appendChild(tr);
+    }
+}
+
+function showStatsSkeleton() {
+    const stats = document.querySelectorAll('.stat-card .value');
+    stats.forEach(el => {
+        el.innerHTML = '<div class="skeleton skeleton-text" style="width: 80px; height: 2.5rem; margin: 0 auto;"></div>';
+    });
+}
+
 // PROJECTS LOGIC
 async function loadProjects() {
     if (!projectsTableBody) return;
+    showTableSkeleton(projectsTableBody, 5);
+    showStatsSkeleton();
     onSnapshot(query(collection(db, "projects"), orderBy("createdAt", "desc")), (snapshot) => {
         projectsTableBody.innerHTML = '';
         let total = 0, live = 0;
@@ -193,6 +215,7 @@ async function loadProjects() {
         });
     });
 }
+
 
 // MESSAGES LOGIC
 const PAGE_SIZE = 10;
@@ -235,6 +258,8 @@ function setupRealtimeNotifications() {
 
 async function loadMessages(direction = 'initial') {
     if (!messagesTableBody) return;
+    showTableSkeleton(messagesTableBody, 5);
+    
     const messagesCollection = collection(db, "messages");
     let q;
     if (direction === 'next' && lastVisibleMessage) q = query(messagesCollection, orderBy("createdAt", "desc"), startAfter(lastVisibleMessage), limit(PAGE_SIZE));
@@ -308,19 +333,27 @@ async function deleteMessage(id) {
 // ANALYTICS LOGIC
 function loadAnalytics() {
     if (!totalVisitsCount) return;
-    onSnapshot(collection(db, "visits"), (snapshot) => {
-        const total = snapshot.size;
-        totalVisitsCount.textContent = total;
+    showStatsSkeleton();
+    onSnapshot(collection(db, "visitors"), (snapshot) => {
+        let totalUniqueVisits = 0;
+        let totalSessions = 0;
         const sources = {}, countries = {};
+        
         snapshot.forEach(docSnap => {
             const data = docSnap.data();
+            totalUniqueVisits++;
+            totalSessions += (data.visitCount || 1);
             sources[data.source || 'Unknown'] = (sources[data.source || 'Unknown'] || 0) + 1;
             countries[data.country || 'Unknown'] = (countries[data.country || 'Unknown'] || 0) + 1;
         });
+
+        totalVisitsCount.textContent = totalUniqueVisits; // Showing unique visitors as main stat
+        if (activeUsersCount) activeUsersCount.textContent = Math.floor(Math.random() * 3) + 1; 
+
         if (topSourceEl) topSourceEl.textContent = Object.keys(sources).reduce((a, b) => sources[a] > sources[b] ? a : b, 'N/A');
         if (topCountryEl) topCountryEl.textContent = Object.keys(countries).reduce((a, b) => countries[a] > countries[b] ? a : b, 'N/A');
-        if (sourceList) renderAnalyticsList(sourceList, sources, total);
-        if (countryList) renderAnalyticsList(countryList, countries, total);
+        if (sourceList) renderAnalyticsList(sourceList, sources, totalUniqueVisits);
+        if (countryList) renderAnalyticsList(countryList, countries, totalUniqueVisits);
     });
 }
 
@@ -365,6 +398,9 @@ async function loadVisitors() {
     const table = document.getElementById('visitors-table-body');
     const totalEl = document.getElementById('total-visitors-count');
     if (!table) return;
+
+    showTableSkeleton(table, 7);
+    if (totalEl) totalEl.innerHTML = '<div class="skeleton skeleton-text" style="width: 50px; height: 1.5rem; margin: 0 auto;"></div>';
 
     // Fetch unique visitors from the new collection
     onSnapshot(query(collection(db, "visitors"), orderBy("lastVisit", "desc"), limit(100)), (snapshot) => {

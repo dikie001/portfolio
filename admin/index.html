@@ -11,23 +11,32 @@
 </head>
 <body class="login-body">
     <div class="login-container fade-in">
-            <div class="login-card">
-                <div class="login-header">
-                    <a href="../index.html" class="back-link">&larr; Back to Site</a>
-                    <h1>Admin Portal</h1>
-                    <p>Welcome back, Dickens.</p>
-                </div>
-                <div id="login-actions">
-                    <button type="button" class="btn btn-primary w-100" id="login-btn">
-                        <span class="btn-text">Sign in with Google</span>
-                        <span class="loader hidden"></span>
-                    </button>
-                    <div class="auth-extras">
-                        <p id="login-error" class="error-message hidden"></p>
-                    </div>
+        <!-- Global Loader Overlay -->
+        <div id="global-loader" class="loader-overlay hidden">
+            <div class="premium-loader">
+                <div class="orbit"></div>
+                <div class="orbit"></div>
+                <div class="center-pulse"></div>
+            </div>
+            <p class="loading-text" id="loader-text">Authenticating</p>
+        </div>
+
+        <div class="login-card">
+            <div class="login-header">
+                <a href="../index.html" class="back-link">&larr; Back to Site</a>
+                <h1>Admin Portal</h1>
+                <p>Welcome back, Dickens.</p>
+            </div>
+            <div id="login-actions">
+                <button type="button" class="btn btn-primary w-100" id="login-btn">
+                    <span class="btn-text">Sign in with Google</span>
+                    <span class="loader hidden"></span>
+                </button>
+                <div class="auth-extras">
+                    <p id="login-error" class="error-message hidden"></p>
                 </div>
             </div>
-
+        </div>
     </div>
 
     <script type="module">
@@ -47,10 +56,21 @@
         const loginError = document.getElementById('login-error');
         const btnText = loginBtn.querySelector('.btn-text');
         const loader = loginBtn.querySelector('.loader');
+        const globalLoader = document.getElementById('global-loader');
+
+        function showLoading(text = "Authenticating...") {
+            document.getElementById('loader-text').textContent = text;
+            globalLoader.classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            globalLoader.classList.add('hidden');
+        }
 
         // Check if already logged in and matches designated admin
         onAuthStateChanged(auth, async (user) => {
             if (user) {
+                showLoading("Verifying Admin Status...");
                 try {
                     const adminDoc = await getDoc(doc(db, 'config', 'admin'));
                     
@@ -74,13 +94,13 @@
                     loginError.textContent = error.message;
                     loginError.classList.remove('hidden');
                     await signOut(auth);
+                    hideLoading();
                 }
             }
         });
 
         loginBtn.addEventListener('click', async () => {
-            btnText.classList.add('hidden');
-            loader.classList.remove('hidden');
+            showLoading("Connecting to Google...");
             loginBtn.disabled = true;
             loginError.classList.add('hidden');
 
@@ -91,14 +111,10 @@
                 console.error(error);
                 loginError.textContent = error.message;
                 loginError.classList.remove('hidden');
-                
-                btnText.classList.remove('hidden');
-                loader.classList.add('hidden');
                 loginBtn.disabled = false;
+                hideLoading();
             }
         });
     </script>
-
-
 </body>
 </html>
