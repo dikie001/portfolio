@@ -23,7 +23,7 @@
 
         <div class="login-card">
             <div class="login-header">
-                <a href="../index.html" class="back-link">&larr; Back to Site</a>
+                <a href="../" class="back-link">&larr; Back to Site</a>
                 <h1>Admin Portal</h1>
                 <p>Welcome back, Dickens.</p>
             </div>
@@ -81,10 +81,10 @@
                             email: user.email,
                             assignedAt: new Date()
                         });
-                        window.location.href = 'dashboard.html';
+                        window.location.href = 'dashboard';
                     } else if (adminDoc.data().uid === user.uid) {
                         // Matches current admin
-                        window.location.href = 'dashboard.html';
+                        window.location.href = 'dashboard';
                     } else {
                         // Access Denied
                         throw new Error("Access Denied: Administrator already assigned.");

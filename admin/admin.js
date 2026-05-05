@@ -70,7 +70,7 @@ function hideLoading() {
 // Auth State Check
 onAuthStateChanged(auth, async (user) => {
     if (!user) {
-        window.location.href = 'index.html';
+        window.location.href = 'index';
         return;
     }
 
@@ -78,7 +78,7 @@ onAuthStateChanged(auth, async (user) => {
         const adminDoc = await getDoc(doc(db, 'config', 'admin'));
         if (!adminDoc.exists() || adminDoc.data().uid !== user.uid) {
             await signOut(auth);
-            window.location.href = 'index.html';
+            window.location.href = 'index';
             return;
         }
 
@@ -90,7 +90,7 @@ onAuthStateChanged(auth, async (user) => {
         requestNotificationPermission();
     } catch (error) {
         console.error("Auth verification error:", error);
-        window.location.href = 'index.html';
+        window.location.href = 'index';
     } finally {
         hideLoading();
     }
@@ -136,16 +136,20 @@ function initDashboard() {
     }
 
     const path = window.location.pathname;
-    if (path.includes('dashboard.html')) {
+    if (path.includes('dashboard')) {
         loadDashboard();
-    } else if (path.includes('projects.html') || path.endsWith('/admin/')) {
+    } else if (path.includes('projects') || path.endsWith('/admin/')) {
         loadProjects();
-    } else if (path.includes('messages.html')) {
+    } else if (path.includes('messages')) {
         loadMessages();
-    } else if (path.includes('analytics.html')) {
+    } else if (path.includes('analytics')) {
         loadAnalytics();
-    } else if (path.includes('visitors.html')) {
+    } else if (path.includes('visitors')) {
         loadVisitors();
+    } else if (path.includes('sessions')) {
+        loadSessions();
+    } else if (path.includes('settings')) {
+        // Settings logic is handled via event listeners
     }
     
     setupRealtimeNotifications();
@@ -206,7 +210,7 @@ async function loadDashboard() {
 const handleLogout = async () => {
     try {
         await signOut(auth);
-        window.location.href = 'index.html';
+        window.location.href = 'index';
     } catch (error) {
         console.error("Logout error:", error);
     }
@@ -737,7 +741,7 @@ async function initializeSession(uid) {
         if (data.status === 'revoked') {
             alert("This session has been revoked by another device.");
             await signOut(auth);
-            window.location.href = 'index.html';
+            window.location.href = 'index';
             return false;
         }
         // Update last active
@@ -750,7 +754,7 @@ async function initializeSession(uid) {
     onSnapshot(sessionRef, (snap) => {
         if (snap.exists() && snap.data().status === 'revoked') {
             alert("This session has been revoked. You will be logged out.");
-            signOut(auth).then(() => window.location.href = 'index.html');
+            signOut(auth).then(() => window.location.href = 'index');
         }
     });
 

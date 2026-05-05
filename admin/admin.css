@@ -591,13 +591,28 @@ body {
 .stat-card .value:has-text {
     font-size: 1.5rem;
 }
-
-/* Analytics specific adjustments */
-#top-source, #top-country {
-    font-size: 1.6rem;
-    word-break: break-all;
+.chart-container {
+    width: 100%;
+    height: 320px;
+    position: relative;
+    margin-top: 1rem;
 }
 
+/* Ensure Chart.js tooltips are prominent */
+.chartjs-tooltip {
+    opacity: 0;
+    position: absolute;
+    background: rgba(20, 20, 20, 0.95);
+    color: white;
+    border-radius: 8px;
+    transition: all .1s ease;
+    pointer-events: none;
+    transform: translate(-50%, 0);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    padding: 8px 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    z-index: 100;
+}
 /* Projects Table/List */
 .data-card {
     background: var(--card-bg);
