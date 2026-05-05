@@ -46,7 +46,20 @@ const visitorsNav = document.getElementById('visitors-nav');
 const analyticsNav = document.getElementById('analytics-nav');
 const settingsNav = document.getElementById('settings-nav');
 
+const globalLoader = document.getElementById('global-loader');
+const loaderText = document.getElementById('loader-text');
+
+function showLoading(text = "Fetching Data...") {
+    if (loaderText) loaderText.textContent = text;
+    if (globalLoader) globalLoader.classList.remove('hidden');
+}
+
+function hideLoading() {
+    if (globalLoader) globalLoader.classList.add('hidden');
+}
+
 // Auth State Check
+showLoading("Verifying Session");
 onAuthStateChanged(auth, async (user) => {
     if (!user) {
         window.location.href = 'index.html';
@@ -76,8 +89,6 @@ function requestNotificationPermission() {
 
 function initDashboard() {
     console.log("Initializing Dashboard...");
-    const loader = document.getElementById('auth-loader');
-    if (loader) loader.style.display = 'none';
     
     const user = auth.currentUser;
     if (user) {
@@ -108,10 +119,21 @@ function initDashboard() {
     }
 
     const path = window.location.pathname;
-    if (path.includes('projects.html') || path.endsWith('/admin/')) loadProjects();
-    else if (path.includes('messages.html')) loadMessages();
-    else if (path.includes('analytics.html')) loadAnalytics();
-    else if (path.includes('visitors.html')) loadVisitors();
+    if (path.includes('projects.html') || path.endsWith('/admin/')) {
+        showLoading("Loading Projects");
+        loadProjects().finally(() => hideLoading());
+    } else if (path.includes('messages.html')) {
+        showLoading("Fetching Inbox");
+        loadMessages().finally(() => hideLoading());
+    } else if (path.includes('analytics.html')) {
+        showLoading("Generating Analytics");
+        loadAnalytics().finally(() => hideLoading());
+    } else if (path.includes('visitors.html')) {
+        showLoading("Processing Visitor Logs");
+        loadVisitors().finally(() => hideLoading());
+    } else {
+        hideLoading();
+    }
     
     setupRealtimeNotifications();
 }
@@ -344,18 +366,26 @@ async function loadVisitors() {
     const totalEl = document.getElementById('total-visitors-count');
     if (!table) return;
 
-    onSnapshot(query(collection(db, "visits"), orderBy("timestamp", "desc"), limit(50)), (snapshot) => {
+    // Fetch unique visitors from the new collection
+    onSnapshot(query(collection(db, "visitors"), orderBy("lastVisit", "desc"), limit(100)), (snapshot) => {
         table.innerHTML = '';
         snapshot.forEach(docSnap => {
             const data = docSnap.data();
-            const date = data.timestamp ? (data.timestamp.toDate ? data.timestamp.toDate().toLocaleString() : new Date(data.timestamp).toLocaleString()) : 'Unknown';
+            const date = data.lastVisit ? (data.lastVisit.toDate ? data.lastVisit.toDate().toLocaleString() : new Date(data.lastVisit).toLocaleString()) : 'Unknown';
+            
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td>${date}</td><td>${data.country || 'Unknown'}</td><td>${data.city || 'Unknown'}</td><td>${data.source || 'Direct'}</td><td><span class="page-tag">${data.page || '/'}</span></td><td class="ua-text" title="${data.userAgent}">${data.userAgent ? data.userAgent.substring(0, 30) + '...' : 'Unknown'}</td>`;
+            tr.innerHTML = `
+                <td>${date}</td>
+                <td><span class="ip-badge">${data.ip || 'Unknown'}</span></td>
+                <td>${data.country || 'Unknown'}</td>
+                <td>${data.city || 'Unknown'}</td>
+                <td>${data.source || 'Direct'}</td>
+                <td><span class="visit-count">${data.visitCount || 1}</span></td>
+                <td class="ua-text" title="${data.userAgent}">${data.userAgent ? data.userAgent.substring(0, 20) + '...' : 'Unknown'}</td>
+            `;
             table.appendChild(tr);
         });
-    });
 
-    onSnapshot(collection(db, "visits"), (snapshot) => {
         if (totalEl) totalEl.textContent = snapshot.size;
         renderVisitsGraph(snapshot);
     });
@@ -372,8 +402,8 @@ function renderVisitsGraph(snapshot) {
     }
     snapshot.forEach(docSnap => {
         const data = docSnap.data();
-        if (data.timestamp) {
-            const date = data.timestamp.toDate ? data.timestamp.toDate().toLocaleDateString() : new Date(data.timestamp).toLocaleDateString();
+        if (data.lastVisit) {
+            const date = data.lastVisit.toDate ? data.lastVisit.toDate().toLocaleDateString() : new Date(data.lastVisit).toLocaleDateString();
             if (days[date] !== undefined) days[date]++;
         }
     });
@@ -382,7 +412,7 @@ function renderVisitsGraph(snapshot) {
         type: 'line',
         data: {
             labels: Object.keys(days),
-            datasets: [{ label: 'Visits', data: Object.values(days), borderColor: '#D4AF37', backgroundColor: 'rgba(212, 175, 55, 0.1)', borderWidth: 3, tension: 0.4, fill: true, pointBackgroundColor: '#D4AF37', pointRadius: 4 }]
+            datasets: [{ label: 'Unique Visits', data: Object.values(days), borderColor: '#D4AF37', backgroundColor: 'rgba(212, 175, 55, 0.1)', borderWidth: 3, tension: 0.4, fill: true, pointBackgroundColor: '#D4AF37', pointRadius: 4 }]
         },
         options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9a9a9a' } }, x: { grid: { display: false }, ticks: { color: '#9a9a9a' } } }, plugins: { legend: { display: false } } }
     });

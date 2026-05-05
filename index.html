@@ -336,31 +336,48 @@
       } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
       // --- TRACKING LOGIC ---
+      // --- TRACKING LOGIC ---
       async function trackVisit() {
         try {
           const referrer = document.referrer || "Direct";
-          const source = referrer.includes("facebook.com")
-            ? "Facebook"
-            : referrer.includes("t.co") || referrer.includes("twitter.com")
-              ? "Twitter"
-              : referrer.includes("linkedin.com")
-                ? "LinkedIn"
-                : referrer.includes("instagram.com")
-                  ? "Instagram"
-                  : "Other/Direct";
+          const source = referrer.includes("facebook.com") ? "Facebook" : 
+                         referrer.includes("t.co") || referrer.includes("twitter.com") ? "Twitter" :
+                         referrer.includes("linkedin.com") ? "LinkedIn" :
+                         referrer.includes("instagram.com") ? "Instagram" : "Other/Direct";
 
           const response = await fetch("https://ipapi.co/json/");
           const locData = await response.json();
+          const ip = locData.ip;
 
-          await addDoc(collection(db, "visits"), {
-            timestamp: new Date(),
+          if (!ip) return;
+
+          // Use the IP as the document ID to prevent duplications
+          const { doc, setDoc, serverTimestamp, increment } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+          
+          const visitorRef = doc(db, "visitors", ip.replace(/\./g, '_')); // Replace dots for cleaner IDs
+          
+          await setDoc(visitorRef, {
+            ip: ip,
+            lastVisit: serverTimestamp(),
+            visitCount: increment(1),
             referrer: referrer,
             source: source,
             country: locData.country_name || "Unknown",
             city: locData.city || "Unknown",
-            page: window.location.pathname,
+            region: locData.region || "Unknown",
+            org: locData.org || "Unknown",
             userAgent: navigator.userAgent,
+            page: window.location.pathname
+          }, { merge: true });
+
+          // Also keep a historical log if needed, but primary categorization is the visitors collection
+          const { addDoc, collection } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+          await addDoc(collection(db, "visits"), {
+            ip: ip,
+            timestamp: serverTimestamp(),
+            page: window.location.pathname
           });
+
         } catch (error) {
           console.error("Tracking failed:", error);
         }
