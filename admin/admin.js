@@ -397,10 +397,15 @@ function renderAnalyticsList(el, data, total) {
     Object.entries(data).sort((a, b) => b[1] - a[1]).forEach(([name, count]) => {
         const percent = Math.round((count / total) * 100);
         const item = document.createElement('div');
-        item.style.marginBottom = '1rem';
+        item.className = 'analytics-item';
         item.innerHTML = `
-            <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem;"><span style="font-size: 0.9rem;">${name}</span><span style="font-size: 0.85rem; color: var(--text-light);">${count} (${percent}%)</span></div>
-            <div style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;"><div style="height: 100%; width: ${percent}%; background: var(--accent-color);"></div></div>
+            <div class="analytics-item-info">
+                <span class="analytics-item-name">${name}</span>
+                <span class="analytics-item-count">${count} (${percent}%)</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" style="width: ${percent}%"></div>
+            </div>
         `;
         el.appendChild(item);
     });
