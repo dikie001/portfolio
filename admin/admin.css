@@ -177,6 +177,10 @@ body {
     text-align: center;
 }
 
+.menu-toggle {
+    display: none;
+}
+
 /* Dashboard Layout */
 .dashboard-body {
     display: flex;
@@ -587,6 +591,7 @@ body {
     font-weight: 700;
     color: var(--accent-color);
     line-height: 1.2;
+    overflow-wrap: break-word;
 }
 
 /* For longer text values in stats */
@@ -1205,12 +1210,20 @@ tr.clickable:hover {
         justify-content: center;
         width: 40px;
         height: 40px;
-        background: transparent;
-        border: none;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
         color: var(--text-color);
         cursor: pointer;
-        margin-right: 0.5rem;
+        margin-right: 1rem;
         padding: 0;
+        transition: var(--transition);
+    }
+
+    .menu-toggle:hover {
+        background: rgba(212, 175, 55, 0.1);
+        border-color: var(--accent-color);
+        color: var(--accent-color);
     }
 
     .view-info {
@@ -1334,21 +1347,66 @@ tr.clickable:hover {
 }
 
 @media (max-width: 480px) {
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-    }
-
-    .main-content {
-        padding: 1rem;
-        padding-top: 85px;
-    }
-
-    .stat-card .value {
-        font-size: 1.5rem;
-    }
-
     .login-card {
         padding: 2rem 1.5rem;
+    }
+
+    /* Table Mobile Stack */
+    .table-responsive table, 
+    .table-responsive thead, 
+    .table-responsive tbody, 
+    .table-responsive th, 
+    .table-responsive td, 
+    .table-responsive tr { 
+        display: block; 
+    }
+
+    .table-responsive thead tr { 
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .table-responsive tr { 
+        border: 1px solid var(--border-color);
+        margin-bottom: 1rem;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    .table-responsive td { 
+        border: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
+        position: relative;
+        padding-left: 45% !important; 
+        text-align: left;
+        min-height: 3rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .table-responsive td:last-child {
+        border-bottom: none;
+    }
+
+    .table-responsive td:before { 
+        position: absolute;
+        left: 1rem;
+        width: 40%; 
+        white-space: nowrap;
+        font-weight: 600;
+        color: var(--accent-color);
+        content: attr(data-label);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+    }
+
+    .msg-preview {
+        max-width: 100% !important;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr !important;
     }
 }
 

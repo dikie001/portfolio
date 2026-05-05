@@ -337,11 +337,11 @@ async function loadProjects() {
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td><img src="${project.image || '../images/logo.png'}" class="project-thumb" alt="${project.title}"></td>
-                <td><strong>${project.title}</strong></td>
-                <td>${project.tags.join(', ')}</td>
-                <td><span class="status-badge ${project.liveLink ? 'live' : 'draft'}">${project.liveLink ? 'Live' : 'Draft'}</span></td>
-                <td class="actions">
+                <td data-label="Image"><img src="${project.image || '../images/logo.png'}" class="project-thumb" alt="${project.title}"></td>
+                <td data-label="Title"><strong>${project.title}</strong></td>
+                <td data-label="Tags">${project.tags.join(', ')}</td>
+                <td data-label="Status"><span class="status-badge ${project.liveLink ? 'live' : 'draft'}">${project.liveLink ? 'Live' : 'Draft'}</span></td>
+                <td data-label="Actions" class="actions">
                     <button class="action-btn edit-btn" data-id="${id}">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4L18.5 2.5z"></path></svg>
                     </button>
@@ -453,11 +453,11 @@ function renderMessages(snapshot) {
         };
         
         tr.innerHTML = `
-            <td>${date}</td>
-            <td><strong>${msg.name}</strong></td>
-            <td>${msg.email}</td>
-            <td class="msg-preview">${msg.message}</td>
-            <td>
+            <td data-label="Date">${date}</td>
+            <td data-label="Sender"><strong>${msg.name}</strong></td>
+            <td data-label="Email">${msg.email}</td>
+            <td data-label="Message" class="msg-preview">${msg.message}</td>
+            <td data-label="Actions">
                 <div class="action-dropdown">
                     <button class="action-btn" onclick="event.stopPropagation(); window.toggleDropdown('${id}')">
                         Actions <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 4px;"><polyline points="6 9 12 15 18 9"></polyline></svg>
@@ -634,13 +634,13 @@ async function loadVisitors() {
             
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td>${date}</td>
-                <td><span class="ip-badge">${data.ip || 'Unknown'}</span></td>
-                <td>${data.country || 'Unknown'}</td>
-                <td>${data.city || 'Unknown'}</td>
-                <td>${data.source || 'Direct'}</td>
-                <td><span class="visit-count">${data.visitCount || 1}</span></td>
-                <td class="ua-text" title="${data.userAgent}">${data.userAgent ? data.userAgent.substring(0, 20) + '...' : 'Unknown'}</td>
+                <td data-label="Last Visit">${date}</td>
+                <td data-label="IP"><span class="ip-badge">${data.ip || 'Unknown'}</span></td>
+                <td data-label="Country">${data.country || 'Unknown'}</td>
+                <td data-label="City">${data.city || 'Unknown'}</td>
+                <td data-label="Source">${data.source || 'Direct'}</td>
+                <td data-label="Visits"><span class="visit-count">${data.visitCount || 1}</span></td>
+                <td data-label="User Agent" class="ua-text" title="${data.userAgent}">${data.userAgent ? data.userAgent.substring(0, 20) + '...' : 'Unknown'}</td>
             `;
             table.appendChild(tr);
         });
