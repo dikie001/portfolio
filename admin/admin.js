@@ -61,6 +61,32 @@ const settingsNav = document.getElementById('settings-nav');
 const globalLoader = document.getElementById('global-loader');
 const loaderText = document.getElementById('loader-text');
 
+// Toast Notification System
+const toastContainer = document.createElement('div');
+toastContainer.className = 'toast-container';
+document.body.appendChild(toastContainer);
+
+function showToast(message, type = 'loading', duration = 3000) {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    
+    let icon = '';
+    if (type === 'loading') icon = '<div class="toast-loader"></div>';
+    else if (type === 'success') icon = '<div class="toast-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>';
+
+    toast.innerHTML = `${icon}<span>${message}</span>`;
+    toastContainer.appendChild(toast);
+
+    if (type !== 'loading') {
+        setTimeout(() => {
+            toast.style.animation = 'toastFadeOut 0.3s ease-in forwards';
+            setTimeout(() => toast.remove(), 300);
+        }, duration);
+    }
+
+    return toast;
+}
+
 function showLoading(text = "Fetching Data...") {
     if (loaderText) loaderText.textContent = text;
     if (globalLoader) globalLoader.classList.remove('hidden');
@@ -596,12 +622,16 @@ window.viewMessage = async (id) => {
 };
 
 window.markAsRead = async (id, refresh = true) => {
+    const toast = showToast('Marking as read...', 'loading');
     try {
         await updateDoc(doc(db, "messages", id), {
             status: 'read'
         });
+        toast.remove();
+        showToast('Message read', 'success', 2000);
         if (refresh) loadMessages();
     } catch (error) {
+        toast.remove();
         console.error("Error marking as read:", error);
     }
 };
@@ -613,10 +643,14 @@ if (prevMsgBtn) prevMsgBtn.addEventListener('click', () => loadMessages('prev'))
 
 async function deleteMessage(id) {
     if (confirm("Delete this message?")) {
+        const toast = showToast('Deleting message...', 'loading');
         try {
             await deleteDoc(doc(db, "messages", id));
+            toast.remove();
+            showToast('Message deleted', 'success', 2000);
             loadMessages();
         } catch (error) {
+            toast.remove();
             console.error("Delete error:", error);
         }
     }
@@ -869,7 +903,18 @@ function openEditModal(id, snapshot) {
 }
 
 async function deleteProject(id) {
-    if (confirm("Delete this project?")) await deleteDoc(doc(db, "projects", id));
+    if (confirm("Delete this project?")) {
+        const toast = showToast('Deleting project...', 'loading');
+        try {
+            await deleteDoc(doc(db, "projects", id));
+            toast.remove();
+            showToast('Project deleted', 'success', 2000);
+        } catch (e) {
+            toast.remove();
+            console.error(e);
+            alert("Error deleting project.");
+        }
+    }
 }
 
 // SESSION MANAGEMENT LOGIC
