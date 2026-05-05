@@ -26,6 +26,7 @@ body {
     color: var(--text-color);
     line-height: 1.6;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
 /* Login Page */
@@ -641,6 +642,8 @@ body {
     border-radius: 16px;
     padding: 1.2rem;
     overflow: hidden;
+    width: 100%;
+    max-width: 100%;
 }
 
 .table-responsive {
@@ -1211,8 +1214,11 @@ tr.clickable:hover {
 
     .main-content {
         margin-left: 0;
-        padding: 1.5rem;
+        padding: 1rem;
         padding-top: 90px;
+        min-width: 0;
+        width: 100%;
+        overflow-x: hidden;
     }
 
     .top-navbar {
