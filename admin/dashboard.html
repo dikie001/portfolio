@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Admin Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body class="dashboard-body">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>Dickens Portal</h2>
+        </div>
+        <nav>
+            <ul class="nav-links">
+                <li class="active">
+                    <a href="#projects">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        Projects
+                    </a>
+                </li>
+                <li>
+                    <a href="#messages">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        Messages
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <button id="logout-btn" class="btn btn-outline logout-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            Logout
+        </button>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="content-header fade-in">
+            <div>
+                <h1>Portfolio Projects</h1>
+                <p>Manage your latest works and case studies.</p>
+            </div>
+            <button id="add-project-btn" class="btn btn-primary">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Add New Project
+            </button>
+        </header>
+
+        <!-- Stats -->
+        <div class="stats-grid fade-in">
+            <div class="stat-card">
+                <h3>Total Projects</h3>
+                <div class="value" id="total-projects-count">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Live Builds</h3>
+                <div class="value" id="live-projects-count">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Visibility</h3>
+                <div class="value">Public</div>
+            </div>
+        </div>
+
+        <!-- Projects List -->
+        <div class="data-card fade-in">
+            <div class="card-header">
+                <h2>All Projects</h2>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Preview</th>
+                            <th>Title</th>
+                            <th>Tech Stack</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projects-table-body">
+                        <!-- Projects will be loaded here -->
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 3rem; color: var(--text-light);">Loading projects...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Project Modal (Add/Edit) -->
+    <div id="project-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Add New Project</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="project-form">
+                <input type="hidden" id="project-id">
+                <div class="input-group">
+                    <input type="text" id="project-title" required placeholder=" ">
+                    <label for="project-title">Project Title</label>
+                </div>
+                <div class="input-group">
+                    <textarea id="project-desc" rows="4" required placeholder=" "></textarea>
+                    <label for="project-desc">Description</label>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="project-image" required placeholder=" ">
+                    <label for="project-image">Image URL</label>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="project-tags" required placeholder=" ">
+                    <label for="project-tags">Tags (comma separated)</label>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="project-live" placeholder=" ">
+                    <label for="project-live">Live Demo Link</label>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="project-github" placeholder=" ">
+                    <label for="project-github">GitHub Link</label>
+                </div>
+                <div class="actions">
+                    <button type="button" class="btn btn-outline close-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="save-project-btn">
+                        <span class="btn-text">Save Project</span>
+                        <span class="loader hidden"></span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="admin.js"></script>
+</body>
+</html>

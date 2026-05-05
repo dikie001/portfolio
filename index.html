@@ -136,87 +136,66 @@
             <p>Real projects, live and running.</p>
         </div>
 
-        <div class="works-container">
-
-
-            <!-- Project 3 -->
-            <div class="work-card reverse fade-in delay-1">
-                <div class="img-placeholder">
-                    <a href="https://newton-delivery-company.vercel.app/" target="_blank">
-                        <img src="images/newton_dashboard.png" alt="Newton Delivery Company"
-                            style="width: 100%; height: 100%; object-fit: contain;">
-                    </a>
-                </div>
-                <div class="work-info">
-                    <h3>Newton Delivery</h3>
-                    <p>A delivery company web app with real-time tracking on maps, user auth, and separate admin/user
-                        dashboards. Handles the full order flow from placement to delivery.</p>
-                    <div class="tags">
-                        <span>React</span>
-                        <span>NodeJS</span>
-                        <span>PostgreSQL</span>
-                        <span>Tailwind</span>
-                    </div>
-                    <a href="https://newton-delivery-company.vercel.app/" target="_blank"
-                        class="btn btn-outline-small">View Live
-                        Build &rarr;</a>
-                    <a href="https://github.com/dikie001/newton-delivery-company" target="_blank"
-                        class="btn btn-outline-small"
-                        style="margin-left: 1rem; border-color: rgba(255,255,255,0.2);">GitHub Repo &rarr;</a>
-                </div>
+        <div class="works-container" id="projects-container">
+            <!-- Projects will be loaded dynamically from Firebase -->
+            <div class="loader-container" style="text-align: center; padding: 5rem 0;">
+                <div class="loader" style="margin: 0 auto; border-top-color: var(--accent-color);"></div>
+                <p style="margin-top: 1rem; color: var(--text-light);">Loading Projects...</p>
             </div>
-            <!-- Project 1 -->
-            <div class="work-card fade-in delay-1">
-                <div class="img-placeholder">
-                    <a href="https://bitsa-ueab.vercel.app" target="_blank">
-                        <img src="images/bitsa_dashboard.png" alt="BITSA Platform"
-                            style="width: 100%; height: 100%; object-fit: contain;">
-                    </a>
-                </div>
-                <div class="work-info">
-                    <h3>BITSA Platform</h3>
-                    <p>A student platform I built for IT students at my university. Has role-based access, AI powered
-                        features, event tracking, and a content system. Full-stack, built from scratch.</p>
-                    <div class="tags">
-                        <span>React</span>
-                        <span>NodeJS</span>
-                        <span>Prisma</span>
-                        <span>ExpressJS</span>
-                    </div>
-                    <a href="https://bitsa-ueab.vercel.app" target="_blank" class="btn btn-outline-small">View Live
-                        Build &rarr;</a>
-                    <a href="https://github.com/dikie001/bitsa" target="_blank" class="btn btn-outline-small"
-                        style="margin-left: 1rem; border-color: rgba(255,255,255,0.2);">GitHub Repo &rarr;</a>
-                </div>
-            </div>
-
-            <!-- Project 2 -->
-            <div class="work-card reverse fade-in delay-1">
-                <div class="img-placeholder">
-                    <a href="https://brillia-six.vercel.app" target="_blank">
-                        <img src="images/brillia_dashboard.png" alt="Brillia PWA App"
-                            style="width: 100%; height: 100%; object-fit: contain;">
-                    </a>
-                </div>
-                <div class="work-info">
-                    <h3>Brillia PWA</h3>
-                    <p>A progressive web app I made for daily inspiration — quizzes, short stories, fun facts. Works
-                        offline too. Built it because I wanted something lightweight and useful.</p>
-                    <div class="tags">
-                        <span>React</span>
-                        <span>TypeScript</span>
-                        <span>Tailwind</span>
-                        <span>PWA</span>
-                    </div>
-                    <a href="https://brillia-six.vercel.app" target="_blank" class="btn btn-outline-small">View Live
-                        Build &rarr;</a>
-                    <a href="https://github.com/dikie001/Brillia" target="_blank" class="btn btn-outline-small"
-                        style="margin-left: 1rem; border-color: rgba(255,255,255,0.2);">GitHub Repo &rarr;</a>
-                </div>
-            </div>
-
         </div>
     </section>
+
+    <!-- Firebase Integration Script -->
+    <script type="module">
+        import { db } from './firebase-config.js';
+        import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        async function loadProjects() {
+            const container = document.getElementById('projects-container');
+            try {
+                const q = query(collection(db, "projects"), orderBy("createdAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    container.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">No projects found. Check back soon!</p>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                let index = 0;
+                querySnapshot.forEach((doc) => {
+                    const project = doc.data();
+                    const isReverse = index % 2 !== 0;
+                    
+                    const card = document.createElement('div');
+                    card.className = `work-card ${isReverse ? 'reverse' : ''} fade-in appear`;
+                    card.innerHTML = `
+                        <div class="img-placeholder">
+                            <a href="${project.liveLink || '#'}" target="_blank">
+                                <img src="${project.image}" alt="${project.title}" style="width: 100%; height: 100%; object-fit: contain;">
+                            </a>
+                        </div>
+                        <div class="work-info">
+                            <h3>${project.title}</h3>
+                            <p>${project.description}</p>
+                            <div class="tags">
+                                ${project.tags.map(tag => `<span>${tag}</span>`).join('')}
+                            </div>
+                            ${project.liveLink ? \`<a href="\${project.liveLink}" target="_blank" class="btn btn-outline-small">View Live Build &rarr;</a>\` : ''}
+                            ${project.githubLink ? \`<a href="\${project.githubLink}" target="_blank" class="btn btn-outline-small" style="margin-left: 1rem; border-color: rgba(255,255,255,0.2);">GitHub Repo &rarr;</a>\` : ''}
+                        </div>
+                    `;
+                    container.appendChild(card);
+                    index++;
+                });
+            } catch (error) {
+                console.error("Error loading projects:", error);
+                container.innerHTML = '<p style="text-align:center; color: var(--error-color);">Failed to load projects. Please refresh.</p>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadProjects);
+    </script>
 
     <section class="rates" id="rates">
         <div class="section-header text-center fade-in">

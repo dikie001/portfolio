@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | Dickens Omondi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body class="login-body">
+    <div class="login-container fade-in">
+        <div class="login-card">
+            <div class="login-header">
+                <a href="../index.html" class="back-link">&larr; Back to Site</a>
+                <h1>Admin Portal</h1>
+                <p>Welcome back, Dickens.</p>
+            </div>
+            <form id="login-form">
+                <div class="input-group">
+                    <input type="email" id="email" required placeholder=" ">
+                    <label for="email">Email Address</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" required placeholder=" ">
+                    <label for="password">Password</label>
+                </div>
+                <button type="submit" class="btn btn-primary w-100" id="login-btn">
+                    <span class="btn-text">Sign In</span>
+                    <span class="loader hidden"></span>
+                </button>
+                <p id="login-error" class="error-message hidden"></p>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth } from '../firebase-config.js';
+        import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const loginForm = document.getElementById('login-form');
+        const loginBtn = document.getElementById('login-btn');
+        const loginError = document.getElementById('login-error');
+        const btnText = loginBtn.querySelector('.btn-text');
+        const loader = loginBtn.querySelector('.loader');
+
+        // Check if already logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.location.href = 'dashboard.html';
+            }
+        });
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Show loader
+            btnText.classList.add('hidden');
+            loader.classList.remove('hidden');
+            loginBtn.disabled = true;
+            loginError.classList.add('hidden');
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                console.error(error);
+                loginError.textContent = "Invalid credentials. Please try again.";
+                loginError.classList.remove('hidden');
+                
+                // Hide loader
+                btnText.classList.remove('hidden');
+                loader.classList.add('hidden');
+                loginBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
