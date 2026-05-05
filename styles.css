@@ -111,14 +111,13 @@ section {
 }
 
 .logo {
-  font-size: 1.8rem; /* Restored slightly larger size */
+  font-size: 1.8rem;
   font-weight: 700;
   letter-spacing: -0.5px;
   color: var(--text-color);
   white-space: nowrap;
   display: flex;
-  align-items: center; /* Center instead of baseline for safer vertical alignment */
-  gap: 4px;
+  align-items: center;
   transition: transform 0.3s ease;
   animation: logoFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -130,20 +129,7 @@ section {
 
 .logo:hover {
   transform: scale(1.02);
-}
-
-.logo span {
   color: var(--accent-color);
-  font-size: 2.4rem;
-  line-height: 1;
-  display: inline-block;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% { text-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
-  50% { text-shadow: 0 0 25px rgba(212, 175, 55, 0.6); }
-  100% { text-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
 }
 
 .navbar {
@@ -211,23 +197,35 @@ section {
 }
 
 .theme-toggle {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-light);
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
 }
 
 .theme-toggle:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(212, 175, 55, 0.1);
   color: var(--accent-color);
   border-color: var(--accent-color);
+  transform: rotate(45deg);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
+}
+
+.theme-toggle svg {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.theme-toggle:active {
+  transform: scale(0.9) rotate(90deg);
 }
 
 .btn-nav {

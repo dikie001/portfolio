@@ -1,6 +1,8 @@
  const menuIcon = document.querySelector("#menu-icon");
 const navbar = document.querySelector(".navbar");
 const header = document.querySelector(".header");
+const navLinks = document.querySelectorAll(".navbar a");
+const sections = document.querySelectorAll("section");
 
 // Toggle Mobile Menu
 menuIcon.onclick = () => {
@@ -8,21 +10,43 @@ menuIcon.onclick = () => {
   navbar.classList.toggle("active");
 };
 
-// Header Scroll Effect
+// Header Scroll Effect & Active Link Highlighter (Scroll Spy)
 window.onscroll = () => {
+  // Header background effect
   if (window.scrollY > 50) {
     header.classList.add("scrolled");
   } else {
     header.classList.remove("scrolled");
   }
+
+  // Active link highlighting on scroll
+  let current = "home"; // Default to home at the very top
+  sections.forEach((section) => {
+    const sectionTop = section.offsetTop;
+    if (window.scrollY >= sectionTop - 200) {
+      current = section.getAttribute("id");
+    }
+  });
+
+  navLinks.forEach((link) => {
+    link.classList.remove("active");
+    const href = link.getAttribute("href").substring(1);
+    if (href === current) {
+      link.classList.add("active");
+    }
+  });
 };
 
-// Close mobile menu when a link is clicked
-const navLinks = document.querySelectorAll(".navbar a");
+// Manual Active Link Highlighting on Click
 navLinks.forEach(link => {
   link.addEventListener("click", () => {
+    // Mobile menu close
     menuIcon.classList.remove("active");
     navbar.classList.remove("active");
+    
+    // Active class update
+    navLinks.forEach(l => l.classList.remove("active"));
+    link.classList.add("active");
   });
 });
 
