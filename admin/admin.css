@@ -25,7 +25,6 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     line-height: 1.6;
-    overflow-x: hidden;
     min-height: 100vh;
 }
 
@@ -1194,14 +1193,12 @@ tr.clickable:hover {
         background: rgba(0, 0, 0, 0.6);
         backdrop-filter: blur(4px);
         z-index: 5;
-        opacity: 0;
-        visibility: hidden;
+        display: none;
         transition: var(--transition);
     }
 
     body.sidebar-open .sidebar-overlay {
-        opacity: 1;
-        visibility: visible;
+        display: block;
     }
 
     .menu-toggle {
@@ -1352,37 +1349,41 @@ tr.clickable:hover {
     }
 
     .table-responsive {
+        width: 100%;
+        max-width: 100%;
         overflow-x: auto;
+        display: block;
         -webkit-overflow-scrolling: touch;
-        margin: 0 -1rem;
-        padding: 0 1rem;
+        border-radius: 12px;
     }
 
     table {
-        min-width: 700px; /* Force horizontal scroll */
-        font-size: 0.75rem !important;
+        width: auto;
+        min-width: 100%;
+        font-size: 0.7rem !important;
     }
 
     td, th {
-        padding: 0.8rem 0.5rem !important;
+        padding: 0.6rem 0.4rem !important;
         white-space: nowrap;
     }
 
     .msg-preview {
-        max-width: 150px !important;
+        max-width: 120px !important;
     }
 
     .stats-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 0.5rem;
+        grid-template-columns: 1fr !important;
+        gap: 0.8rem;
     }
 
     .stat-card {
-        padding: 0.8rem;
+        padding: 1rem;
+        width: 100%;
     }
 
     .stat-card .value {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
     }
 }
 
