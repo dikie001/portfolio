@@ -215,9 +215,7 @@ function setupMobileMenu() {
 
 async function loadDashboard() {
     if (!dashUniqueVisitors) return;
-    showStatsSkeleton();
-    showGraphSkeleton('dash-visits-chart');
-    if (dashLatestMessages) dashLatestMessages.innerHTML = '<div class="skeleton" style="height: 200px; border-radius: 12px;"></div>';
+    // Static skeletons are already in HTML
 
     // Fetch Visitors (only last 7 days for performance)
     const sevenDaysAgo = new Date();
@@ -332,8 +330,7 @@ function hideGraphSkeleton(canvasId) {
 // PROJECTS LOGIC
 async function loadProjects() {
     if (!projectsTableBody) return;
-    showTableSkeleton(projectsTableBody, 5);
-    showStatsSkeleton();
+    // Static skeletons are already in HTML
     onSnapshot(query(collection(db, "projects"), orderBy("createdAt", "desc")), (snapshot) => {
         projectsTableBody.innerHTML = '';
         let total = 0, live = 0;
@@ -434,7 +431,7 @@ function setupRealtimeNotifications() {
 
 async function loadMessages(direction = 'initial') {
     if (!messagesTableBody) return;
-    showTableSkeleton(messagesTableBody, 5);
+    if (direction !== 'initial') showTableSkeleton(messagesTableBody, 5); // Only show for pagination
     
     const messagesCollection = collection(db, "messages");
     let q;
@@ -571,7 +568,7 @@ window.deleteMessage = deleteMessage;
 // ANALYTICS LOGIC
 function loadAnalytics() {
     if (!totalVisitsCount) return;
-    showStatsSkeleton();
+    // Static skeletons are already in HTML
     
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 30); // Show last 30 days for analytics
@@ -654,10 +651,7 @@ async function loadVisitors() {
     const table = document.getElementById('visitors-table-body');
     const totalEl = document.getElementById('total-visitors-count');
     if (!table) return;
-
-    showTableSkeleton(table, 7);
-    showStatsSkeleton();
-    showGraphSkeleton('visits-chart');
+    // Static skeletons are already in HTML
 
     // Fetch unique visitors from the new collection
     onSnapshot(query(collection(db, "visitors"), orderBy("lastVisit", "desc"), limit(100)), (snapshot) => {
@@ -924,8 +918,7 @@ window.revokeSession = async (sId) => {
 async function loadSessions() {
     const sessionsList = document.getElementById('sessions-list');
     if (!sessionsList) return;
-
-    sessionsList.innerHTML = '<div class="skeleton" style="height: 100px; border-radius: 14px; margin-bottom: 1rem;"></div>'.repeat(3);
+    // Static skeletons are already in HTML
 
     // Fetch active sessions without orderBy to avoid index requirement
     const q = query(collection(db, 'sessions'), where('status', '==', 'active'));

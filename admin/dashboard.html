@@ -149,7 +149,8 @@
                         <h2>Traffic Analytics</h2>
                     </div>
                     <div class="chart-container" style="height: 320px; position: relative;">
-                        <canvas id="dash-visits-chart"></canvas>
+                        <canvas id="dash-visits-chart" style="display: none;"></canvas>
+                        <div id="dash-visits-chart-skeleton" class="skeleton" style="width: 100%; height: 100%; border-radius: 12px;"></div>
                     </div>
                 </div>
 
@@ -159,7 +160,7 @@
                         <h2>Latest Inquiries</h2>
                     </div>
                     <div id="dash-latest-messages" class="latest-items">
-                        <!-- Messages will load here -->
+                        <div class="skeleton" style="height: 200px; border-radius: 12px;"></div>
                     </div>
                 </div>
             </div>
