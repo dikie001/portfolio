@@ -1312,14 +1312,14 @@ html[data-theme='light'] .availability-card:hover {
   opacity: 0.8;
 }
 
-.admin-avatar-link {
+.admin-avatar-wrapper {
   display: block;
   line-height: 0;
-  cursor: default; /* Hidden link feel */
+  cursor: default; /* Hidden link feel - no pointer */
   text-decoration: none;
 }
 
-.admin-avatar-link:hover .footer-avatar {
+.admin-avatar-wrapper:hover .footer-avatar {
   opacity: 1;
   /* No scale or glow to keep it hidden */
 }
@@ -1330,8 +1330,7 @@ html[data-theme='light'] .availability-card:hover {
   font-size: 1.6rem;
   color: var(--accent-color);
   transition: var(--transition);
-  text-transform: none; /* Keep the capitalization as 'Dickens Omondi' */
-}
+} 
 
 .footer .logo:hover {
   color: var(--white);
