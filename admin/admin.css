@@ -905,12 +905,13 @@ td {
 
 .loading-text {
     margin-top: 1.5rem;
-    font-size: 0.85rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
     color: var(--accent-color);
-    text-transform: uppercase;
-    letter-spacing: 3px;
+    font-style: italic;
+    letter-spacing: 0.5px;
     font-weight: 500;
-    opacity: 0.8;
+    opacity: 0.9;
 }
 
 /* Skeleton Loaders */
