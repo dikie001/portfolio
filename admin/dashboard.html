@@ -56,11 +56,28 @@
 
     <!-- Main Content -->
     <main class="main-content">
+        <!-- Top Navbar -->
+        <nav class="top-navbar fade-in">
+            <div class="view-info">
+                <h2 id="current-view-title">Dashboard</h2>
+            </div>
+            <div class="user-profile">
+                <div class="user-details">
+                    <span id="user-email">admin@example.com</span>
+                </div>
+                <div class="avatar-wrapper">
+                    <img id="user-avatar" src="../images/logo.png" alt="Admin">
+                </div>
+                <div class="profile-actions">
+                    <button class="logout-link" id="nav-logout-btn">Logout</button>
+                </div>
+            </div>
+        </nav>
+
         <!-- Projects View -->
         <div id="projects-view">
             <header class="content-header fade-in">
                 <div>
-                    <h1>Portfolio Projects</h1>
                     <p>Manage your latest works and case studies.</p>
                 </div>
                 <button id="add-project-btn" class="btn btn-primary">
@@ -112,7 +129,6 @@
         <div id="messages-view" class="hidden">
             <header class="content-header fade-in">
                 <div>
-                    <h1>Client Inquiries</h1>
                     <p>Read and manage messages from your portfolio.</p>
                 </div>
                 <button id="test-notify-btn" class="btn btn-outline" style="font-size: 0.8rem; padding: 0.5rem 1rem;">
@@ -152,7 +168,6 @@
         <div id="analytics-view" class="hidden">
             <header class="content-header fade-in">
                 <div>
-                    <h1>Visitor Analytics</h1>
                     <p>Track your audience and traffic sources.</p>
                 </div>
             </header>
@@ -192,7 +207,6 @@
         <div id="settings-view" class="hidden">
             <header class="content-header fade-in">
                 <div>
-                    <h1>Settings</h1>
                     <p>Manage your account and site preferences.</p>
                 </div>
             </header>

@@ -110,10 +110,22 @@ if (testNotifyBtn) {
 function initDashboard() {
     console.log("Initializing Dashboard...");
     document.getElementById('auth-loader').style.display = 'none';
+    
+    // Update Navbar User Info
+    const user = auth.currentUser;
+    if (user) {
+        document.getElementById('user-email').textContent = user.email;
+        if (user.photoURL) {
+            document.getElementById('user-avatar').src = user.photoURL;
+        }
+    }
+
     loadProjects();
     loadMessages();
     loadAnalytics();
+    setupRealtimeNotifications();
 }
+
 
 
 // Navigation Logic
@@ -124,16 +136,17 @@ settingsNav.parentElement.addEventListener('click', (e) => { e.preventDefault();
 
 function showView(view) {
     const views = {
-        projects: { el: projectsView, nav: projectsNav },
-        messages: { el: messagesView, nav: messagesNav },
-        analytics: { el: analyticsView, nav: analyticsNav },
-        settings: { el: settingsView, nav: settingsNav }
+        projects: { el: projectsView, nav: projectsNav, title: 'Projects Management' },
+        messages: { el: messagesView, nav: messagesNav, title: 'Client Inquiries' },
+        analytics: { el: analyticsView, nav: analyticsNav, title: 'Visitor Analytics' },
+        settings: { el: settingsView, nav: settingsNav, title: 'System Settings' }
     };
 
     Object.keys(views).forEach(key => {
         if (key === view) {
             views[key].el.classList.remove('hidden');
             views[key].nav.parentElement.classList.add('active');
+            document.getElementById('current-view-title').textContent = views[key].title;
         } else {
             views[key].el.classList.add('hidden');
             views[key].nav.parentElement.classList.remove('active');
@@ -141,15 +154,20 @@ function showView(view) {
     });
 }
 
+
 // Logout
-logoutBtn.addEventListener('click', async () => {
+const handleLogout = async () => {
     try {
         await signOut(auth);
         window.location.href = 'index.html';
     } catch (error) {
         console.error("Error signing out:", error);
     }
-});
+};
+
+logoutBtn.addEventListener('click', handleLogout);
+document.getElementById('nav-logout-btn').addEventListener('click', handleLogout);
+
 
 // PROJECTS LOGIC
 async function loadProjects() {
@@ -199,8 +217,40 @@ let isInitialMessagesLoad = true;
 let lastVisibleMessage = null;
 let firstVisibleMessage = null;
 const PAGE_SIZE = 10;
+const dashboardLoadTime = new Date();
+
+function setupRealtimeNotifications() {
+    console.log("Setting up real-time notifications...");
+    const q = query(
+        collection(db, "messages"), 
+        where("createdAt", ">", dashboardLoadTime),
+        orderBy("createdAt", "desc")
+    );
+
+    onSnapshot(q, (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+            if (change.type === "added") {
+                const msg = change.doc.data();
+                console.log("New message received:", msg);
+                
+                // Show Browser Notification
+                if ("Notification" in window && Notification.permission === "granted") {
+                    new Notification("New Inquiry from " + msg.name, {
+                        body: msg.message.substring(0, 100) + "...",
+                        icon: "../images/logo.png"
+                    });
+                }
+                
+                // Refresh the first page if we are on it to show the new message
+                // (Optional: can be handled by reloading or just letting the user know)
+                loadMessages('initial');
+            }
+        });
+    });
+}
 
 async function loadMessages(direction = 'initial') {
+
     console.log("Loading messages from Firestore...");
     
     const messagesCollection = collection(db, "messages");
