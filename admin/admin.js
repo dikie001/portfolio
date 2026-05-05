@@ -792,6 +792,7 @@ async function registerSession(uid) {
         uid,
         sessionId,
         deviceName: `${os} - ${browser}${isMobile ? ' (Mobile)' : ''}`,
+        deviceType: isMobile ? 'mobile' : 'desktop',
         userAgent,
         loginAt: new Date(),
         lastActive: new Date(),
@@ -854,12 +855,17 @@ async function loadSessions() {
         sortedDocs.forEach(docSnap => {
             const session = docSnap.data();
             const isCurrent = session.sessionId === sessionId;
+            const isMobile = session.deviceType === 'mobile' || session.deviceName?.includes('(Mobile)');
+            const deviceIcon = isMobile 
+                ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>`
+                : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>`;
+
             const item = document.createElement('div');
             item.className = 'session-item';
             item.innerHTML = `
                 <div class="session-info">
                     <div class="session-device">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                        ${deviceIcon}
                         ${session.deviceName || 'Unknown Device'}
                         ${isCurrent ? '<span class="current-badge">Current</span>' : ''}
                     </div>
