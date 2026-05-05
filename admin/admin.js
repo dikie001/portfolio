@@ -135,6 +135,16 @@ function initDashboard() {
         document.addEventListener('click', () => profileDropdown.classList.add('hidden'));
     }
 
+    // Fix for local development clean URLs
+    if (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') {
+        document.querySelectorAll('.nav-links a, .dropdown-menu a').forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && !href.includes('.') && !href.startsWith('http') && !href.startsWith('#') && !href.startsWith('mailto:')) {
+                link.setAttribute('href', href + '.html');
+            }
+        });
+    }
+
     const path = window.location.pathname;
     if (path.includes('dashboard')) {
         loadDashboard();
