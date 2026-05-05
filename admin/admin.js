@@ -15,6 +15,7 @@ import {
 // DOM Elements
 const projectsTableBody = document.getElementById('projects-table-body');
 const messagesTableBody = document.getElementById('messages-table-body');
+const testNotifyBtn = document.getElementById('test-notify-btn');
 const logoutBtn = document.getElementById('logout-btn');
 const addProjectBtn = document.getElementById('add-project-btn');
 const projectModal = document.getElementById('project-modal');
@@ -55,11 +56,33 @@ onAuthStateChanged(auth, (user) => {
 
 function requestNotificationPermission() {
     if ("Notification" in window) {
-        Notification.requestPermission();
+        Notification.requestPermission().then(permission => {
+            console.log("Notification permission:", permission);
+        });
     }
 }
 
+// Test Notification Button
+if (testNotifyBtn) {
+    testNotifyBtn.addEventListener('click', () => {
+        if ("Notification" in window) {
+            if (Notification.permission === "granted") {
+                new Notification("Test Notification", {
+                    body: "If you see this, notifications are working!",
+                    icon: '../images/logo.png'
+                });
+            } else {
+                alert("Notification permission is currently: " + Notification.permission + ". Please enable them in your browser.");
+                Notification.requestPermission();
+            }
+        } else {
+            alert("This browser does not support desktop notifications.");
+        }
+    });
+}
+
 function initDashboard() {
+    console.log("Initializing Dashboard...");
     loadProjects();
     loadMessages();
     loadAnalytics();
@@ -147,15 +170,30 @@ async function loadProjects() {
 let isInitialMessagesLoad = true;
 
 async function loadMessages() {
+    console.log("Loading messages from Firestore...");
+    
+    // One-time debug fetch
+    getDocs(collection(db, "messages")).then(snap => {
+        console.log("Direct getDocs fetch. Size:", snap.size);
+    }).catch(err => {
+        console.error("Direct getDocs fetch failed:", err);
+    });
+
     const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
     
-    // Fallback if the first query fails (e.g., due to missing index or malformed data)
+    // Fallback if the first query fails
     onSnapshot(q, (snapshot) => {
+        console.log("Messages snapshot received (ordered). Size:", snapshot.size);
         renderMessages(snapshot);
     }, (error) => {
-        console.warn("Ordered query failed, falling back to simple query:", error);
+        console.error("Ordered query failed:", error);
+        console.log("Falling back to simple query...");
         onSnapshot(collection(db, "messages"), (snapshot) => {
+            console.log("Messages snapshot received (simple). Size:", snapshot.size);
             renderMessages(snapshot);
+        }, (err) => {
+            console.error("Simple query also failed:", err);
+            alert("Firestore Error: " + err.message);
         });
     });
 }
