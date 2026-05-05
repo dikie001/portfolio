@@ -628,6 +628,15 @@
       </div>
     </section>
 
+    <!-- EmailJS for Notifications -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+      (function() {
+          // USER: Replace with your actual Public Key from EmailJS dashboard
+          emailjs.init("YOUR_PUBLIC_KEY");
+      })();
+    </script>
+
     <!-- Firebase Contact Logic -->
     <script type="module">
       import { db } from "./firebase-config.js";
@@ -677,6 +686,19 @@
           statusMsg.className = "form-status success";
           statusMsg.classList.remove("hidden");
           contactForm.reset();
+
+          // Optional: Send Email Notification via EmailJS
+          // This ensures the admin gets an email immediately
+          try {
+            emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+              from_name: formData.name,
+              from_email: formData.email,
+              message: formData.message,
+              reply_to: formData.email,
+            });
+          } catch (emailErr) {
+            console.warn("Email notification failed, but message saved to database:", emailErr);
+          }
 
           // Visual reward: temporary glow on form
           const formContainer = contactForm.closest(".contact-form-container");

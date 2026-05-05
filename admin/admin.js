@@ -168,7 +168,16 @@ async function loadMessages() {
             const id = docSnap.id;
             if (msg.status === 'unread') unread++;
 
-            const date = msg.createdAt?.toDate ? msg.createdAt.toDate().toLocaleDateString() : 'Just now';
+            let date = 'Just now';
+            if (msg.createdAt) {
+                if (msg.createdAt.toDate) {
+                    date = msg.createdAt.toDate().toLocaleDateString();
+                } else if (msg.createdAt instanceof Date) {
+                    date = msg.createdAt.toLocaleDateString();
+                } else if (typeof msg.createdAt === 'string') {
+                    date = new Date(msg.createdAt).toLocaleDateString();
+                }
+            }
 
             const tr = document.createElement('tr');
             tr.className = msg.status === 'unread' ? 'unread-row' : '';
