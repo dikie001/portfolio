@@ -97,8 +97,17 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 function requestNotificationPermission() {
-    if ("Notification" in window && Notification.permission === "default") {
-        Notification.requestPermission();
+    if ("Notification" in window) {
+        if (Notification.permission === "default") {
+            Notification.requestPermission();
+        }
+        
+        // Register Service Worker for background notifications
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/admin/sw.js')
+                .then(reg => console.log('Service Worker Registered', reg))
+                .catch(err => console.error('Service Worker registration failed', err));
+        }
     }
 }
 
@@ -402,7 +411,20 @@ function setupRealtimeNotifications() {
                 const body = msg.message.substring(0, 100) + "...";
                 showToast(title, body);
                 if ("Notification" in window && Notification.permission === "granted") {
-                    new Notification(title, { body: body, icon: "../images/logo.png" });
+                    const options = {
+                        body: body,
+                        icon: "../images/logo.png",
+                        badge: "../images/logo.png",
+                        data: { url: '/admin/messages.html' }
+                    };
+                    
+                    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                        navigator.serviceWorker.ready.then(reg => {
+                            reg.showNotification(title, options);
+                        });
+                    } else {
+                        new Notification(title, options);
+                    }
                 }
                 if (messagesTableBody) loadMessages('initial');
             }
@@ -854,9 +876,25 @@ function setupSessionNotifications() {
             if (change.type === "added") {
                 const session = change.doc.data();
                 if (session.sessionId !== sessionId) {
-                    showToast("New Device Logged In", `A new session was started on ${session.deviceName}`);
+                    const title = "New Device Logged In";
+                    const body = `A new session was started on ${session.deviceName}`;
+                    showToast(title, body);
+                    
                     if ("Notification" in window && Notification.permission === "granted") {
-                        new Notification("New Device Login", { body: `New login from ${session.deviceName}`, icon: "../images/logo.png" });
+                        const options = {
+                            body: body,
+                            icon: "../images/logo.png",
+                            badge: "../images/logo.png",
+                            data: { url: '/admin/sessions.html' }
+                        };
+                        
+                        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                            navigator.serviceWorker.ready.then(reg => {
+                                reg.showNotification(title, options);
+                            });
+                        } else {
+                            new Notification(title, options);
+                        }
                     }
                 }
             }
