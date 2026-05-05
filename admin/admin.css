@@ -1663,3 +1663,130 @@ tr.clickable:hover {
         gap: 2rem;
     }
 }
+
+/* Notifications Enhancement */
+.notification-bell {
+    position: relative;
+    cursor: pointer;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--error-color);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    border: 2px solid var(--bg-color);
+    display: none;
+}
+
+.notification-badge.active {
+    display: block;
+}
+
+.notification-dropdown {
+    position: absolute;
+    top: calc(100% + 15px);
+    right: -50px;
+    width: 320px;
+    background: rgba(15, 15, 15, 0.98);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.2rem;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    display: none;
+    animation: dropdownScale 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.notification-dropdown.active {
+    display: block;
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.8rem;
+}
+
+.notification-header h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.notification-list {
+    max-height: 350px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.notification-item {
+    padding: 0.8rem;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    cursor: pointer;
+    transition: var(--transition);
+    border: 1px solid transparent;
+}
+
+.notification-item:hover {
+    background: rgba(212, 175, 55, 0.05);
+    border-color: rgba(212, 175, 55, 0.2);
+}
+
+.notification-item.unread {
+    border-left: 3px solid var(--accent-color);
+}
+
+.notification-item h4 {
+    font-size: 0.85rem;
+    margin-bottom: 0.2rem;
+    color: var(--text-color);
+}
+
+.notification-item p {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.notification-item .time {
+    font-size: 0.65rem;
+    color: var(--accent-color);
+    margin-top: 0.4rem;
+    display: block;
+    opacity: 0.8;
+}
+
+.no-notifications {
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-light);
+    font-size: 0.85rem;
+}
+
+.view-all-link {
+    display: block;
+    text-align: center;
+    margin-top: 1rem;
+    color: var(--accent-color);
+    font-size: 0.8rem;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.view-all-link:hover {
+    text-decoration: underline;
+}

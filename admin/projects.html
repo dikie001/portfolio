@@ -97,8 +97,19 @@
                 <h2 id="current-view-title">Projects Management</h2>
             </div>
             <div class="navbar-actions">
-                <div class="notification-bell">
+                <div class="notification-bell" id="notification-trigger">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    <span class="notification-badge" id="nav-badge">0</span>
+                    <div class="notification-dropdown" id="notification-dropdown">
+                        <div class="notification-header">
+                            <h3>Notifications</h3>
+                            <button id="mark-all-read" style="background:none; border:none; color:var(--accent-color); cursor:pointer; font-size:0.75rem;">Mark all as read</button>
+                        </div>
+                        <div class="notification-list" id="nav-notification-list">
+                            <div class="no-notifications">No new messages</div>
+                        </div>
+                        <a href="messages.html" class="view-all-link">View all messages</a>
+                    </div>
                 </div>
                 <div class="user-profile-wrapper" id="profile-trigger">
                     <div class="user-profile">

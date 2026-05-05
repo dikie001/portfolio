@@ -12,6 +12,7 @@ import {
     query, 
     orderBy,
     onSnapshot,
+    writeBatch,
     where,
     limit,
     startAfter,
@@ -435,36 +436,82 @@ function showNotificationToast(title, message) {
 }
 
 function setupRealtimeNotifications() {
-    let isInitialMessagesLoad = true;
-    const q = query(collection(db, "messages"), where("createdAt", ">", dashboardLoadTime), orderBy("createdAt", "desc"));
-    onSnapshot(q, (snapshot) => {
-        if (isInitialMessagesLoad) {
-            isInitialMessagesLoad = false;
+    const navBadge = document.getElementById('nav-badge');
+    const navList = document.getElementById('nav-notification-list');
+    const trigger = document.getElementById('notification-trigger');
+    const dropdown = document.getElementById('notification-dropdown');
+    const markReadBtn = document.getElementById('mark-all-read');
+
+    if (trigger && dropdown) {
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('active');
+        });
+        document.addEventListener('click', () => dropdown.classList.remove('active'));
+        dropdown.addEventListener('click', (e) => e.stopPropagation());
+    }
+
+    if (markReadBtn) {
+        markReadBtn.onclick = async () => {
+            const unreadDocs = await getDocs(query(collection(db, "messages"), where("status", "!=", "read")));
+            const batch = writeBatch(db);
+            unreadDocs.forEach(d => batch.update(d.ref, { status: 'read' }));
+            await batch.commit();
+            showToast("All messages marked as read", "success");
+        };
+    }
+
+    let isInitialLoad = true;
+    // Listen for all unread messages for the badge
+    onSnapshot(query(collection(db, "messages"), where("status", "!=", "read"), orderBy("createdAt", "desc")), (snapshot) => {
+        const unreadCount = snapshot.size;
+        
+        if (navBadge) {
+            navBadge.innerText = unreadCount > 9 ? '9+' : unreadCount;
+            navBadge.classList.toggle('active', unreadCount > 0);
+        }
+
+        if (navList) {
+            if (unreadCount === 0) {
+                navList.innerHTML = '<div class="no-notifications">No new messages</div>';
+            } else {
+                navList.innerHTML = '';
+                snapshot.docs.slice(0, 5).forEach(doc => {
+                    const msg = doc.data();
+                    const item = document.createElement('div');
+                    item.className = 'notification-item unread';
+                    item.onclick = () => window.location.href = 'messages.html';
+                    item.innerHTML = `
+                        <h4>${msg.name}</h4>
+                        <p>${msg.message}</p>
+                        <span class="time">${msg.createdAt?.toDate ? msg.createdAt.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Just now'}</span>
+                    `;
+                    navList.appendChild(item);
+                });
+            }
+        }
+
+        if (isInitialLoad) {
+            isInitialLoad = false;
             return;
         }
+
         snapshot.docChanges().forEach((change) => {
             if (change.type === "added") {
                 const msg = change.doc.data();
-                const title = "New Inquiry: " + msg.name;
-                const body = msg.message.substring(0, 100) + "...";
-                showNotificationToast(title, body);
+                showNotificationToast("New Inquiry: " + msg.name, msg.message.substring(0, 100) + "...");
+                
                 if ("Notification" in window && Notification.permission === "granted") {
                     const options = {
-                        body: body,
+                        body: msg.message.substring(0, 100) + "...",
                         icon: "../images/logo.png",
                         badge: "../images/logo.png",
                         data: { url: '/admin/messages.html' }
                     };
-                    
-                    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-                        navigator.serviceWorker.ready.then(reg => {
-                            reg.showNotification(title, options);
-                        });
-                    } else {
-                        new Notification(title, options);
+                    if (navigator.serviceWorker && navigator.serviceWorker.ready) {
+                        navigator.serviceWorker.ready.then(reg => reg.showNotification("New Message from " + msg.name, options));
                     }
                 }
-                if (messagesTableBody) loadMessages('initial');
             }
         });
     });
