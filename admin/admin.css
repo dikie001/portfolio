@@ -664,6 +664,15 @@ body {
     max-width: 100%;
 }
 
+.latest-message-item {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.latest-message-item:last-child {
+    border-bottom: none;
+}
+
 .table-responsive {
     overflow-x: auto;
 }
@@ -1532,6 +1541,14 @@ tr.clickable:hover {
 
     .stat-card .value {
         font-size: 1.4rem;
+    }
+
+    .data-card {
+        padding: 1.2rem 0.6rem !important;
+    }
+
+    .latest-message-item {
+        padding: 0.8rem 1rem !important;
     }
 }
 

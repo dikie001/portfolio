@@ -286,7 +286,6 @@ async function loadDashboard() {
                 const msg = docSnap.data();
                 const item = document.createElement('div');
                 item.className = 'latest-message-item';
-                item.style.padding = '1rem 1.5rem';
                 const isRead = msg.status === 'read';
                 const ticks = `
                     <div class="status-ticks ${isRead ? 'read' : ''}" style="margin-top: 0.5rem; justify-content: flex-end;">
