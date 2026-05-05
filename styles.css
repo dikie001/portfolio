@@ -1391,18 +1391,19 @@ html[data-theme='light'] .availability-card:hover {
   gap: 1rem;
 }
 
+/* Utility Classes */
+.hidden {
+  display: none !important;
+}
+
 /* Loader Styling */
 .loader {
   width: 20px;
   height: 20px;
-  border: 2px solid rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(0, 0, 0, 0.2);
   border-top-color: #000;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
-}
-
-[data-theme="light"] .loader {
-  border-top-color: var(--white);
 }
 
 @keyframes spin {
