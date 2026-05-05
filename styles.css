@@ -1295,6 +1295,40 @@ html[data-theme='light'] .availability-card:hover {
   margin-bottom: 4rem;
 }
 
+.footer-logo-group {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.footer-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: opacity 0.3s ease;
+  object-fit: cover;
+  display: block;
+  opacity: 0.8;
+}
+
+.admin-avatar-link {
+  display: block;
+  line-height: 0;
+  cursor: default; /* Hidden link feel */
+  text-decoration: none;
+}
+
+.admin-avatar-link:hover .footer-avatar {
+  opacity: 1;
+  /* No scale or glow to keep it hidden */
+}
+
+.footer .logo {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
 .footer-links {
   display: flex;
   gap: 3rem;
