@@ -717,7 +717,7 @@ function renderVisitsGraph(snapshot, canvasId = 'visits-chart') {
                         color: '#9a9a9a',
                         maxRotation: 0,
                         autoSkip: true,
-                        maxTicksLimit: 7
+                        maxTicksLimit: window.innerWidth < 480 ? 4 : 7
                     } 
                 } 
             }, 

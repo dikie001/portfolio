@@ -1305,6 +1305,10 @@ tr.clickable:hover {
         width: 45px;
         height: 30px;
     }
+
+    .chart-container {
+        height: 240px !important;
+    }
 }
 
 @media (max-width: 480px) {
