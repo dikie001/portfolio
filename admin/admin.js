@@ -521,18 +521,26 @@ function setupRealtimeNotifications() {
             snapshot.docChanges().forEach((change) => {
                 if (change.type === "added") {
                     const msg = change.doc.data();
-                    showNotificationToast("New Inquiry: " + msg.name, msg.message.substring(0, 100) + "...");
+                    const id = change.doc.id;
                     
-                    if ("Notification" in window && Notification.permission === "granted") {
-                        const options = {
-                            body: msg.message.substring(0, 100) + "...",
-                            icon: "../images/logo.png",
-                            badge: "../images/logo.png",
-                            data: { url: '/admin/messages.html' }
-                        };
-                        if (navigator.serviceWorker && navigator.serviceWorker.ready) {
-                            navigator.serviceWorker.ready.then(reg => reg.showNotification("New Message from " + msg.name, options));
+                    // Only show notification if it hasn't been flagged as 'notified' in the database
+                    if (msg.notified !== true) {
+                        showNotificationToast("New Inquiry: " + msg.name, msg.message.substring(0, 100) + "...");
+                        
+                        if ("Notification" in window && Notification.permission === "granted") {
+                            const options = {
+                                body: msg.message.substring(0, 100) + "...",
+                                icon: "../images/logo.png",
+                                badge: "../images/logo.png",
+                                data: { url: '/admin/messages.html' }
+                            };
+                            if (navigator.serviceWorker && navigator.serviceWorker.ready) {
+                                navigator.serviceWorker.ready.then(reg => reg.showNotification("New Message from " + msg.name, options));
+                            }
                         }
+
+                        // Mark as notified in the database immediately so other tabs/sessions don't re-show it
+                        updateDoc(doc(db, "messages", id), { notified: true }).catch(err => console.error("Error marking as notified:", err));
                     }
                 }
             });
