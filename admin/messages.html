@@ -145,6 +145,35 @@
         </div>
     </main>
 
+    <!-- View Message Modal -->
+    <div id="view-message-modal" class="modal hidden">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>Message Details</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div id="message-details" style="padding: 1.5rem; color: var(--text-color);">
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="color: var(--text-light); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">From</label>
+                    <div id="msg-detail-name" style="font-size: 1.1rem; font-weight: 600; margin-top: 0.3rem;"></div>
+                    <div id="msg-detail-email" style="color: var(--accent-color); font-size: 0.9rem; margin-top: 0.1rem;"></div>
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="color: var(--text-light); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Date</label>
+                    <div id="msg-detail-date" style="font-size: 0.95rem; margin-top: 0.3rem;"></div>
+                </div>
+                <div>
+                    <label style="color: var(--text-light); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">Message</label>
+                    <div id="msg-detail-content" style="font-size: 1rem; line-height: 1.6; margin-top: 0.5rem; background: rgba(255,255,255,0.03); padding: 1.2rem; border-radius: 12px; border: 1px solid var(--border-color);"></div>
+                </div>
+            </div>
+            <div class="actions" style="border-top: 1px solid var(--border-color); padding: 1rem 1.5rem;">
+                <button class="btn btn-outline close-modal">Close</button>
+                <a id="msg-reply-btn" href="#" class="btn btn-primary">Reply via Email</a>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="admin.js"></script>
 </body>
 </html>

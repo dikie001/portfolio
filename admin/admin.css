@@ -226,6 +226,18 @@ body {
     transition: var(--transition);
 }
 
+/* Dashboard Nav Link Distinction */
+#dashboard-nav {
+    background: rgba(212, 175, 55, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    margin-bottom: 1.5rem;
+}
+
+#dashboard-nav:hover {
+    background: rgba(212, 175, 55, 0.1);
+    border-color: var(--accent-color);
+}
+
 .nav-links li.active a,
 .nav-links a:hover {
     background: rgba(212, 175, 55, 0.08);
@@ -305,8 +317,8 @@ body {
 .main-content {
     flex: 1;
     margin-left: 260px;
-    padding: 2.5rem 3.5rem;
-    padding-top: 120px; /* Space for fixed navbar + breathing room */
+    padding: 1.5rem 2.5rem;
+    padding-top: 100px; /* Space for fixed navbar */
 }
 
 /* Top Navbar */
@@ -564,15 +576,16 @@ body {
 .data-card {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
-    border-radius: 20px;
-    padding: 1.5rem;
+    border-radius: 16px;
+    padding: 1.2rem;
     overflow: hidden;
 }
 
 .data-card h2 {
-    font-size: 1.2rem;
-    margin-bottom: 1.2rem;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
     font-weight: 600;
+    opacity: 0.9;
 }
 
 .card-header {
@@ -917,4 +930,94 @@ td {
     font-size: 0.85rem;
     margin-top: 0.2rem;
 }
+
+/* Table Actions Dropdown */
+.action-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.action-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-light);
+    padding: 0.4rem 0.8rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.action-btn:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: #111;
+    min-width: 160px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    z-index: 1000;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    margin-top: 0.5rem;
+    overflow: hidden;
+}
+
+.dropdown-content.show {
+    display: block;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.dropdown-content button, .dropdown-content a {
+    color: var(--text-light);
+    padding: 0.8rem 1rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.dropdown-content button:hover, .dropdown-content a:hover {
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--accent-color);
+}
+
+.dropdown-content button.delete-action:hover {
+    background: rgba(255, 77, 77, 0.1);
+    color: var(--error-color);
+}
+
+/* Row Clickable */
+tr.clickable {
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+tr.clickable:hover {
+    background: rgba(255, 255, 255, 0.03) !important;
+}
+
+.msg-preview {
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-light);
+}
+
 

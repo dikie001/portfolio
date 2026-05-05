@@ -383,30 +383,77 @@ function renderMessages(snapshot) {
         const msg = docSnap.data();
         const id = docSnap.id;
         const date = msg.createdAt ? (msg.createdAt.toDate ? msg.createdAt.toDate().toLocaleDateString() : new Date(msg.createdAt).toLocaleDateString()) : 'Just now';
+        
         const tr = document.createElement('tr');
+        tr.className = 'clickable';
+        tr.onclick = (e) => {
+            if (!e.target.closest('.action-dropdown')) window.viewMessage(id);
+        };
+        
         tr.innerHTML = `
             <td>${date}</td>
             <td><strong>${msg.name}</strong></td>
             <td>${msg.email}</td>
             <td class="msg-preview">${msg.message}</td>
-            <td class="actions">
-                <button class="action-btn view-msg-btn" data-id="${id}">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                </button>
-                <button class="action-btn delete-msg-btn" data-id="${id}">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                </button>
+            <td>
+                <div class="action-dropdown">
+                    <button class="action-btn" onclick="event.stopPropagation(); window.toggleDropdown('${id}')">
+                        Actions <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 4px;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div id="dropdown-${id}" class="dropdown-content">
+                        <button onclick="window.viewMessage('${id}')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            View Details
+                        </button>
+                        <a href="mailto:${msg.email}?subject=Re: Portfolio Inquiry" onclick="event.stopPropagation()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                            Send Email
+                        </a>
+                        <button class="delete-action" onclick="event.stopPropagation(); window.deleteMessage('${id}')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                            Delete
+                        </button>
+                    </div>
+                </div>
             </td>
         `;
         messagesTableBody.appendChild(tr);
     });
-
-    document.querySelectorAll('.view-msg-btn').forEach(btn => btn.addEventListener('click', () => {
-        const msg = snapshot.docs.find(d => d.id === btn.dataset.id).data();
-        alert(`From: ${msg.name} (${msg.email})\n\nMessage: ${msg.message}`);
-    }));
-    document.querySelectorAll('.delete-msg-btn').forEach(btn => btn.addEventListener('click', () => deleteMessage(btn.dataset.id)));
 }
+
+// Window scoped functions for global access
+window.addEventListener('click', (e) => {
+    if (!e.target.closest('.action-dropdown')) {
+        document.querySelectorAll('.dropdown-content').forEach(d => d.classList.remove('show'));
+    }
+});
+
+window.toggleDropdown = (id) => {
+    const dropdown = document.getElementById(`dropdown-${id}`);
+    document.querySelectorAll('.dropdown-content').forEach(d => {
+        if (d !== dropdown) d.classList.remove('show');
+    });
+    if (dropdown) dropdown.classList.toggle('show');
+};
+
+window.viewMessage = async (id) => {
+    try {
+        const docSnap = await getDoc(doc(db, "messages", id));
+        if (!docSnap.exists()) return;
+        const msg = docSnap.data();
+        
+        document.getElementById('msg-detail-name').textContent = msg.name;
+        document.getElementById('msg-detail-email').textContent = msg.email;
+        document.getElementById('msg-detail-date').textContent = msg.createdAt ? (msg.createdAt.toDate ? msg.createdAt.toDate().toLocaleString() : new Date(msg.createdAt).toLocaleString()) : 'Unknown';
+        document.getElementById('msg-detail-content').textContent = msg.message;
+        document.getElementById('msg-reply-btn').href = `mailto:${msg.email}?subject=Re: Portfolio Inquiry`;
+        
+        const modal = document.getElementById('view-message-modal');
+        if (modal) modal.classList.remove('hidden');
+    } catch (error) {
+        console.error("Error viewing message:", error);
+    }
+};
 
 const nextMsgBtn = document.getElementById('next-messages-btn');
 const prevMsgBtn = document.getElementById('prev-messages-btn');
@@ -414,8 +461,16 @@ if (nextMsgBtn) nextMsgBtn.addEventListener('click', () => { loadMessages('next'
 if (prevMsgBtn) prevMsgBtn.addEventListener('click', () => loadMessages('prev'));
 
 async function deleteMessage(id) {
-    if (confirm("Delete this message?")) await deleteDoc(doc(db, "messages", id));
+    if (confirm("Delete this message?")) {
+        try {
+            await deleteDoc(doc(db, "messages", id));
+            loadMessages();
+        } catch (error) {
+            console.error("Delete error:", error);
+        }
+    }
 }
+window.deleteMessage = deleteMessage;
 
 // ANALYTICS LOGIC
 function loadAnalytics() {
