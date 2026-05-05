@@ -300,6 +300,7 @@
       import {
         collection,
         getDocs,
+        getDoc,
         query,
         orderBy,
         addDoc,
@@ -436,7 +437,55 @@
         }
       }
 
+      async function applySiteSettings() {
+        try {
+          const siteDoc = await getDoc(doc(db, 'config', 'site'));
+          if (siteDoc.exists()) {
+            const data = siteDoc.data();
+            
+            if (data.title) {
+                document.title = data.title;
+                const ogTitle = document.querySelector('meta[property="og:title"]');
+                if (ogTitle) ogTitle.content = data.title;
+            }
+            if (data.description) {
+                const metaDesc = document.querySelector('meta[name="description"]');
+                if (metaDesc) metaDesc.content = data.description;
+                const ogDesc = document.querySelector('meta[property="og:description"]');
+                if (ogDesc) ogDesc.content = data.description;
+            }
+
+            if (data.phone) {
+                const phoneLinks = document.querySelectorAll('a[href^="tel:"], a[href^="https://wa.me/"]');
+                phoneLinks.forEach(link => {
+                    if (link.href.startsWith('tel:')) link.href = `tel:${data.phone}`;
+                    if (link.href.startsWith('https://wa.me/')) link.href = `https://wa.me/${data.phone.replace(/\+/g, '')}`;
+                    const p = link.querySelector('p');
+                    if (p && !p.classList.contains('inline-link')) p.textContent = data.phone;
+                });
+            }
+
+            if (data.email) {
+                const emailLinks = document.querySelectorAll('a[href^="mailto:"]');
+                emailLinks.forEach(link => {
+                    link.href = `mailto:${data.email}`;
+                    const p = link.querySelector('p');
+                    if (p) p.textContent = data.email;
+                });
+            }
+
+            if (data.github) document.querySelectorAll('a[aria-label="GitHub"], a.logo[href*="github.com"]').forEach(a => a.href = data.github);
+            if (data.linkedin) document.querySelectorAll('a[aria-label="LinkedIn"]').forEach(a => a.href = data.linkedin);
+            if (data.instagram) document.querySelectorAll('a[aria-label="Instagram"]').forEach(a => a.href = data.instagram);
+            if (data.twitter) document.querySelectorAll('a[aria-label="Twitter"]').forEach(a => a.href = data.twitter);
+          }
+        } catch (e) {
+          console.error("Error applying site settings:", e);
+        }
+      }
+
       document.addEventListener("DOMContentLoaded", () => {
+        applySiteSettings();
         loadExtraProjects();
         trackVisit();
       });

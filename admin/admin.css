@@ -1605,3 +1605,61 @@ tr.clickable:hover {
     from { transform: translateX(0); opacity: 1; }
     to { transform: translateX(100%); opacity: 0; }
 }
+
+/* Settings Page Enhancements */
+.settings-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 900px;
+}
+
+.settings-form .data-card {
+    padding: 2rem;
+    margin-bottom: 1rem;
+}
+
+.input-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.input-row .input-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.settings-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+.form-status {
+    padding: 1rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    margin-top: 1.5rem;
+    text-align: center;
+    border: 1px solid transparent;
+}
+
+.form-status.success {
+    background: rgba(68, 255, 68, 0.05);
+    border-color: rgba(68, 255, 68, 0.2);
+    color: var(--success-color);
+}
+
+.form-status.error {
+    background: rgba(255, 77, 77, 0.05);
+    border-color: rgba(255, 77, 77, 0.2);
+    color: var(--error-color);
+}
+
+@media (max-width: 768px) {
+    .input-row {
+        flex-direction: column;
+        gap: 2rem;
+    }
+}

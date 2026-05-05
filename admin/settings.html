@@ -129,29 +129,102 @@
         <div id="settings-view">
             <header class="content-header fade-in">
                 <div>
-                    <p>Manage your account and site preferences.</p>
+                    <h1>Site Configuration</h1>
+                    <p>Manage your portfolio's global information and contact details.</p>
                 </div>
             </header>
 
-            <div class="data-card fade-in" style="max-width: 500px;">
-                <div class="card-header">
-                    <h2>Update Password</h2>
-                </div>
-                <form id="settings-form">
-                    <div class="input-group">
-                        <input type="password" id="new-password" required placeholder=" ">
-                        <label for="new-password">New Password</label>
+            <div class="settings-container fade-in">
+                <form id="site-settings-form" class="settings-form">
+                    <!-- General Section -->
+                    <div class="data-card">
+                        <div class="card-header">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                            <h2>General Info & SEO</h2>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="site-title" placeholder=" ">
+                            <label for="site-title">Site Title (Browser Tab)</label>
+                        </div>
+                        <div class="input-group">
+                            <textarea id="site-description" rows="2" placeholder=" "></textarea>
+                            <label for="site-description">SEO Description</label>
+                        </div>
                     </div>
-                    <div class="input-group">
-                        <input type="password" id="confirm-password" required placeholder=" ">
-                        <label for="confirm-password">Confirm New Password</label>
+
+                    <!-- Contact Section -->
+                    <div class="data-card">
+                        <div class="card-header">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                            <h2>Contact Details</h2>
+                        </div>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <input type="tel" id="contact-phone" placeholder=" ">
+                                <label for="contact-phone">WhatsApp/Phone (+254...)</label>
+                            </div>
+                            <div class="input-group">
+                                <input type="email" id="contact-email" placeholder=" ">
+                                <label for="contact-email">Contact Email</label>
+                            </div>
+                        </div>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100" id="update-password-btn">
-                        <span class="btn-text">Update Password</span>
-                        <span class="loader hidden"></span>
-                    </button>
-                    <p id="settings-msg" class="error-message hidden"></p>
+
+                    <!-- Socials Section -->
+                    <div class="data-card">
+                        <div class="card-header">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                            <h2>Social Media Links</h2>
+                        </div>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <input type="url" id="social-github" placeholder=" ">
+                                <label for="social-github">GitHub Profile</label>
+                            </div>
+                            <div class="input-group">
+                                <input type="url" id="social-linkedin" placeholder=" ">
+                                <label for="social-linkedin">LinkedIn Profile</label>
+                            </div>
+                        </div>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <input type="url" id="social-instagram" placeholder=" ">
+                                <label for="social-instagram">Instagram URL</label>
+                            </div>
+                            <div class="input-group">
+                                <input type="url" id="social-twitter" placeholder=" ">
+                                <label for="social-twitter">Twitter / X URL</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-actions">
+                        <button type="submit" class="btn btn-primary" id="save-settings-btn">
+                            <span class="btn-text">Save Changes</span>
+                            <span class="loader hidden"></span>
+                        </button>
+                    </div>
                 </form>
+                
+                <!-- Keep password update as a secondary small card if needed -->
+                <div class="data-card" style="margin-top: 2rem; max-width: 400px; opacity: 0.8;">
+                    <div class="card-header">
+                        <h2>Admin Account</h2>
+                    </div>
+                    <form id="settings-form">
+                        <p style="font-size: 0.8rem; color: var(--text-light); margin-bottom: 1rem;">Update your login password below.</p>
+                        <div class="input-group">
+                            <input type="password" id="new-password" placeholder=" ">
+                            <label for="new-password">New Password</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="password" id="confirm-password" placeholder=" ">
+                            <label for="confirm-password">Confirm Password</label>
+                        </div>
+                        <button type="submit" class="btn btn-outline w-100" id="update-password-btn">Update Password</button>
+                    </form>
+                </div>
+                <p id="settings-msg" class="form-status hidden" style="margin-top: 1rem;"></p>
             </div>
         </div>
     </main>

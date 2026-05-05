@@ -188,7 +188,7 @@ function initDashboard() {
         loadSessions();
         setupSessionNotifications();
     } else if (path.includes('settings.html')) {
-        // Settings logic already handled via event listeners
+        loadSiteSettings();
     }
     
     // Global features
@@ -1089,3 +1089,72 @@ async function loadSessions() {
     });
 }
 
+
+// SITE SETTINGS LOGIC
+async function loadSiteSettings() {
+    const siteForm = document.getElementById('site-settings-form');
+    if (!siteForm) return;
+
+    showLoading("Loading Site Configuration...");
+    try {
+        const siteDoc = await getDoc(doc(db, 'config', 'site'));
+        if (siteDoc.exists()) {
+            const data = siteDoc.data();
+            document.getElementById('site-title').value = data.title || '';
+            document.getElementById('site-description').value = data.description || '';
+            document.getElementById('contact-phone').value = data.phone || '';
+            document.getElementById('contact-email').value = data.email || '';
+            document.getElementById('social-github').value = data.github || '';
+            document.getElementById('social-linkedin').value = data.linkedin || '';
+            document.getElementById('social-instagram').value = data.instagram || '';
+            document.getElementById('social-twitter').value = data.twitter || '';
+        }
+    } catch (error) {
+        console.error("Error loading settings:", error);
+        showToast("Failed to load settings", "error");
+    } finally {
+        hideLoading();
+    }
+
+    siteForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const saveBtn = document.getElementById('save-settings-btn');
+        const btnText = saveBtn.querySelector('.btn-text');
+        const loader = saveBtn.querySelector('.loader');
+        const msgEl = document.getElementById('settings-msg');
+
+        btnText.classList.add('hidden');
+        loader.classList.remove('hidden');
+        saveBtn.disabled = true;
+
+        const settingsData = {
+            title: document.getElementById('site-title').value.trim(),
+            description: document.getElementById('site-description').value.trim(),
+            phone: document.getElementById('contact-phone').value.trim(),
+            email: document.getElementById('contact-email').value.trim(),
+            github: document.getElementById('social-github').value.trim(),
+            linkedin: document.getElementById('social-linkedin').value.trim(),
+            instagram: document.getElementById('social-instagram').value.trim(),
+            twitter: document.getElementById('social-twitter').value.trim(),
+            updatedAt: new Date()
+        };
+
+        try {
+            await setDoc(doc(db, 'config', 'site'), settingsData, { merge: true });
+            msgEl.textContent = "Settings saved successfully! Changes will reflect on your portfolio shortly.";
+            msgEl.className = "form-status success";
+            msgEl.classList.remove('hidden');
+            showToast("Settings Saved", "success");
+            setTimeout(() => msgEl.classList.add('hidden'), 5000);
+        } catch (error) {
+            console.error("Save error:", error);
+            msgEl.textContent = "Error saving settings. Please try again.";
+            msgEl.className = "form-status error";
+            msgEl.classList.remove('hidden');
+        } finally {
+            btnText.classList.remove('hidden');
+            loader.classList.add('hidden');
+            saveBtn.disabled = false;
+        }
+    });
+}
