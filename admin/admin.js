@@ -132,7 +132,7 @@ function requestNotificationPermission() {
         
         // Register Service Worker for PWA and background notifications
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
+            navigator.serviceWorker.register('/admin/sw.js', { scope: '/admin/' })
                 .then(reg => console.log('Admin Service Worker Registered', reg))
                 .catch(err => console.error('Admin Service Worker registration failed', err));
         }
