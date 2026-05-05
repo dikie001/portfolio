@@ -369,7 +369,7 @@ async function loadProjects() {
 // MESSAGES LOGIC
 const PAGE_SIZE = 10;
 let lastVisibleMessage = null, firstVisibleMessage = null;
-const dashboardLoadTime = new Date(Date.now() - 60000);
+const dashboardLoadTime = new Date();
 
 function showToast(title, message) {
     const toast = document.createElement('div');
@@ -388,8 +388,13 @@ function showToast(title, message) {
 }
 
 function setupRealtimeNotifications() {
+    let isInitialMessagesLoad = true;
     const q = query(collection(db, "messages"), where("createdAt", ">", dashboardLoadTime), orderBy("createdAt", "desc"));
     onSnapshot(q, (snapshot) => {
+        if (isInitialMessagesLoad) {
+            isInitialMessagesLoad = false;
+            return;
+        }
         snapshot.docChanges().forEach((change) => {
             if (change.type === "added") {
                 const msg = change.doc.data();
@@ -838,8 +843,13 @@ async function registerSession(uid) {
 }
 
 function setupSessionNotifications() {
+    let isInitialSessionsLoad = true;
     const q = query(collection(db, "sessions"), where("loginAt", ">", dashboardLoadTime), orderBy("loginAt", "desc"));
     onSnapshot(q, (snapshot) => {
+        if (isInitialSessionsLoad) {
+            isInitialSessionsLoad = false;
+            return;
+        }
         snapshot.docChanges().forEach((change) => {
             if (change.type === "added") {
                 const session = change.doc.data();
