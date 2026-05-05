@@ -72,6 +72,23 @@ navLinks.forEach(link => {
   });
 });
 
+// Hero Greeting Bubble Click Toggle
+const heroImg = document.querySelector(".home-img img");
+const greetingBubble = document.querySelector(".greeting-bubble");
+
+if (heroImg && greetingBubble) {
+  heroImg.addEventListener("click", (e) => {
+    e.stopPropagation(); // Prevent immediate closing
+    greetingBubble.classList.toggle("active");
+  });
+
+  // Close bubble when clicking anywhere else
+  document.addEventListener("click", () => {
+    greetingBubble.classList.remove("active");
+  });
+}
+
+
 // Scroll Animation Observer for Golden Theme elements
 const fadeElements = document.querySelectorAll('.fade-in');
 
