@@ -71,7 +71,7 @@ function hideLoading() {
 // Auth State Check
 onAuthStateChanged(auth, async (user) => {
     if (!user) {
-        window.location.href = 'index';
+        window.location.href = 'index.html';
         return;
     }
 
@@ -79,7 +79,7 @@ onAuthStateChanged(auth, async (user) => {
         const adminDoc = await getDoc(doc(db, 'config', 'admin'));
         if (!adminDoc.exists() || adminDoc.data().uid !== user.uid) {
             await signOut(auth);
-            window.location.href = 'index';
+            window.location.href = 'index.html';
             return;
         }
 
@@ -90,7 +90,7 @@ onAuthStateChanged(auth, async (user) => {
         requestNotificationPermission();
     } catch (error) {
         console.error("Auth verification error:", error);
-        window.location.href = 'index';
+        window.location.href = 'index.html';
     } finally {
         hideLoading();
     }
@@ -263,7 +263,7 @@ async function loadDashboard() {
 const handleLogout = async () => {
     try {
         await signOut(auth);
-        window.location.href = 'index';
+        window.location.href = 'index.html';
     } catch (error) {
         console.error("Logout error:", error);
     }
@@ -799,7 +799,7 @@ async function initializeSession(uid) {
         if (data.status === 'revoked') {
             alert("This session has been revoked by another device.");
             await signOut(auth);
-            window.location.href = 'index';
+            window.location.href = 'index.html';
             return false;
         }
         // Update last active
@@ -812,7 +812,7 @@ async function initializeSession(uid) {
     onSnapshot(sessionRef, (snap) => {
         if (snap.exists() && snap.data().status === 'revoked') {
             alert("This session has been revoked. You will be logged out.");
-            signOut(auth).then(() => window.location.href = 'index');
+            signOut(auth).then(() => window.location.href = 'index.html');
         }
     });
 
