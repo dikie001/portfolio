@@ -306,7 +306,7 @@ body {
     flex: 1;
     margin-left: 260px;
     padding: 2.5rem 3.5rem;
-    padding-top: 80px; /* Space for fixed navbar */
+    padding-top: 120px; /* Space for fixed navbar + breathing room */
 }
 
 /* Top Navbar */
