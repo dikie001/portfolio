@@ -81,6 +81,13 @@
     <main class="main-content">
         <!-- Top Navbar -->
         <nav class="top-navbar fade-in">
+            <button class="menu-toggle">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
             <div class="view-info">
                 <h2 id="current-view-title">System Settings</h2>
             </div>
@@ -90,8 +97,8 @@
                 </div>
                 <div class="user-profile-wrapper" id="profile-trigger">
                     <div class="user-profile">
-                        <div class="avatar-wrapper">
-                            <img id="user-avatar" src="../images/logo.png" alt="Admin">
+                        <div class="avatar-wrapper skeleton">
+                            <img id="user-avatar" src="../images/logo.png" alt="Admin" onload="this.parentElement.classList.remove('skeleton')">
                         </div>
                         <span id="user-name">Admin</span>
                         <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
