@@ -8,11 +8,13 @@ import {
     deleteDoc, 
     doc, 
     query, 
-    orderBy 
+    orderBy,
+    onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // DOM Elements
 const projectsTableBody = document.getElementById('projects-table-body');
+const messagesTableBody = document.getElementById('messages-table-body');
 const logoutBtn = document.getElementById('logout-btn');
 const addProjectBtn = document.getElementById('add-project-btn');
 const projectModal = document.getElementById('project-modal');
@@ -21,15 +23,52 @@ const projectForm = document.getElementById('project-form');
 const modalTitle = document.getElementById('modal-title');
 const totalProjectsCount = document.getElementById('total-projects-count');
 const liveProjectsCount = document.getElementById('live-projects-count');
+const unreadCountBadge = document.getElementById('unread-count');
+
+// Navigation
+const projectsNav = document.querySelector('a[href="#projects"]');
+const messagesNav = document.querySelector('a[href="#messages"]');
+const projectsView = document.getElementById('projects-view');
+const messagesView = document.getElementById('messages-view');
 
 // Auth State Check
 onAuthStateChanged(auth, (user) => {
     if (!user) {
         window.location.href = 'index.html';
     } else {
-        loadProjects();
+        initDashboard();
     }
 });
+
+function initDashboard() {
+    loadProjects();
+    loadMessages();
+}
+
+// Navigation Logic
+projectsNav.parentElement.addEventListener('click', (e) => {
+    e.preventDefault();
+    showView('projects');
+});
+
+messagesNav.parentElement.addEventListener('click', (e) => {
+    e.preventDefault();
+    showView('messages');
+});
+
+function showView(view) {
+    if (view === 'projects') {
+        projectsView.classList.remove('hidden');
+        messagesView.classList.add('hidden');
+        projectsNav.parentElement.classList.add('active');
+        messagesNav.parentElement.classList.remove('active');
+    } else {
+        projectsView.classList.add('hidden');
+        messagesView.classList.remove('hidden');
+        projectsNav.parentElement.classList.remove('active');
+        messagesNav.parentElement.classList.add('active');
+    }
+}
 
 // Logout
 logoutBtn.addEventListener('click', async () => {
@@ -41,17 +80,14 @@ logoutBtn.addEventListener('click', async () => {
     }
 });
 
-// Load Projects from Firestore
+// PROJECTS LOGIC
 async function loadProjects() {
-    try {
-        const q = query(collection(db, "projects"), orderBy("title", "asc"));
-        const querySnapshot = await getDocs(q);
-        
+    onSnapshot(query(collection(db, "projects"), orderBy("createdAt", "desc")), (snapshot) => {
         projectsTableBody.innerHTML = '';
         let total = 0;
         let live = 0;
 
-        querySnapshot.forEach((doc) => {
+        snapshot.forEach((doc) => {
             const project = doc.data();
             const id = doc.id;
             total++;
@@ -75,28 +111,78 @@ async function loadProjects() {
             projectsTableBody.appendChild(tr);
         });
 
-        if (total === 0) {
-            projectsTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 3rem; color: var(--text-light);">No projects found. Add your first one!</td></tr>';
-        }
-
         totalProjectsCount.textContent = total;
         liveProjectsCount.textContent = live;
 
-        // Attach event listeners to new buttons
+        // Re-attach listeners
         document.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.addEventListener('click', () => openEditModal(btn.dataset.id, querySnapshot));
+            btn.addEventListener('click', () => openEditModal(btn.dataset.id, snapshot));
         });
         document.querySelectorAll('.delete-btn').forEach(btn => {
             btn.addEventListener('click', () => deleteProject(btn.dataset.id));
         });
+    });
+}
 
-    } catch (error) {
-        console.error("Error loading projects:", error);
-        projectsTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 3rem; color: var(--error-color);">Error loading projects. Check console.</td></tr>';
+// MESSAGES LOGIC
+async function loadMessages() {
+    onSnapshot(query(collection(db, "messages"), orderBy("createdAt", "desc")), (snapshot) => {
+        messagesTableBody.innerHTML = '';
+        let unread = 0;
+
+        snapshot.forEach((docSnap) => {
+            const msg = docSnap.data();
+            const id = docSnap.id;
+            if (msg.status === 'unread') unread++;
+
+            const date = msg.createdAt?.toDate ? msg.createdAt.toDate().toLocaleDateString() : 'Just now';
+
+            const tr = document.createElement('tr');
+            tr.className = msg.status === 'unread' ? 'unread-row' : '';
+            tr.innerHTML = `
+                <td>${date}</td>
+                <td><strong>${msg.name}</strong></td>
+                <td>${msg.email}</td>
+                <td class="msg-preview">${msg.message}</td>
+                <td class="actions">
+                    <button class="action-btn view-msg-btn" data-id="${id}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </button>
+                    <button class="action-btn delete-msg-btn" data-id="${id}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                    </button>
+                </td>
+            `;
+            messagesTableBody.appendChild(tr);
+        });
+
+        unreadCountBadge.textContent = `${unread} New`;
+
+        document.querySelectorAll('.view-msg-btn').forEach(btn => {
+            btn.addEventListener('click', () => viewMessage(btn.dataset.id, snapshot));
+        });
+        document.querySelectorAll('.delete-msg-btn').forEach(btn => {
+            btn.addEventListener('click', () => deleteMessage(btn.dataset.id));
+        });
+    });
+}
+
+function viewMessage(id, snapshot) {
+    const msg = snapshot.docs.find(d => d.id === id).data();
+    alert(`From: ${msg.name} (${msg.email})\n\nMessage: ${msg.message}`);
+    // Mark as read
+    if (msg.status === 'unread') {
+        updateDoc(doc(db, "messages", id), { status: 'read' });
     }
 }
 
-// Modal Handling
+async function deleteMessage(id) {
+    if (confirm("Delete this message?")) {
+        await deleteDoc(doc(db, "messages", id));
+    }
+}
+
+// Modal & Form Logic (same as before)
 addProjectBtn.addEventListener('click', () => {
     modalTitle.textContent = 'Add New Project';
     projectForm.reset();
@@ -110,20 +196,11 @@ closeModalBtns.forEach(btn => {
     });
 });
 
-window.addEventListener('click', (e) => {
-    if (e.target === projectModal) {
-        projectModal.classList.add('hidden');
-    }
-});
-
-// Add/Update Project
 projectForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const id = document.getElementById('project-id').value;
     const saveBtn = document.getElementById('save-project-btn');
-    const btnText = saveBtn.querySelector('.btn-text');
-    const loader = saveBtn.querySelector('.loader');
-
+    
     const projectData = {
         title: document.getElementById('project-title').value,
         description: document.getElementById('project-desc').value,
@@ -134,10 +211,7 @@ projectForm.addEventListener('submit', async (e) => {
         updatedAt: new Date()
     };
 
-    btnText.classList.add('hidden');
-    loader.classList.remove('hidden');
     saveBtn.disabled = true;
-
     try {
         if (id) {
             await updateDoc(doc(db, "projects", id), projectData);
@@ -146,20 +220,16 @@ projectForm.addEventListener('submit', async (e) => {
             await addDoc(collection(db, "projects"), projectData);
         }
         projectModal.classList.add('hidden');
-        loadProjects();
     } catch (error) {
-        console.error("Error saving project:", error);
-        alert("Error saving project. See console.");
+        console.error(error);
+        alert("Error saving project.");
     } finally {
-        btnText.classList.remove('hidden');
-        loader.classList.add('hidden');
         saveBtn.disabled = false;
     }
 });
 
-// Edit Modal
-function openEditModal(id, querySnapshot) {
-    const docData = querySnapshot.docs.find(d => d.id === id).data();
+function openEditModal(id, snapshot) {
+    const docData = snapshot.docs.find(d => d.id === id).data();
     modalTitle.textContent = 'Edit Project';
     document.getElementById('project-id').value = id;
     document.getElementById('project-title').value = docData.title;
@@ -171,15 +241,8 @@ function openEditModal(id, querySnapshot) {
     projectModal.classList.remove('hidden');
 }
 
-// Delete Project
 async function deleteProject(id) {
-    if (confirm("Are you sure you want to delete this project?")) {
-        try {
-            await deleteDoc(doc(db, "projects", id));
-            loadProjects();
-        } catch (error) {
-            console.error("Error deleting project:", error);
-            alert("Error deleting project.");
-        }
+    if (confirm("Delete this project?")) {
+        await deleteDoc(doc(db, "projects", id));
     }
 }

@@ -413,3 +413,38 @@ td {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+.unread-row {
+    background: rgba(212, 175, 55, 0.05);
+}
+
+.unread-row td {
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.msg-preview {
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-light);
+}
+
+.status-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-badge.live {
+    background: rgba(68, 255, 68, 0.1);
+    color: var(--success-color);
+}
+
+.status-badge.draft {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-light);
+}

@@ -39,56 +39,89 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <header class="content-header fade-in">
-            <div>
-                <h1>Portfolio Projects</h1>
-                <p>Manage your latest works and case studies.</p>
-            </div>
-            <button id="add-project-btn" class="btn btn-primary">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                Add New Project
-            </button>
-        </header>
+        <!-- Projects View -->
+        <div id="projects-view">
+            <header class="content-header fade-in">
+                <div>
+                    <h1>Portfolio Projects</h1>
+                    <p>Manage your latest works and case studies.</p>
+                </div>
+                <button id="add-project-btn" class="btn btn-primary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Add New Project
+                </button>
+            </header>
 
-        <!-- Stats -->
-        <div class="stats-grid fade-in">
-            <div class="stat-card">
-                <h3>Total Projects</h3>
-                <div class="value" id="total-projects-count">0</div>
+            <!-- Stats -->
+            <div class="stats-grid fade-in">
+                <div class="stat-card">
+                    <h3>Total Projects</h3>
+                    <div class="value" id="total-projects-count">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Live Builds</h3>
+                    <div class="value" id="live-projects-count">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Visibility</h3>
+                    <div class="value">Public</div>
+                </div>
             </div>
-            <div class="stat-card">
-                <h3>Live Builds</h3>
-                <div class="value" id="live-projects-count">0</div>
-            </div>
-            <div class="stat-card">
-                <h3>Visibility</h3>
-                <div class="value">Public</div>
+
+            <!-- Projects List -->
+            <div class="data-card fade-in">
+                <div class="card-header">
+                    <h2>All Projects</h2>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Preview</th>
+                                <th>Title</th>
+                                <th>Tech Stack</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="projects-table-body">
+                            <!-- Projects will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <!-- Projects List -->
-        <div class="data-card fade-in">
-            <div class="card-header">
-                <h2>All Projects</h2>
-            </div>
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Preview</th>
-                            <th>Title</th>
-                            <th>Tech Stack</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="projects-table-body">
-                        <!-- Projects will be loaded here -->
-                        <tr>
-                            <td colspan="5" style="text-align: center; padding: 3rem; color: var(--text-light);">Loading projects...</td>
-                        </tr>
-                    </tbody>
-                </table>
+        <!-- Messages View -->
+        <div id="messages-view" class="hidden">
+            <header class="content-header fade-in">
+                <div>
+                    <h1>Client Inquiries</h1>
+                    <p>Read and manage messages from your portfolio.</p>
+                </div>
+            </header>
+
+            <div class="data-card fade-in">
+                <div class="card-header">
+                    <h2>Inbox</h2>
+                    <span id="unread-count" class="tier-label" style="color: var(--accent-color); border-color: var(--accent-color);">0 New</span>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Sender</th>
+                                <th>Email</th>
+                                <th>Message</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="messages-table-body">
+                            <!-- Messages will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </main>

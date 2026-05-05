@@ -327,7 +327,7 @@
             </div>
 
             <div class="contact-form-container fade-in delay-2">
-                <form action="https://formspree.io/f/mgvvgozj" method="POST" class="contact-form">
+                <form id="contact-form" class="contact-form">
                     <h3>Send a Message</h3>
                     <p class="form-subtitle">I typically reply within 24 hours.</p>
                     <div class="input-row">
@@ -340,19 +340,68 @@
                             <label for="email">Email Address</label>
                         </div>
                     </div>
-                    <!-- <div class="input-group">
-                        <input type="text" id="subject" name="subject" required placeholder=" ">
-                        <label for="subject">Estimated Timeline</label>
-                    </div> -->
                     <div class="input-group">
                         <textarea name="message" id="message" rows="5" required placeholder=" "></textarea>
                         <label for="message">Project Details</label>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Send Inquiry</button>
+                    <button type="submit" class="btn btn-primary w-100" id="submit-btn">
+                        <span class="btn-text">Send Inquiry</span>
+                        <span class="loader hidden"></span>
+                    </button>
+                    <p id="form-status" class="form-status hidden"></p>
                 </form>
             </div>
         </div>
     </section>
+
+    <!-- Firebase Contact Logic -->
+    <script type="module">
+        import { db } from './firebase-config.js';
+        import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const contactForm = document.getElementById('contact-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const loader = submitBtn.querySelector('.loader');
+        const statusMsg = document.getElementById('form-status');
+
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            btnText.classList.add('hidden');
+            loader.classList.remove('hidden');
+            submitBtn.disabled = true;
+
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                message: document.getElementById('message').value,
+                createdAt: new Date(),
+                status: 'unread'
+            };
+
+            try {
+                await addDoc(collection(db, "messages"), formData);
+                statusMsg.textContent = "Message sent successfully! I'll get back to you soon.";
+                statusMsg.style.color = "var(--accent-color)";
+                statusMsg.classList.remove('hidden');
+                contactForm.reset();
+            } catch (error) {
+                console.error("Error sending message:", error);
+                statusMsg.textContent = "Oops! Something went wrong. Please try again.";
+                statusMsg.style.color = "var(--error-color)";
+                statusMsg.classList.remove('hidden');
+            } finally {
+                btnText.classList.remove('hidden');
+                loader.classList.add('hidden');
+                submitBtn.disabled = false;
+                
+                setTimeout(() => {
+                    statusMsg.classList.add('hidden');
+                }, 5000);
+            }
+        });
+    </script>
 
     <footer class="footer fade-in">
         <div class="footer-content">
@@ -370,7 +419,7 @@
                 <a target='_blank' href="https://x.com/Dickens1457?s=09">Twitter</a>
             </div>
         </div>
-        <p class="copyright">© 2026 Dickens Omondi. All rights reserved.</p>
+        <p class="copyright">© 2026 Dickens Omondi. All rights reserved. <a href="admin/" style="opacity: 0.3; font-size: 0.7rem; margin-left: 1rem;">Admin</a></p>
     </footer>
 
     <script src="main.js"></script>
