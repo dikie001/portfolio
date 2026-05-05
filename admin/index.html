@@ -11,94 +11,85 @@
 </head>
 <body class="login-body">
     <div class="login-container fade-in">
-        <div class="login-card">
-            <div class="login-header">
-                <a href="../index.html" class="back-link">&larr; Back to Site</a>
-                <h1>Admin Portal</h1>
-                <p>Welcome back, Dickens.</p>
+            <div class="login-card">
+                <div class="login-header">
+                    <a href="../index.html" class="back-link">&larr; Back to Site</a>
+                    <h1>Admin Portal</h1>
+                    <p>Welcome back, Dickens.</p>
+                </div>
+                <div id="login-actions">
+                    <button type="button" class="btn btn-primary w-100" id="login-btn">
+                        <span class="btn-text">Sign in with Google</span>
+                        <span class="loader hidden"></span>
+                    </button>
+                    <div class="auth-extras">
+                        <p id="login-error" class="error-message hidden"></p>
+                    </div>
+                </div>
             </div>
-            <form id="login-form">
-                <div class="input-group">
-                    <input type="email" id="email" required placeholder=" ">
-                    <label for="email">Email Address</label>
-                </div>
-                <div class="input-group">
-                    <input type="password" id="password" required placeholder=" ">
-                    <label for="password">Password</label>
-                </div>
-                <button type="submit" class="btn btn-primary w-100" id="login-btn">
-                    <span class="btn-text">Sign In</span>
-                    <span class="loader hidden"></span>
-                </button>
-                <div class="auth-extras">
-                    <p id="login-error" class="error-message hidden"></p>
-                    <a href="#" id="toggle-auth" style="display: block; margin-top: 1rem; font-size: 0.8rem; color: var(--text-light); text-align: center; opacity: 0.5;">Need to create an account?</a>
-                </div>
-            </form>
-        </div>
+
     </div>
 
     <script type="module">
-        import { auth } from '../firebase-config.js';
+        import { auth, googleProvider } from '../firebase-config.js';
         import { 
-            signInWithEmailAndPassword, 
-            createUserWithEmailAndPassword,
-            onAuthStateChanged 
+            signInWithPopup,
+            onAuthStateChanged,
+            signOut
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        const loginForm = document.getElementById('login-form');
         const loginBtn = document.getElementById('login-btn');
         const loginError = document.getElementById('login-error');
-        const toggleAuth = document.getElementById('toggle-auth');
         const btnText = loginBtn.querySelector('.btn-text');
         const loader = loginBtn.querySelector('.loader');
 
-        let isLogin = true;
-
-        toggleAuth.addEventListener('click', (e) => {
-            e.preventDefault();
-            isLogin = !isLogin;
-            btnText.textContent = isLogin ? 'Sign In' : 'Create Account';
-            toggleAuth.textContent = isLogin ? 'Need to create an account?' : 'Back to Sign In';
-            document.querySelector('h1').textContent = isLogin ? 'Admin Portal' : 'Create Admin';
-        });
-
-        // Check if already logged in
-        onAuthStateChanged(auth, (user) => {
+        // Check if already logged in and has admin claim
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
-                window.location.href = 'dashboard.html';
+                const idTokenResult = await user.getIdTokenResult();
+                if (idTokenResult.claims.admin) {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    loginError.textContent = "Access Denied: You do not have admin privileges.";
+                    loginError.classList.remove('hidden');
+                    await signOut(auth);
+                }
             }
         });
 
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
+        loginBtn.addEventListener('click', async () => {
             btnText.classList.add('hidden');
             loader.classList.remove('hidden');
             loginBtn.disabled = true;
             loginError.classList.add('hidden');
 
             try {
-                if (isLogin) {
-                    await signInWithEmailAndPassword(auth, email, password);
+                const result = await signInWithPopup(auth, googleProvider);
+                const idTokenResult = await result.user.getIdTokenResult();
+                
+                if (idTokenResult.claims.admin) {
+                    window.location.href = 'dashboard.html';
                 } else {
-                    await createUserWithEmailAndPassword(auth, email, password);
+                    // Force refresh token once in case claim was just assigned
+                    const freshToken = await result.user.getIdTokenResult(true);
+                    if (freshToken.claims.admin) {
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        throw new Error("You do not have admin privileges.");
+                    }
                 }
-                window.location.href = 'dashboard.html';
             } catch (error) {
                 console.error(error);
-                loginError.textContent = error.message.includes('auth/email-already-in-use') 
-                    ? "Email already exists." 
-                    : "Action failed. Check credentials or Firebase rules.";
+                loginError.textContent = error.message;
                 loginError.classList.remove('hidden');
                 
                 btnText.classList.remove('hidden');
                 loader.classList.add('hidden');
                 loginBtn.disabled = false;
+                await signOut(auth);
             }
         });
     </script>
+
 </body>
 </html>

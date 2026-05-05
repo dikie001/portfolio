@@ -669,14 +669,19 @@
         statusMsg.classList.add("hidden");
 
         const formData = {
-          name: document.getElementById("name").value.trim(),
-          email: document.getElementById("email").value.trim(),
-          message: document.getElementById("message").value.trim(),
+          name: String(document.getElementById("name").value.trim()),
+          email: String(document.getElementById("email").value.trim()),
+          message: String(document.getElementById("message").value.trim()),
           createdAt: new Date(),
-          status: "unread",
         };
 
-        console.log("Submitting form data:", formData);
+        // Basic validation already done by HTML5, but let's be explicit
+        if (!formData.name || !formData.email || !formData.message) {
+            throw new Error("All fields are required.");
+        }
+
+        console.log("Submitting form data to Firestore...", formData);
+
 
         try {
           // Attempt to send to Firestore

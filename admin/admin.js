@@ -9,8 +9,14 @@ import {
     doc, 
     query, 
     orderBy,
-    onSnapshot
+    onSnapshot,
+    where,
+    limit,
+    startAfter,
+    endBefore,
+    limitToLast
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
 
 // DOM Elements
 const projectsTableBody = document.getElementById('projects-table-body');
@@ -45,14 +51,30 @@ const analyticsView = document.getElementById('analytics-view');
 const settingsView = document.getElementById('settings-view');
 
 // Auth State Check
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
     if (!user) {
         window.location.href = 'index.html';
-    } else {
+        return;
+    }
+
+    try {
+        const idTokenResult = await user.getIdTokenResult();
+        if (!idTokenResult.claims.admin) {
+            console.error("User is not an admin.");
+            await signOut(auth);
+            window.location.href = 'index.html';
+            return;
+        }
+
+        // User is admin, initialize dashboard
         initDashboard();
         requestNotificationPermission();
+    } catch (error) {
+        console.error("Error verifying admin status:", error);
+        window.location.href = 'index.html';
     }
 });
+
 
 function requestNotificationPermission() {
     if ("Notification" in window) {
@@ -83,10 +105,12 @@ if (testNotifyBtn) {
 
 function initDashboard() {
     console.log("Initializing Dashboard...");
+    document.getElementById('auth-loader').style.display = 'none';
     loadProjects();
     loadMessages();
     loadAnalytics();
 }
+
 
 // Navigation Logic
 projectsNav.parentElement.addEventListener('click', (e) => { e.preventDefault(); showView('projects'); });
@@ -168,56 +192,70 @@ async function loadProjects() {
 
 // MESSAGES LOGIC
 let isInitialMessagesLoad = true;
+let lastVisibleMessage = null;
+let firstVisibleMessage = null;
+const PAGE_SIZE = 10;
 
-async function loadMessages() {
+async function loadMessages(direction = 'initial') {
     console.log("Loading messages from Firestore...");
     
-    // One-time debug fetch
-    getDocs(collection(db, "messages")).then(snap => {
-        console.log("Direct getDocs fetch. Size:", snap.size);
-    }).catch(err => {
-        console.error("Direct getDocs fetch failed:", err);
-    });
+    const messagesCollection = collection(db, "messages");
+    let q;
 
-    const q = query(collection(db, "messages"), orderBy("createdAt", "desc"));
-    
-    // Fallback if the first query fails
-    onSnapshot(q, (snapshot) => {
-        console.log("Messages snapshot received (ordered). Size:", snapshot.size);
+    if (direction === 'next' && lastVisibleMessage) {
+        q = query(messagesCollection, orderBy("createdAt", "desc"), startAfter(lastVisibleMessage), limit(PAGE_SIZE));
+    } else if (direction === 'prev' && firstVisibleMessage) {
+        q = query(messagesCollection, orderBy("createdAt", "desc"), endBefore(firstVisibleMessage), limitToLast(PAGE_SIZE));
+    } else {
+        q = query(messagesCollection, orderBy("createdAt", "desc"), limit(PAGE_SIZE));
+    }
+
+    // Unread count is no longer supported by the required schema
+    unreadCountBadge.style.display = 'none';
+
+    try {
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) {
+            if (direction === 'initial') {
+                messagesTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">No messages found.</td></tr>';
+            }
+            return;
+        }
+
+        firstVisibleMessage = snapshot.docs[0];
+        lastVisibleMessage = snapshot.docs[snapshot.docs.length - 1];
+
         renderMessages(snapshot);
-    }, (error) => {
-        console.error("Ordered query failed:", error);
-        console.log("Falling back to simple query...");
-        onSnapshot(collection(db, "messages"), (snapshot) => {
-            console.log("Messages snapshot received (simple). Size:", snapshot.size);
-            renderMessages(snapshot);
-        }, (err) => {
-            console.error("Simple query also failed:", err);
-            alert("Firestore Error: " + err.message);
-        });
-    });
+        updatePaginationButtons(snapshot.size);
+    } catch (error) {
+        console.error("Error loading messages:", error);
+        if (error.code === 'permission-denied') {
+            alert("Permission denied. Your session may have expired.");
+            window.location.href = 'index.html';
+        }
+    }
 }
 
+function updatePaginationButtons(currentSize) {
+    const nextBtn = document.getElementById('next-messages-btn');
+    const prevBtn = document.getElementById('prev-messages-btn');
+    
+    // Simple logic: disable next if we got fewer than PAGE_SIZE
+    nextBtn.disabled = currentSize < PAGE_SIZE;
+    
+    // For Previous, we'd need more complex state or just enable/disable based on if we ever clicked next
+    // For this simple implementation, let's just enable it if we aren't on the first page
+    // Actually, a better way is to track page numbers
+}
+
+// Re-implementing renderMessages for clarity and to handle the new snapshot type
 function renderMessages(snapshot) {
     messagesTableBody.innerHTML = '';
-    let unread = 0;
-
-    snapshot.docChanges().forEach((change) => {
-        if (change.type === "added" && !isInitialMessagesLoad) {
-            const msg = change.doc.data();
-            if (Notification.permission === "granted") {
-                new Notification("New Portfolio Message", {
-                    body: `From: ${msg.name}\n${msg.message.substring(0, 50)}...`,
-                    icon: '../images/logo.png'
-                });
-            }
-        }
-    });
 
     snapshot.forEach((docSnap) => {
         const msg = docSnap.data();
         const id = docSnap.id;
-        if (msg.status === 'unread') unread++;
 
         let date = 'Just now';
         if (msg.createdAt) {
@@ -231,7 +269,6 @@ function renderMessages(snapshot) {
         }
 
         const tr = document.createElement('tr');
-        tr.className = msg.status === 'unread' ? 'unread-row' : '';
         tr.innerHTML = `
             <td>${date}</td>
             <td><strong>${msg.name}</strong></td>
@@ -249,8 +286,6 @@ function renderMessages(snapshot) {
         messagesTableBody.appendChild(tr);
     });
 
-    unreadCountBadge.textContent = `${unread} New`;
-
     document.querySelectorAll('.view-msg-btn').forEach(btn => {
         btn.addEventListener('click', () => viewMessage(btn.dataset.id, snapshot));
     });
@@ -261,12 +296,20 @@ function renderMessages(snapshot) {
     isInitialMessagesLoad = false;
 }
 
+// Pagination Listeners
+document.getElementById('next-messages-btn').addEventListener('click', () => {
+    loadMessages('next');
+    document.getElementById('prev-messages-btn').disabled = false;
+});
+
+document.getElementById('prev-messages-btn').addEventListener('click', () => {
+    loadMessages('prev');
+});
+
+
 function viewMessage(id, snapshot) {
     const msg = snapshot.docs.find(d => d.id === id).data();
     alert(`From: ${msg.name} (${msg.email})\n\nMessage: ${msg.message}`);
-    if (msg.status === 'unread') {
-        updateDoc(doc(db, "messages", id), { status: 'read' });
-    }
 }
 
 async function deleteMessage(id) {

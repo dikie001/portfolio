@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Messages collection: Public can write, only Admin can read/delete
+    match /messages/{messageId} {
+      allow create: if request.resource.data.name is string &&
+                      request.resource.data.email is string &&
+                      request.resource.data.message is string &&
+                      request.resource.data.createdAt is timestamp;
+      allow read, update, delete: if request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Visits collection: Public can write (tracking), only Admin can read
+    match /visits/{visitId} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null && request.auth.token.admin == true;
+    }
+    
+    // Default rule for all other collections: Admin only
+    match /{document=**} {
+      allow read, write: if request.auth != null && request.auth.token.admin == true;
+    }
+
+  }
+}
