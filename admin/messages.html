@@ -133,8 +133,8 @@
                             <tr>
                                 <th>Date</th>
                                 <th>Sender</th>
-                                <th>Email</th>
-                                <th>Message</th>
+                                <th>Phone</th>
+                                <th class="desktop-only">Message</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -162,7 +162,7 @@
                 <div class="modal-detail-group">
                     <label class="modal-detail-label">From</label>
                     <div id="msg-detail-name" class="modal-detail-value" style="font-weight: 600; font-size: 1.1rem;"></div>
-                    <div id="msg-detail-email" style="color: var(--accent-color); font-size: 0.9rem;"></div>
+                    <div id="msg-detail-phone" style="color: var(--accent-color); font-size: 0.9rem;"></div>
                 </div>
                 <div class="modal-detail-group">
                     <label class="modal-detail-label">Date</label>
@@ -175,7 +175,8 @@
             </div>
             <div class="modal-actions">
                 <button class="btn btn-outline close-modal">Close</button>
-                <a id="msg-reply-btn" href="#" class="btn btn-primary">Reply via Email</a>
+                <a id="msg-call-btn" href="#" class="btn btn-outline">Call Now</a>
+                <a id="msg-whatsapp-btn" href="#" target="_blank" class="btn btn-primary">WhatsApp Message</a>
             </div>
         </div>
     </div>

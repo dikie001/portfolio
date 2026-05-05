@@ -1104,6 +1104,20 @@ td {
     color: var(--accent-color);
 }
 
+.ellipsis-btn {
+    padding: 0.4rem;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.desktop-only {
+    display: table-cell;
+}
+
 .dropdown-content {
     display: none;
     position: absolute;
@@ -1243,11 +1257,15 @@ tr.clickable:hover {
 
     .table-responsive {
         width: 100% !important;
-        max-width: 100vw !important;
+        max-width: 100% !important;
         overflow-x: auto !important;
         display: block !important;
         -webkit-overflow-scrolling: touch;
         position: relative;
+    }
+
+    .desktop-only {
+        display: none !important;
     }
 
     table {
