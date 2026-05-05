@@ -17,6 +17,8 @@
   --font-body: 'Inter', sans-serif;
 
   --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --error-color: #ff4d4d;
+  --success-color: #22c55e;
 }
 
 * {
@@ -1189,6 +1191,68 @@ html[data-theme='light'] .availability-card:hover {
 
 .contact-form .btn {
   margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Loader Styling */
+.loader {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+[data-theme="light"] .loader {
+  border-top-color: var(--white);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Form Status Alerts */
+.form-status {
+  margin-top: 2rem;
+  padding: 1.2rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  text-align: center;
+  transition: var(--transition);
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.form-status:not(.hidden) {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.form-status.success {
+  background: rgba(34, 197, 94, 0.1);
+  color: var(--success-color);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.form-status.error {
+  background: rgba(255, 77, 77, 0.1);
+  color: var(--error-color);
+  border: 1px solid rgba(255, 77, 77, 0.2);
+}
+
+/* Validation Styles */
+.input-group input:invalid:not(:placeholder-shown) {
+  border-bottom-color: var(--error-color);
+}
+
+.input-group input:invalid:not(:placeholder-shown)+label {
+  color: var(--error-color);
 }
 
 /* Footer */
