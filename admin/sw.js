@@ -1,13 +1,33 @@
+// CACHE NAME
+const CACHE_NAME = 'dikie-admin-v1';
+
+// PWA Install Event
+self.addEventListener('install', (event) => {
+    self.skipWaiting();
+});
+
+// PWA Activate Event
+self.addEventListener('activate', (event) => {
+    event.waitUntil(clients.claim());
+});
+
+// PWA Fetch Event (Satisfy installability requirements)
+self.addEventListener('fetch', (event) => {
+    // Standard pass-through
+    event.respondWith(fetch(event.request));
+});
+
+// PUSH NOTIFICATIONS
 self.addEventListener('push', function(event) {
     const data = event.data ? event.data.json() : {};
     const title = data.title || "New Message";
     const options = {
         body: data.body || "You have a new inquiry on your portfolio.",
-        icon: '/images/logo.png',
-        badge: '/images/logo.png',
+        icon: '../images/logo.png',
+        badge: '../images/logo.png',
         vibrate: [100, 50, 100],
         data: {
-            url: data.url || '/admin/messages.html'
+            url: data.url || 'messages.html'
         }
     };
 

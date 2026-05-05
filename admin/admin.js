@@ -130,11 +130,11 @@ function requestNotificationPermission() {
             Notification.requestPermission();
         }
         
-        // Register Service Worker for background notifications
+        // Register Service Worker for PWA and background notifications
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/admin/sw.js')
-                .then(reg => console.log('Service Worker Registered', reg))
-                .catch(err => console.error('Service Worker registration failed', err));
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('Admin Service Worker Registered', reg))
+                .catch(err => console.error('Admin Service Worker registration failed', err));
         }
     }
 }
@@ -194,6 +194,7 @@ function initDashboard() {
     // Global features
     if (!path.includes('index.html')) {
         setupRealtimeNotifications();
+        requestNotificationPermission(); // Now also handles SW registration
     }
 }
 
