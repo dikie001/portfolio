@@ -134,38 +134,135 @@
             <span class="section-tag">Projects</span>
             <h2>Things I've Built</h2>
             <p>Real projects, live and running.</p>
-        </div>
-
+        </div>        
         <div class="works-container" id="projects-container">
-            <!-- Projects will be loaded dynamically from Firebase -->
-            <div class="loader-container" style="text-align: center; padding: 5rem 0;">
-                <div class="loader" style="margin: 0 auto; border-top-color: var(--accent-color);"></div>
-                <p style="margin-top: 1rem; color: var(--text-light);">Loading Projects...</p>
+            <!-- Project 3 -->
+            <div class="work-card reverse fade-in appear">
+                <div class="img-placeholder">
+                    <a href="https://newton-delivery-company.vercel.app/" target="_blank">
+                        <img src="images/newton_dashboard.png" alt="Newton Delivery Company"
+                            style="width: 100%; height: 100%; object-fit: contain;">
+                    </a>
+                </div>
+                <div class="work-info">
+                    <h3>Newton Delivery</h3>
+                    <p>A delivery company web app with real-time tracking on maps, user auth, and separate admin/user
+                        dashboards. Handles the full order flow from placement to delivery.</p>
+                    <div class="tags">
+                        <span>React</span>
+                        <span>NodeJS</span>
+                        <span>PostgreSQL</span>
+                        <span>Tailwind</span>
+                    </div>
+                    <a href="https://newton-delivery-company.vercel.app/" target="_blank"
+                        class="btn btn-outline-small">View Live
+                        Build &rarr;</a>
+                    <a href="https://github.com/dikie001/newton-delivery-company" target="_blank"
+                        class="btn btn-outline-small"
+                        style="margin-left: 1rem; border-color: rgba(255,255,255,0.2);">GitHub Repo &rarr;</a>
+                </div>
             </div>
+            <!-- Project 1 -->
+            <div class="work-card fade-in appear">
+                <div class="img-placeholder">
+                    <a href="https://bitsa-ueab.vercel.app" target="_blank">
+                        <img src="images/bitsa_dashboard.png" alt="BITSA Platform"
+                            style="width: 100%; height: 100%; object-fit: contain;">
+                    </a>
+                </div>
+                <div class="work-info">
+                    <h3>BITSA Platform</h3>
+                    <p>A student platform I built for IT students at my university. Has role-based access, AI powered
+                        features, event tracking, and a content system. Full-stack, built from scratch.</p>
+                    <div class="tags">
+                        <span>React</span>
+                        <span>NodeJS</span>
+                        <span>Prisma</span>
+                        <span>ExpressJS</span>
+                    </div>
+                    <a href="https://bitsa-ueab.vercel.app" target="_blank" class="btn btn-outline-small">View Live
+                        Build &rarr;</a>
+                    <a href="https://github.com/dikie001/bitsa" target="_blank" class="btn btn-outline-small"
+                        style="margin-left: 1rem; border-color: rgba(255,255,255,0.2);">GitHub Repo &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Project 2 -->
+            <div class="work-card reverse fade-in appear">
+                <div class="img-placeholder">
+                    <a href="https://brillia-six.vercel.app" target="_blank">
+                        <img src="images/brillia_dashboard.png" alt="Brillia PWA App"
+                            style="width: 100%; height: 100%; object-fit: contain;">
+                    </a>
+                </div>
+                <div class="work-info">
+                    <h3>Brillia PWA</h3>
+                    <p>A progressive web app I made for daily inspiration — quizzes, short stories, fun facts. Works
+                        offline too. Built it because I wanted something lightweight and useful.</p>
+                    <div class="tags">
+                        <span>React</span>
+                        <span>TypeScript</span>
+                        <span>Tailwind</span>
+                        <span>PWA</span>
+                    </div>
+                    <a href="https://brillia-six.vercel.app" target="_blank" class="btn btn-outline-small">View Live
+                        Build &rarr;</a>
+                    <a href="https://github.com/dikie001/Brillia" target="_blank" class="btn btn-outline-small"
+                        style="margin-left: 1rem; border-color: rgba(255,255,255,0.2);">GitHub Repo &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Additional dynamic projects will be appended here -->
+            <div id="dynamic-projects-container"></div>
         </div>
     </section>
 
     <!-- Firebase Integration Script -->
     <script type="module">
         import { db } from './firebase-config.js';
-        import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { collection, getDocs, query, orderBy, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        async function loadProjects() {
-            const container = document.getElementById('projects-container');
+        // --- TRACKING LOGIC ---
+        async function trackVisit() {
             try {
+                const referrer = document.referrer || 'Direct';
+                const source = referrer.includes('facebook.com') ? 'Facebook' : 
+                               referrer.includes('t.co') || referrer.includes('twitter.com') ? 'Twitter' :
+                               referrer.includes('linkedin.com') ? 'LinkedIn' : 
+                               referrer.includes('instagram.com') ? 'Instagram' : 'Other/Direct';
+
+                const response = await fetch('https://ipapi.co/json/');
+                const locData = await response.json();
+
+                await addDoc(collection(db, "visits"), {
+                    timestamp: new Date(),
+                    referrer: referrer,
+                    source: source,
+                    country: locData.country_name || 'Unknown',
+                    city: locData.city || 'Unknown',
+                    page: window.location.pathname,
+                    userAgent: navigator.userAgent
+                });
+            } catch (error) {
+                console.error("Tracking failed:", error);
+            }
+        }
+
+        async function loadExtraProjects() {
+            const container = document.getElementById('dynamic-projects-container');
+            try {
+                // Only load projects that AREN'T the original 3 (based on creation date or just filter titles)
                 const q = query(collection(db, "projects"), orderBy("createdAt", "desc"));
                 const querySnapshot = await getDocs(q);
                 
-                if (querySnapshot.empty) {
-                    container.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">No projects found. Check back soon!</p>';
-                    return;
-                }
-
-                container.innerHTML = '';
-                let index = 0;
+                const originalTitles = ["Newton Delivery", "BITSA Platform", "Brillia PWA"];
+                
+                let index = 1; // Start with 1 for alternate layout (since we already have 3)
                 querySnapshot.forEach((doc) => {
                     const project = doc.data();
-                    const isReverse = index % 2 !== 0;
+                    if (originalTitles.includes(project.title)) return; // Skip original ones
+
+                    const isReverse = index % 2 === 0;
                     
                     const card = document.createElement('div');
                     card.className = `work-card ${isReverse ? 'reverse' : ''} fade-in appear`;
@@ -181,20 +278,22 @@
                             <div class="tags">
                                 ${project.tags.map(tag => `<span>${tag}</span>`).join('')}
                             </div>
-                            ${project.liveLink ? \`<a href="\${project.liveLink}" target="_blank" class="btn btn-outline-small">View Live Build &rarr;</a>\` : ''}
-                            ${project.githubLink ? \`<a href="\${project.githubLink}" target="_blank" class="btn btn-outline-small" style="margin-left: 1rem; border-color: rgba(255,255,255,0.2);">GitHub Repo &rarr;</a>\` : ''}
+                            ${project.liveLink ? `<a href="${project.liveLink}" target="_blank" class="btn btn-outline-small">View Live Build &rarr;</a>` : ''}
+                            ${project.githubLink ? `<a href="${project.githubLink}" target="_blank" class="btn btn-outline-small" style="margin-left: 1rem; border-color: rgba(255,255,255,0.2);">GitHub Repo &rarr;</a>` : ''}
                         </div>
                     `;
                     container.appendChild(card);
                     index++;
                 });
             } catch (error) {
-                console.error("Error loading projects:", error);
-                container.innerHTML = '<p style="text-align:center; color: var(--error-color);">Failed to load projects. Please refresh.</p>';
+                console.error("Error loading extra projects:", error);
             }
         }
 
-        document.addEventListener('DOMContentLoaded', loadProjects);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadExtraProjects();
+            trackVisit();
+        });
     </script>
 
     <section class="rates" id="rates">

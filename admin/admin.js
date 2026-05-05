@@ -25,12 +25,22 @@ const totalProjectsCount = document.getElementById('total-projects-count');
 const liveProjectsCount = document.getElementById('live-projects-count');
 const unreadCountBadge = document.getElementById('unread-count');
 
+// Analytics Elements
+const totalVisitsCount = document.getElementById('total-visits-count');
+const topSourceEl = document.getElementById('top-source');
+const topCountryEl = document.getElementById('top-country');
+const sourceList = document.getElementById('source-list');
+const countryList = document.getElementById('country-list');
+
 // Navigation
 const projectsNav = document.querySelector('a[href="#projects"]');
 const messagesNav = document.querySelector('a[href="#messages"]');
+const analyticsNav = document.querySelector('a[href="#analytics"]');
 const settingsNav = document.querySelector('a[href="#settings"]');
+
 const projectsView = document.getElementById('projects-view');
 const messagesView = document.getElementById('messages-view');
+const analyticsView = document.getElementById('analytics-view');
 const settingsView = document.getElementById('settings-view');
 
 // Auth State Check
@@ -45,28 +55,20 @@ onAuthStateChanged(auth, (user) => {
 function initDashboard() {
     loadProjects();
     loadMessages();
+    loadAnalytics();
 }
 
 // Navigation Logic
-projectsNav.parentElement.addEventListener('click', (e) => {
-    e.preventDefault();
-    showView('projects');
-});
-
-messagesNav.parentElement.addEventListener('click', (e) => {
-    e.preventDefault();
-    showView('messages');
-});
-
-settingsNav.parentElement.addEventListener('click', (e) => {
-    e.preventDefault();
-    showView('settings');
-});
+projectsNav.parentElement.addEventListener('click', (e) => { e.preventDefault(); showView('projects'); });
+messagesNav.parentElement.addEventListener('click', (e) => { e.preventDefault(); showView('messages'); });
+analyticsNav.parentElement.addEventListener('click', (e) => { e.preventDefault(); showView('analytics'); });
+settingsNav.parentElement.addEventListener('click', (e) => { e.preventDefault(); showView('settings'); });
 
 function showView(view) {
     const views = {
         projects: { el: projectsView, nav: projectsNav },
         messages: { el: messagesView, nav: messagesNav },
+        analytics: { el: analyticsView, nav: analyticsNav },
         settings: { el: settingsView, nav: settingsNav }
     };
 
@@ -191,6 +193,59 @@ async function deleteMessage(id) {
     }
 }
 
+// ANALYTICS LOGIC
+function loadAnalytics() {
+    onSnapshot(collection(db, "visits"), (snapshot) => {
+        const total = snapshot.size;
+        totalVisitsCount.textContent = total;
+
+        const sources = {};
+        const countries = {};
+
+        snapshot.forEach(docSnap => {
+            const data = docSnap.data();
+            const source = data.source || 'Unknown';
+            const country = data.country || 'Unknown';
+
+            sources[source] = (sources[source] || 0) + 1;
+            countries[country] = (countries[country] || 0) + 1;
+        });
+
+        // Get Top Source
+        const topSource = Object.keys(sources).reduce((a, b) => sources[a] > sources[b] ? a : b, 'N/A');
+        topSourceEl.textContent = topSource;
+
+        // Get Top Country
+        const topCountry = Object.keys(countries).reduce((a, b) => countries[a] > countries[b] ? a : b, 'N/A');
+        topCountryEl.textContent = topCountry;
+
+        // Render Lists
+        renderAnalyticsList(sourceList, sources, total);
+        renderAnalyticsList(countryList, countries, total);
+    });
+}
+
+function renderAnalyticsList(el, data, total) {
+    el.innerHTML = '';
+    const sorted = Object.entries(data).sort((a, b) => b[1] - a[1]);
+    
+    sorted.forEach(([name, count]) => {
+        const percent = Math.round((count / total) * 100);
+        const item = document.createElement('div');
+        item.style.marginBottom = '1rem';
+        item.innerHTML = `
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem;">
+                <span style="font-size: 0.9rem;">${name}</span>
+                <span style="font-size: 0.85rem; color: var(--text-light);">${count} (${percent}%)</span>
+            </div>
+            <div style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
+                <div style="height: 100%; width: ${percent}%; background: var(--accent-color);"></div>
+            </div>
+        `;
+        el.appendChild(item);
+    });
+}
+
 // SETTINGS LOGIC
 const settingsForm = document.getElementById('settings-form');
 const settingsMsg = document.getElementById('settings-msg');
@@ -231,7 +286,7 @@ settingsForm.addEventListener('submit', async (e) => {
         settingsForm.reset();
     } catch (error) {
         console.error(error);
-        settingsMsg.textContent = "Error updating password. You may need to re-login to perform this sensitive action.";
+        settingsMsg.textContent = "Error updating password. You may need to re-login.";
         settingsMsg.style.color = "var(--error-color)";
         settingsMsg.classList.remove('hidden');
     } finally {

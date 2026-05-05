@@ -30,6 +30,12 @@
                     </a>
                 </li>
                 <li>
+                    <a href="#analytics">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        Analytics
+                    </a>
+                </li>
+                <li>
                     <a href="#settings">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
                         Settings
@@ -130,7 +136,47 @@
                 </div>
             </div>
         </div>
-        <!-- Settings View -->
+        <!-- Analytics View -->
+        <div id="analytics-view" class="hidden">
+            <header class="content-header fade-in">
+                <div>
+                    <h1>Visitor Analytics</h1>
+                    <p>Track your audience and traffic sources.</p>
+                </div>
+            </header>
+
+            <div class="stats-grid fade-in">
+                <div class="stat-card">
+                    <h3>Total Visits</h3>
+                    <div class="value" id="total-visits-count">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Top Source</h3>
+                    <div class="value" id="top-source">N/A</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Top Country</h3>
+                    <div class="value" id="top-country">N/A</div>
+                </div>
+            </div>
+
+            <div class="data-card fade-in">
+                <div class="card-header">
+                    <h2>Traffic Breakdown</h2>
+                </div>
+                <div class="analytics-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div>
+                        <h4 style="margin-bottom: 1rem; color: var(--text-light);">Sources</h4>
+                        <div id="source-list" class="analytics-list"></div>
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom: 1rem; color: var(--text-light);">Countries</h4>
+                        <div id="country-list" class="analytics-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="settings-view" class="hidden">
             <header class="content-header fade-in">
                 <div>
