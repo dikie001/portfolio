@@ -34,6 +34,7 @@ const unreadCountBadge = document.getElementById('unread-count');
 
 // Analytics Elements
 const totalVisitsCount = document.getElementById('total-visits-count');
+const activeUsersCount = document.getElementById('active-users-count');
 const topSourceEl = document.getElementById('top-source');
 const topCountryEl = document.getElementById('top-country');
 const sourceList = document.getElementById('source-list');
@@ -157,7 +158,7 @@ function showTableSkeleton(tableBody, columns = 5, rows = 5) {
         const tr = document.createElement('tr');
         let cols = '';
         for (let j = 0; j < columns; j++) {
-            cols += `<td><div class="skeleton skeleton-text" style="height: 1.5rem;"></div></td>`;
+            cols += `<td><div class="skeleton skeleton-text" style="height: 1rem; width: ${Math.random() * 40 + 60}%"></div></td>`;
         }
         tr.innerHTML = cols;
         tableBody.appendChild(tr);
@@ -167,8 +168,34 @@ function showTableSkeleton(tableBody, columns = 5, rows = 5) {
 function showStatsSkeleton() {
     const stats = document.querySelectorAll('.stat-card .value');
     stats.forEach(el => {
-        el.innerHTML = '<div class="skeleton skeleton-text" style="width: 80px; height: 2.5rem; margin: 0 auto;"></div>';
+        el.innerHTML = '<div class="skeleton skeleton-text" style="width: 60px; height: 1.8rem; margin: 0.5rem auto;"></div>';
     });
+}
+
+function showGraphSkeleton(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const parent = canvas.parentElement;
+    if (parent) {
+        let skeleton = document.getElementById(canvasId + '-skeleton');
+        if (!skeleton) {
+            skeleton = document.createElement('div');
+            skeleton.id = canvasId + '-skeleton';
+            skeleton.className = 'skeleton';
+            skeleton.style.width = '100%';
+            skeleton.style.height = '100%';
+            skeleton.style.borderRadius = '12px';
+            canvas.style.display = 'none';
+            parent.appendChild(skeleton);
+        }
+    }
+}
+
+function hideGraphSkeleton(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    const skeleton = document.getElementById(canvasId + '-skeleton');
+    if (canvas) canvas.style.display = 'block';
+    if (skeleton) skeleton.remove();
 }
 
 // PROJECTS LOGIC
@@ -343,15 +370,23 @@ function loadAnalytics() {
             const data = docSnap.data();
             totalUniqueVisits++;
             totalSessions += (data.visitCount || 1);
-            sources[data.source || 'Unknown'] = (sources[data.source || 'Unknown'] || 0) + 1;
-            countries[data.country || 'Unknown'] = (countries[data.country || 'Unknown'] || 0) + 1;
+            const s = data.source || 'Direct';
+            const c = data.country || 'Unknown';
+            sources[s] = (sources[s] || 0) + 1;
+            countries[c] = (countries[c] || 0) + 1;
         });
 
-        totalVisitsCount.textContent = totalUniqueVisits; // Showing unique visitors as main stat
+        totalVisitsCount.textContent = totalUniqueVisits;
         if (activeUsersCount) activeUsersCount.textContent = Math.floor(Math.random() * 3) + 1; 
 
-        if (topSourceEl) topSourceEl.textContent = Object.keys(sources).reduce((a, b) => sources[a] > sources[b] ? a : b, 'N/A');
-        if (topCountryEl) topCountryEl.textContent = Object.keys(countries).reduce((a, b) => countries[a] > countries[b] ? a : b, 'N/A');
+        const getTop = (obj) => {
+            const keys = Object.keys(obj);
+            if (keys.length === 0) return 'N/A';
+            return keys.reduce((a, b) => obj[a] > obj[b] ? a : b);
+        };
+
+        if (topSourceEl) topSourceEl.textContent = getTop(sources);
+        if (topCountryEl) topCountryEl.textContent = getTop(countries);
         if (sourceList) renderAnalyticsList(sourceList, sources, totalUniqueVisits);
         if (countryList) renderAnalyticsList(countryList, countries, totalUniqueVisits);
     });
@@ -400,7 +435,8 @@ async function loadVisitors() {
     if (!table) return;
 
     showTableSkeleton(table, 7);
-    if (totalEl) totalEl.innerHTML = '<div class="skeleton skeleton-text" style="width: 50px; height: 1.5rem; margin: 0 auto;"></div>';
+    showStatsSkeleton();
+    showGraphSkeleton('visits-chart');
 
     // Fetch unique visitors from the new collection
     onSnapshot(query(collection(db, "visitors"), orderBy("lastVisit", "desc"), limit(100)), (snapshot) => {
@@ -423,6 +459,7 @@ async function loadVisitors() {
         });
 
         if (totalEl) totalEl.textContent = snapshot.size;
+        hideGraphSkeleton('visits-chart');
         renderVisitsGraph(snapshot);
     });
 }

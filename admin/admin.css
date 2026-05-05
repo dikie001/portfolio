@@ -182,16 +182,14 @@ body {
 }
 
 .sidebar {
-    width: 280px;
-    background: rgba(15, 15, 15, 0.8);
-    backdrop-filter: blur(20px);
+    width: 240px;
+    background: var(--sidebar-bg);
     border-right: 1px solid var(--border-color);
-    padding: 2rem;
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
     position: fixed;
     height: 100vh;
-    z-index: 10;
 }
 
 .sidebar-header {
@@ -199,7 +197,8 @@ body {
 }
 
 .sidebar-header h2 {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
     color: var(--accent-color);
 }
 
@@ -212,14 +211,15 @@ body {
     margin-bottom: 0.5rem;
 }
 
-.nav-links a {
+.nav-links li a {
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 1rem;
+    padding: 0.7rem 0.9rem;
     color: var(--text-light);
     text-decoration: none;
     border-radius: 12px;
+    font-size: 0.85rem;
     transition: var(--transition);
 }
 
@@ -236,9 +236,9 @@ body {
 
 .main-content {
     flex: 1;
-    margin-left: 280px;
-    padding: 2rem 3rem;
-    padding-top: 6rem; /* Space for fixed navbar */
+    margin-left: 220px;
+    padding: 1rem 2rem;
+    padding-top: 4.5rem; /* Space for fixed navbar */
 }
 
 /* Top Navbar */
@@ -246,15 +246,15 @@ body {
     position: fixed;
     top: 0;
     right: 0;
-    left: 280px; /* Offset by sidebar width */
-    height: 80px;
+    left: 220px; /* Offset by sidebar width */
+    height: 56px;
     background: rgba(8, 8, 8, 0.7);
     backdrop-filter: blur(15px);
     border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 3rem;
+    padding: 0 2rem;
     z-index: 100;
 }
 
@@ -440,31 +440,36 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem;
 }
 
 .content-header h1 {
-    font-size: 2.5rem;
+    font-size: 1.8rem;
+}
+
+.content-header p {
+    font-size: 0.9rem;
+    opacity: 0.7;
 }
 
 /* Stats Grid */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
-    margin-bottom: 4rem;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .stat-card {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
-    padding: 2rem;
-    border-radius: 20px;
+    padding: 1.2rem;
+    border-radius: 16px;
     text-align: center;
 }
 
 .stat-card h3 {
-    font-size: 0.9rem;
+    font-size: 0.75rem;
     color: var(--text-light);
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -472,7 +477,7 @@ body {
 }
 
 .stat-card .value {
-    font-size: 2.5rem;
+    font-size: 1.8rem;
     font-weight: 700;
     color: var(--accent-color);
 }
@@ -481,8 +486,8 @@ body {
 .data-card {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
-    border-radius: 24px;
-    padding: 2rem;
+    border-radius: 20px;
+    padding: 1.5rem;
     overflow: hidden;
 }
 
