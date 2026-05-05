@@ -49,8 +49,15 @@ onAuthStateChanged(auth, (user) => {
         window.location.href = 'index.html';
     } else {
         initDashboard();
+        requestNotificationPermission();
     }
 });
+
+function requestNotificationPermission() {
+    if ("Notification" in window) {
+        Notification.requestPermission();
+    }
+}
 
 function initDashboard() {
     loadProjects();
@@ -137,10 +144,24 @@ async function loadProjects() {
 }
 
 // MESSAGES LOGIC
+let isInitialMessagesLoad = true;
+
 async function loadMessages() {
     onSnapshot(query(collection(db, "messages"), orderBy("createdAt", "desc")), (snapshot) => {
         messagesTableBody.innerHTML = '';
         let unread = 0;
+
+        snapshot.docChanges().forEach((change) => {
+            if (change.type === "added" && !isInitialMessagesLoad) {
+                const msg = change.doc.data();
+                if (Notification.permission === "granted") {
+                    new Notification("New Portfolio Message", {
+                        body: `From: ${msg.name}\n${msg.message.substring(0, 50)}...`,
+                        icon: '../images/logo.png'
+                    });
+                }
+            }
+        });
 
         snapshot.forEach((docSnap) => {
             const msg = docSnap.data();
@@ -176,6 +197,8 @@ async function loadMessages() {
         document.querySelectorAll('.delete-msg-btn').forEach(btn => {
             btn.addEventListener('click', () => deleteMessage(btn.dataset.id));
         });
+
+        isInitialMessagesLoad = false;
     });
 }
 
