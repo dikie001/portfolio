@@ -118,4 +118,58 @@ function updateLocalTime() {
 }
 
 updateLocalTime();
+
 setInterval(updateLocalTime, 60000); // update every minute
+
+// Share Functionality
+window.closeShareModal = function() {
+    const modal = document.getElementById('share-modal-overlay');
+    if (modal) modal.classList.remove('active');
+};
+
+window.copyToClipboard = function() {
+    const input = document.getElementById('share-link-input');
+    input.select();
+    input.setSelectionRange(0, 99999); // For mobile
+    navigator.clipboard.writeText(input.value).then(() => {
+        const btn = document.getElementById('copy-share-btn');
+        const originalText = btn.innerText;
+        btn.innerText = 'Copied!';
+        btn.style.background = '#22c55e';
+        btn.style.color = '#fff';
+        
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.style.background = 'var(--accent-color)';
+            btn.style.color = '#000';
+        }, 2000);
+    });
+};
+
+function initShare() {
+    const shareBtn = document.getElementById('share-site-btn');
+    if (!shareBtn) return;
+
+    shareBtn.addEventListener('click', async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: 'Dickens Omondi | Portfolio',
+                    text: 'Check out Dickens Omondi\'s professional portfolio. Full-stack developer building fast, scalable web apps.',
+                    url: window.location.href
+                });
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    document.getElementById('share-modal-overlay').classList.add('active');
+                }
+            }
+        } else {
+            document.getElementById('share-modal-overlay').classList.add('active');
+        }
+    });
+}
+
+// Initialize on DOM Load
+document.addEventListener('DOMContentLoaded', () => {
+    initShare();
+});

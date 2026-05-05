@@ -739,6 +739,40 @@
           <a target="_blank" href="https://x.com/Dickens1457?s=09" aria-label="Twitter">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733-16z"/><path d="M4 20l6.768-6.768m2.46-2.46L20 4"/></svg>
           </a>
+          <button id="share-site-btn" class="share-btn-pill" aria-label="Share Website">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+            <span>Share</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Share Modal Fallback -->
+      <div id="share-modal-overlay" class="share-modal-overlay" onclick="window.closeShareModal()">
+        <div class="share-modal" onclick="event.stopPropagation()">
+          <div class="share-modal-header">
+            <h3>Share Portfolio</h3>
+            <button onclick="window.closeShareModal()" style="background:none; border:none; color:var(--text-light); cursor:pointer;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+          <div class="share-options">
+            <a href="https://wa.me/?text=Check out Dickens Omondi's Portfolio: https://dikie.vercel.app/" target="_blank" class="share-option">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-14h.1A8.38 8.38 0 0 1 16.5 2h.5A8 8 0 0 1 21 11.5Z"/><path d="M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"/></svg>
+              <span>WhatsApp</span>
+            </a>
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://dikie.vercel.app/" target="_blank" class="share-option">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+              <span>LinkedIn</span>
+            </a>
+            <a href="https://x.com/intent/tweet?text=Check out this portfolio: &url=https://dikie.vercel.app/" target="_blank" class="share-option">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l11.733 16h4.267l-11.733-16z"/><path d="M4 20l6.768-6.768m2.46-2.46L20 4"/></svg>
+              <span>X / Twitter</span>
+            </a>
+          </div>
+          <div class="copy-link-box">
+            <input type="text" id="share-link-input" value="https://dikie.vercel.app/" readonly>
+            <button id="copy-share-btn" class="copy-btn" onclick="window.copyToClipboard()">Copy</button>
+          </div>
         </div>
       </div>
       <p class="copyright">
