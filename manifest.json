@@ -1,21 +1,20 @@
 {
-  "name": "Dikie001 Admin Portal",
+  "name": "Dickens Omondi Portfolio",
   "short_name": "Dickens",
-  "description": "Administrative control center for Dickens Omondi's Portfolio.",
-  "start_url": "index.html",
-  "scope": "./",
+  "description": "Full-stack developer building secure, fast, production-ready systems.",
+  "start_url": "/index.html",
   "display": "standalone",
-  "background_color": "#080808",
+  "background_color": "#0a0a0a",
   "theme_color": "#D4AF37",
   "icons": [
     {
-      "src": "../images/logo.png",
+      "src": "images/logo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "../images/logo.png",
+      "src": "images/logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
