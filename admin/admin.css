@@ -147,6 +147,14 @@ body {
     color: #000;
 }
 
+.google-icon {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .btn-primary:hover {
     background: #e5c048;
     transform: translateY(-1px);
@@ -844,8 +852,8 @@ td {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(10, 10, 10, 0.8);
-    backdrop-filter: blur(12px);
+    background: var(--bg-color);
+    backdrop-filter: blur(20px);
     display: flex;
     flex-direction: column;
     align-items: center;
