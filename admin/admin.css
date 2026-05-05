@@ -900,8 +900,28 @@ td {
     pointer-events: none;
 }
 
-/* Analytics List Progress Bar Fix */
-.analytics-list > div {
-    animation: fadeIn 0.4s ease-out forwards;
+/* Dashboard Latest Items */
+.latest-message-item {
+    transition: var(--transition);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.latest-message-item:last-child {
+    border-bottom: none !important;
+}
+
+.latest-message-item:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.latest-message-item strong {
+    color: var(--accent-color);
+    font-size: 0.95rem;
+}
+
+.latest-message-item p {
+    color: var(--text-light);
+    font-size: 0.85rem;
+    margin-top: 0.2rem;
 }
 

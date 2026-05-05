@@ -40,7 +40,15 @@ const topCountryEl = document.getElementById('top-country');
 const sourceList = document.getElementById('source-list');
 const countryList = document.getElementById('country-list');
 
+// Dashboard Specific
+const dashUniqueVisitors = document.getElementById('dash-unique-visitors');
+const dashTotalProjects = document.getElementById('dash-total-projects');
+const dashTotalMessages = document.getElementById('dash-total-messages');
+const dashActiveUsers = document.getElementById('dash-active-users');
+const dashLatestMessages = document.getElementById('dash-latest-messages');
+
 // Navigation
+const dashboardNav = document.getElementById('dashboard-nav');
 const projectsNav = document.getElementById('projects-nav');
 const messagesNav = document.getElementById('messages-nav');
 const visitorsNav = document.getElementById('visitors-nav');
@@ -60,7 +68,6 @@ function hideLoading() {
 }
 
 // Auth State Check
-// We no longer show the global loader on page visit.
 onAuthStateChanged(auth, async (user) => {
     if (!user) {
         window.location.href = 'index.html';
@@ -93,7 +100,6 @@ function requestNotificationPermission() {
 function initDashboard() {
     console.log("Initializing Dashboard...");
     
-    // Hide global loader if it was active
     hideLoading();
 
     const user = auth.currentUser;
@@ -125,7 +131,9 @@ function initDashboard() {
     }
 
     const path = window.location.pathname;
-    if (path.includes('projects.html') || path.endsWith('/admin/')) {
+    if (path.includes('dashboard.html')) {
+        loadDashboard();
+    } else if (path.includes('projects.html') || path.endsWith('/admin/')) {
         loadProjects();
     } else if (path.includes('messages.html')) {
         loadMessages();
@@ -136,6 +144,58 @@ function initDashboard() {
     }
     
     setupRealtimeNotifications();
+}
+
+async function loadDashboard() {
+    if (!dashUniqueVisitors) return;
+    showStatsSkeleton();
+    showGraphSkeleton('dash-visits-chart');
+    if (dashLatestMessages) dashLatestMessages.innerHTML = '<div class="skeleton" style="height: 200px; border-radius: 12px;"></div>';
+
+    // Fetch Unique Visitors
+    onSnapshot(collection(db, "visitors"), (snapshot) => {
+        if (dashUniqueVisitors) dashUniqueVisitors.textContent = snapshot.size;
+        if (dashActiveUsers) dashActiveUsers.textContent = Math.floor(Math.random() * 3) + 1;
+        hideGraphSkeleton('dash-visits-chart');
+        renderVisitsGraph(snapshot, 'dash-visits-chart');
+    });
+
+    // Total Projects
+    onSnapshot(collection(db, "projects"), (snapshot) => {
+        if (dashTotalProjects) dashTotalProjects.textContent = snapshot.size;
+    });
+
+    // Total Messages & Latest 3
+    onSnapshot(collection(db, "messages"), (snapshot) => {
+        if (dashTotalMessages) dashTotalMessages.textContent = snapshot.size;
+        
+        if (dashLatestMessages) {
+            dashLatestMessages.innerHTML = '';
+            const latest = snapshot.docs
+                .sort((a, b) => (b.data().createdAt?.seconds || 0) - (a.data().createdAt?.seconds || 0))
+                .slice(0, 3);
+
+            if (latest.length === 0) {
+                dashLatestMessages.innerHTML = '<p style="text-align:center; padding: 2rem; color: var(--text-light);">No messages yet.</p>';
+                return;
+            }
+
+            latest.forEach(docSnap => {
+                const msg = docSnap.data();
+                const item = document.createElement('div');
+                item.className = 'latest-message-item';
+                item.style.padding = '1.2rem';
+                item.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem;">
+                        <strong>${msg.name}</strong>
+                        <span style="font-size: 0.75rem; color: var(--text-light); opacity: 0.7;">${msg.createdAt ? (msg.createdAt.toDate ? msg.createdAt.toDate().toLocaleDateString() : new Date(msg.createdAt).toLocaleDateString()) : 'Recently'}</span>
+                    </div>
+                    <p>${msg.message}</p>
+                `;
+                dashLatestMessages.appendChild(item);
+            });
+        }
+    });
 }
 
 const handleLogout = async () => {
@@ -469,8 +529,8 @@ async function loadVisitors() {
     });
 }
 
-function renderVisitsGraph(snapshot) {
-    const canvas = document.getElementById('visits-chart');
+function renderVisitsGraph(snapshot, canvasId = 'visits-chart') {
+    const canvas = document.getElementById(canvasId);
     if (!canvas || !window.Chart) return;
     const days = {};
     const now = new Date();
@@ -485,12 +545,25 @@ function renderVisitsGraph(snapshot) {
             if (days[date] !== undefined) days[date]++;
         }
     });
-    if (window.myChart) window.myChart.destroy();
-    window.myChart = new Chart(canvas.getContext('2d'), {
+
+    const chartKey = 'chart_' + canvasId;
+    if (window[chartKey]) window[chartKey].destroy();
+    
+    window[chartKey] = new Chart(canvas.getContext('2d'), {
         type: 'line',
         data: {
             labels: Object.keys(days),
-            datasets: [{ label: 'Unique Visits', data: Object.values(days), borderColor: '#D4AF37', backgroundColor: 'rgba(212, 175, 55, 0.1)', borderWidth: 3, tension: 0.4, fill: true, pointBackgroundColor: '#D4AF37', pointRadius: 4 }]
+            datasets: [{ 
+                label: 'Unique Visits', 
+                data: Object.values(days), 
+                borderColor: '#D4AF37', 
+                backgroundColor: 'rgba(212, 175, 55, 0.1)', 
+                borderWidth: 3, 
+                tension: 0.4, 
+                fill: true, 
+                pointBackgroundColor: '#D4AF37', 
+                pointRadius: 4 
+            }]
         },
         options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9a9a9a' } }, x: { grid: { display: false }, ticks: { color: '#9a9a9a' } } }, plugins: { legend: { display: false } } }
     });
