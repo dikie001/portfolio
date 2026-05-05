@@ -1351,62 +1351,38 @@ tr.clickable:hover {
         padding: 2rem 1.5rem;
     }
 
-    /* Table Mobile Stack */
-    .table-responsive table, 
-    .table-responsive thead, 
-    .table-responsive tbody, 
-    .table-responsive th, 
-    .table-responsive td, 
-    .table-responsive tr { 
-        display: block; 
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 0 -1rem;
+        padding: 0 1rem;
     }
 
-    .table-responsive thead tr { 
-        position: absolute;
-        top: -9999px;
-        left: -9999px;
+    table {
+        min-width: 700px; /* Force horizontal scroll */
+        font-size: 0.75rem !important;
     }
 
-    .table-responsive tr { 
-        border: 1px solid var(--border-color);
-        margin-bottom: 1rem;
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.02);
-    }
-
-    .table-responsive td { 
-        border: none;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
-        position: relative;
-        padding-left: 45% !important; 
-        text-align: left;
-        min-height: 3rem;
-        display: flex;
-        align-items: center;
-    }
-
-    .table-responsive td:last-child {
-        border-bottom: none;
-    }
-
-    .table-responsive td:before { 
-        position: absolute;
-        left: 1rem;
-        width: 40%; 
+    td, th {
+        padding: 0.8rem 0.5rem !important;
         white-space: nowrap;
-        font-weight: 600;
-        color: var(--accent-color);
-        content: attr(data-label);
-        font-size: 0.75rem;
-        text-transform: uppercase;
     }
 
     .msg-preview {
-        max-width: 100% !important;
+        max-width: 150px !important;
     }
 
     .stats-grid {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.5rem;
+    }
+
+    .stat-card {
+        padding: 0.8rem;
+    }
+
+    .stat-card .value {
+        font-size: 1.2rem;
     }
 }
 
