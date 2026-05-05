@@ -1672,8 +1672,8 @@ tr.clickable:hover {
 
 .notification-badge {
     position: absolute;
-    top: -3px;
-    right: -3px;
+    top: -2px;
+    right: -2px;
     background: var(--accent-color);
     color: #000;
     font-size: 0.55rem;
@@ -1766,27 +1766,25 @@ tr.clickable:hover {
 
 
 .notification-item {
-    padding: 0.8rem;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.03);
-    cursor: pointer;
+    position: relative;
+    padding: 1rem;
+    padding-right: 3rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
     transition: var(--transition);
-    border: 1px solid transparent;
-}
-
-.notification-item:hover {
-    background: rgba(212, 175, 55, 0.05);
-    border-color: rgba(212, 175, 55, 0.2);
+    border: 1px solid var(--border-color);
 }
 
 .notification-item.unread {
-    border-left: 3px solid var(--accent-color);
+    background: rgba(212, 175, 55, 0.04);
+    border-color: rgba(212, 175, 55, 0.1);
 }
 
 .notification-item h4 {
     font-size: 0.85rem;
     margin-bottom: 0.2rem;
     color: var(--text-color);
+    font-weight: 600;
 }
 
 .notification-item p {
@@ -1797,13 +1795,41 @@ tr.clickable:hover {
     text-overflow: ellipsis;
 }
 
+.notification-item .time-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.6rem;
+}
+
 .notification-item .time {
     font-size: 0.65rem;
-    color: var(--accent-color);
-    margin-top: 0.4rem;
-    display: block;
-    opacity: 0.8;
+    color: var(--text-light);
+    opacity: 0.6;
 }
+
+.notification-item .status-ticks {
+    display: flex;
+    gap: -8px;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: var(--transition);
+}
+
+.notification-item .status-ticks:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.notification-item .status-ticks.read {
+    color: #4db8ff;
+    opacity: 1;
+}
+
+.notification-item .status-ticks svg:last-child {
+    margin-left: -10px;
+}
+
 
 .no-notifications {
     padding: 2rem;

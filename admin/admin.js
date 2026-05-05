@@ -477,16 +477,35 @@ function setupRealtimeNotifications() {
             } else {
                 navList.innerHTML = '';
                 const docs = snapshot.docs || [];
-                docs.filter(d => d.data().status !== 'read').slice(0, 5).forEach(doc => {
-                    const msg = doc.data();
+                docs.filter(d => d.data().status !== 'read').slice(0, 5).forEach(docSnap => {
+                    const msg = docSnap.data();
+                    const id = docSnap.id;
                     const item = document.createElement('div');
                     item.className = 'notification-item unread';
-                    item.onclick = () => window.location.href = 'messages.html';
+                    
+                    const timeStr = msg.createdAt?.toDate ? msg.createdAt.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Just now';
+                    
                     item.innerHTML = `
-                        <h4>${msg.name}</h4>
-                        <p>${msg.message}</p>
-                        <span class="time">${msg.createdAt?.toDate ? msg.createdAt.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Just now'}</span>
+                        <div class="notif-content" style="cursor: pointer;">
+                            <h4>${msg.name}</h4>
+                            <p>${msg.message}</p>
+                        </div>
+                        <div class="time-group">
+                            <span class="time">${timeStr}</span>
+                            <div class="status-ticks" title="Mark as read" data-id="${id}">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </div>
+                        </div>
                     `;
+                    
+                    item.querySelector('.notif-content').onclick = () => window.location.href = 'messages.html';
+                    item.querySelector('.status-ticks').onclick = async (e) => {
+                        e.stopPropagation();
+                        await updateDoc(doc(db, "messages", id), { status: 'read' });
+                        showToast("Message marked as read", "success");
+                    };
+                    
                     navList.appendChild(item);
                 });
             }
