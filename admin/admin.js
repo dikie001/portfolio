@@ -204,9 +204,11 @@ function setupMobileMenu() {
     const topNavbar = document.querySelector('.top-navbar');
     if (!topNavbar) return;
 
-    // Create Toggle Button if not exists
-    if (!document.querySelector('.menu-toggle')) {
-        const toggleBtn = document.createElement('button');
+    let toggleBtn = document.querySelector('.menu-toggle');
+    
+    // Create Toggle Button if not exists (for backwards compatibility if any page is missing it)
+    if (!toggleBtn) {
+        toggleBtn = document.createElement('button');
         toggleBtn.className = 'menu-toggle';
         toggleBtn.innerHTML = `
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -216,29 +218,32 @@ function setupMobileMenu() {
             </svg>
         `;
         topNavbar.prepend(toggleBtn);
+    }
 
-        // Create Overlay if not exists
-        const overlay = document.createElement('div');
+    // Create Overlay if not exists
+    let overlay = document.querySelector('.sidebar-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
         overlay.className = 'sidebar-overlay';
         document.body.appendChild(overlay);
-
-        // Toggle Event
-        toggleBtn.addEventListener('click', () => {
-            document.body.classList.toggle('sidebar-open');
-        });
-
-        // Close Event
-        overlay.addEventListener('click', () => {
-            document.body.classList.remove('sidebar-open');
-        });
-
-        // Close on Link Click
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                document.body.classList.remove('sidebar-open');
-            });
-        });
     }
+
+    // Toggle Event
+    toggleBtn.onclick = () => {
+        document.body.classList.toggle('sidebar-open');
+    };
+
+    // Close Event
+    overlay.onclick = () => {
+        document.body.classList.remove('sidebar-open');
+    };
+
+    // Close on Link Click
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.onclick = () => {
+            document.body.classList.remove('sidebar-open');
+        };
+    });
 }
 
 async function loadDashboard() {
@@ -796,55 +801,69 @@ function renderVisitsGraph(snapshot, canvasId = 'visits-chart') {
         data: {
             labels: Object.keys(days).map(d => {
                 const date = new Date(d);
-                return date.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+                return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
             }),
             datasets: [{ 
                 label: 'Unique Visits', 
                 data: Object.values(days), 
                 borderColor: '#D4AF37', 
-                backgroundColor: 'rgba(212, 175, 55, 0.1)', 
-                borderWidth: 3, 
+                backgroundColor: 'rgba(212, 175, 55, 0.05)', 
+                borderWidth: 2, 
                 tension: 0.4, 
                 fill: true, 
                 pointBackgroundColor: '#D4AF37', 
-                pointRadius: 4,
-                pointHoverRadius: 6
+                pointRadius: 3,
+                pointHoverRadius: 5
             }]
         },
         options: { 
             responsive: true, 
             maintainAspectRatio: false, 
+            layout: {
+                padding: {
+                    left: 0,
+                    right: 10,
+                    top: 10,
+                    bottom: 0
+                }
+            },
             scales: { 
                 y: { 
                     beginAtZero: true, 
-                    grid: { color: 'rgba(255,255,255,0.05)' }, 
+                    grid: { color: 'rgba(255,255,255,0.03)' }, 
                     ticks: { 
-                        color: '#9a9a9a',
+                        color: '#7a7a7a',
+                        font: { size: 10 },
                         stepSize: 1,
                         precision: 0,
+                        padding: 8,
                         callback: function(value) { if (value % 1 === 0) return value; }
                     } 
                 }, 
                 x: { 
                     grid: { display: false }, 
                     ticks: { 
-                        color: '#9a9a9a',
+                        color: '#7a7a7a',
+                        font: { size: 10 },
                         maxRotation: 0,
                         autoSkip: true,
-                        maxTicksLimit: window.innerWidth < 480 ? 4 : 7
+                        maxTicksLimit: window.innerWidth < 480 ? 4 : 6,
+                        padding: 8
                     } 
                 } 
             }, 
             plugins: { 
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: 'rgba(20, 20, 20, 0.9)',
+                    backgroundColor: 'rgba(20, 20, 20, 0.95)',
                     titleColor: '#D4AF37',
                     bodyColor: '#fff',
-                    borderColor: 'rgba(212, 175, 55, 0.3)',
+                    borderColor: 'rgba(212, 175, 55, 0.2)',
                     borderWidth: 1,
                     padding: 10,
-                    displayColors: false
+                    displayColors: false,
+                    intersect: false,
+                    mode: 'index'
                 }
             } 
         }
