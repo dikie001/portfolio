@@ -1672,19 +1672,22 @@ tr.clickable:hover {
 
 .notification-badge {
     position: absolute;
-    top: -5px;
-    right: -5px;
+    top: -3px;
+    right: -3px;
     background: var(--accent-color);
     color: #000;
-    font-size: 0.65rem;
-    font-weight: 800;
-    padding: 2px 5px;
-    border-radius: 6px;
+    font-size: 0.55rem;
+    font-weight: 900;
+    width: 17px;
+    height: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
     border: 1.5px solid var(--bg-color);
     display: none;
-    min-width: 18px;
-    text-align: center;
     box-shadow: 0 0 10px var(--accent-glow);
+    pointer-events: none;
 }
 
 @keyframes pulse-gold {
