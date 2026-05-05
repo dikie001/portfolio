@@ -1658,27 +1658,31 @@ html[data-theme='light'] .availability-card:hover {
 
 
 /* Share Button & Modal Styles */
-.share-btn-round {
-  background: rgba(255, 255, 255, 0.05);
+.share-btn-pill {
+  background: rgba(212, 175, 55, 0.05);
   border: 1.5px solid rgba(212, 175, 55, 0.2);
-  color: var(--text-light);
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
+  color: var(--accent-color);
+  padding: 0.5rem 1.2rem;
+  border-radius: 30px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 0.6rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-left: 0.5rem;
+  margin-left: 1rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.share-btn-round:hover {
+.share-btn-pill:hover {
   background: var(--accent-color);
   color: #000;
   border-color: var(--accent-color);
   transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+  box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
 }
 
 .share-modal-overlay {
