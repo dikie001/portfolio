@@ -111,20 +111,39 @@ function initDashboard() {
     console.log("Initializing Dashboard...");
     document.getElementById('auth-loader').style.display = 'none';
     
-    // Update Navbar User Info
+    // Update Navbar & Dropdown User Info
     const user = auth.currentUser;
     if (user) {
-        document.getElementById('user-email').textContent = user.email;
+        const name = user.displayName || "Admin User";
+        document.getElementById('user-name').textContent = name;
+        document.getElementById('dropdown-name').textContent = name;
+        document.getElementById('dropdown-email').textContent = user.email;
+        
         if (user.photoURL) {
             document.getElementById('user-avatar').src = user.photoURL;
+            document.getElementById('dropdown-avatar').src = user.photoURL;
         }
     }
+
+    // Profile Dropdown Toggle
+    const profileTrigger = document.getElementById('profile-trigger');
+    const profileDropdown = document.getElementById('profile-dropdown');
+    
+    profileTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        profileDropdown.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', () => {
+        profileDropdown.classList.add('hidden');
+    });
 
     loadProjects();
     loadMessages();
     loadAnalytics();
     setupRealtimeNotifications();
 }
+
 
 
 
@@ -166,7 +185,8 @@ const handleLogout = async () => {
 };
 
 logoutBtn.addEventListener('click', handleLogout);
-document.getElementById('nav-logout-btn').addEventListener('click', handleLogout);
+document.getElementById('dropdown-logout-btn').addEventListener('click', handleLogout);
+
 
 
 // PROJECTS LOGIC
