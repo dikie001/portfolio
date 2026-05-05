@@ -676,6 +676,8 @@
           status: "unread",
         };
 
+        console.log("Submitting form data:", formData);
+
         try {
           // Attempt to send to Firestore
           await addDoc(collection(db, "messages"), formData);
