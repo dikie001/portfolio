@@ -845,6 +845,12 @@ section {
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
   position: relative;
   overflow: hidden;
+  transition: transform 0.4s ease, border-color 0.4s ease;
+}
+
+.cta-container:hover {
+  transform: translateY(-5px);
+  border-color: rgba(212, 175, 55, 0.3);
 }
 
 .cta-container::before {
@@ -884,21 +890,6 @@ section {
   display: flex;
   justify-content: center;
   gap: 2rem;
-}
-
-@media (max-width: 768px) {
-  .cta-content h2 {
-    font-size: 2.8rem;
-  }
-  
-  .cta-actions {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .cta-container {
-    padding: 4rem 2rem;
-  }
 }
 
 /* Better Contact Section Redesign */
@@ -1586,19 +1577,49 @@ html[data-theme='light'] .availability-card:hover {
     order: 2;
   }
 
-
-
   .about {
     margin: 1rem auto;
     max-width: calc(100% - 2rem);
     padding: 5rem 2rem;
+  }
+
+  .cta-content h2 {
+    font-size: 3.2rem;
+  }
+
+  .cta-container {
+    padding: 5rem 3rem;
   }
 }
 
 @media (max-width: 768px) {
 
   section {
-    padding: 5rem 5%;
+    padding: 4rem 5%;
+  }
+
+  .cta-section {
+    padding: 6rem 5%;
+  }
+
+  .cta-content h2 {
+    font-size: 2.5rem;
+  }
+
+  .cta-content p {
+    font-size: 1.1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .cta-actions {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0 1rem;
+  }
+
+  .cta-container {
+    padding: 3.5rem 1.5rem;
+    border-radius: 30px;
   }
 
   .about {
@@ -1827,6 +1848,31 @@ html[data-theme='light'] .availability-card:hover {
   .copyright {
     font-size: 0.78rem;
     letter-spacing: 0.5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cta-content h2 {
+    font-size: 2rem;
+  }
+
+  .cta-section {
+    padding: 4rem 3%;
+  }
+
+  .cta-container {
+    padding: 3rem 1.2rem;
+    border-radius: 24px;
+  }
+
+  .cta-content p {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .cta-actions .btn {
+    padding: 1rem 2rem;
+    font-size: 0.85rem;
   }
 }
 
