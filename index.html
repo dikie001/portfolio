@@ -323,6 +323,12 @@
       // --- TRACKING LOGIC ---
       async function trackVisit() {
         try {
+          // Only track on the home page as requested
+          const path = window.location.pathname;
+          const isHomePage = path === "/" || path === "/index.html" || path === "";
+                             
+          if (!isHomePage) return;
+
           const referrer = document.referrer || "Direct";
           const source = referrer.includes("facebook.com") ? "Facebook" : 
                          referrer.includes("t.co") || referrer.includes("twitter.com") ? "Twitter" :
@@ -332,26 +338,25 @@
           let ip = "";
           let locData = {};
 
-          try {
-            const response = await fetch("https://ipapi.co/json/");
-            if (response.ok) {
-                locData = await response.json();
-                ip = locData.ip;
-            }
-          } catch (e) {
-            console.warn("Primary IP service failed, trying fallback...");
-          }
+          // Multiple IP services for robustness
+          const ipServices = [
+            "https://ipapi.co/json/",
+            "https://api.ipify.org?format=json",
+            "https://ipinfo.io/json"
+          ];
 
-          if (!ip) {
+          for (const service of ipServices) {
             try {
-              const fbResponse = await fetch("https://api.ipify.org?format=json");
-              if (fbResponse.ok) {
-                const fbData = await fbResponse.json();
-                ip = fbData.ip;
+              const resp = await fetch(service);
+              if (resp.ok) {
+                const data = await resp.json();
+                ip = data.ip || data.query || data.ip_address;
+                if (ip) {
+                  locData = data;
+                  break;
+                }
               }
-            } catch (e) {
-              console.error("Fallback IP service failed:", e);
-            }
+            } catch (e) {}
           }
 
           if (!ip) {
@@ -359,31 +364,23 @@
             return;
           }
 
-          console.log("Tracking visit for IP:", ip);
-
           const visitorRef = doc(db, "visitors", ip.replace(/\./g, '_')); 
           
+          // Log to unique visitors collection only (no page-level tracking)
           await setDoc(visitorRef, {
             ip: ip,
             lastVisit: serverTimestamp(),
             visitCount: increment(1),
             referrer: referrer,
             source: source,
-            country: locData.country_name || "Unknown",
+            country: locData.country_name || locData.country || "Unknown",
             city: locData.city || "Unknown",
             region: locData.region || "Unknown",
             org: locData.org || "Unknown",
-            userAgent: navigator.userAgent,
-            page: window.location.pathname
+            userAgent: navigator.userAgent
           }, { merge: true });
 
-          await addDoc(collection(db, "visits"), {
-            ip: ip,
-            timestamp: serverTimestamp(),
-            page: window.location.pathname
-          });
-
-          console.log("Visit tracked successfully.");
+          console.log("Visitor tracking updated.");
         } catch (error) {
           console.error("Tracking failed:", error);
         }
