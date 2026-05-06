@@ -1,4 +1,4 @@
- const menuIcon = document.querySelector("#menu-icon");
+const menuIcon = document.querySelector("#menu-icon");
 const navbar = document.querySelector(".navbar");
 const header = document.querySelector(".header");
 const navLinks = document.querySelectorAll(".navbar a");
@@ -72,8 +72,6 @@ navLinks.forEach(link => {
   });
 });
 
-
-
 // Scroll Animation Observer for Golden Theme elements
 const fadeElements = document.querySelectorAll('.fade-in');
 
@@ -97,10 +95,6 @@ fadeElements.forEach(el => {
   appearOnScroll.observe(el);
 });
 
-
-
-
-
 // Local Time Updates
 function updateLocalTime() {
   const timeElement = document.getElementById('local-time');
@@ -118,8 +112,54 @@ function updateLocalTime() {
 }
 
 updateLocalTime();
-
 setInterval(updateLocalTime, 60000); // update every minute
+
+// Global Toast Notification System
+window.showToast = function(title, message, type = 'success', duration = 5000) {
+    let container = document.querySelector('.toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    
+    let iconHtml = '';
+    if (type === 'loading') {
+        iconHtml = '<div class="toast-spinner"></div>';
+    } else {
+        const icon = type === 'success' 
+            ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>'
+            : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+        iconHtml = icon;
+    }
+
+    toast.innerHTML = `
+        <div class="toast-icon">${iconHtml}</div>
+        <div class="toast-content">
+            <div class="toast-title">${title}</div>
+            <div class="toast-message">${message}</div>
+        </div>
+    `;
+
+    container.appendChild(toast);
+
+    const removeToast = () => {
+        toast.classList.add('fade-out');
+        setTimeout(() => {
+            toast.remove();
+            if (container.childNodes.length === 0) container.remove();
+        }, 500);
+    };
+
+    if (duration > 0) {
+        setTimeout(removeToast, duration);
+    }
+
+    return { remove: removeToast };
+};
 
 // Share Functionality
 window.closeShareModal = function() {
@@ -169,6 +209,22 @@ function initShare() {
     });
 }
 
+// Resume Lazy Loading Simulation
+window.viewResume = function() {
+    const loadingToast = window.showToast("Fetching Resume", "Optimizing for your device...", "loading", -1);
+    
+    // Simulate a bit of loading for premium feel
+    setTimeout(() => {
+        loadingToast.remove();
+        window.showToast("Ready!", "Opening Dickens Omondi's Resume.", "success", 3000);
+        
+        // Open the file
+        setTimeout(() => {
+            window.open('Dickens_Omondi_Resume.pdf', '_blank');
+        }, 500);
+    }, 1500);
+};
+
 // Scroll Down Indicator
 function initScrollIndicator() {
     const scrollIndicator = document.querySelector('.scroll-indicator');
@@ -191,7 +247,6 @@ function initScrollIndicator() {
         }
     });
 }
-
 
 // Initialize on DOM Load
 document.addEventListener('DOMContentLoaded', () => {
