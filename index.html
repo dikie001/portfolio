@@ -611,7 +611,6 @@
               <span class="btn-text">Send Inquiry</span>
               <span class="loader hidden"></span>
             </button>
-            <p id="form-status" class="form-status hidden"></p>
           </form>
         </div>
       </div>
@@ -631,16 +630,49 @@
       const submitBtn = document.getElementById("submit-btn");
       const btnText = submitBtn.querySelector(".btn-text");
       const loader = submitBtn.querySelector(".loader");
-      const statusMsg = document.getElementById("form-status");
+
+      // Toast Notification System
+      function showToast(title, message, type = 'success') {
+        let container = document.querySelector('.toast-container');
+        if (!container) {
+          container = document.createElement('div');
+          container.className = 'toast-container';
+          document.body.appendChild(container);
+        }
+
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        
+        const icon = type === 'success' 
+          ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>'
+          : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+
+        toast.innerHTML = `
+          <div class="toast-icon">${icon}</div>
+          <div class="toast-content">
+            <div class="toast-title">${title}</div>
+            <div class="toast-message">${message}</div>
+          </div>
+        `;
+
+        container.appendChild(toast);
+
+        // Auto remove
+        setTimeout(() => {
+          toast.classList.add('fade-out');
+          setTimeout(() => {
+            toast.remove();
+            if (container.childNodes.length === 0) container.remove();
+          }, 500);
+        }, 5000);
+      }
 
       contactForm.addEventListener("submit", async (e) => {
         e.preventDefault();
 
         // Basic validation check
         if (!contactForm.checkValidity()) {
-          statusMsg.textContent = "Please fill in all fields correctly.";
-          statusMsg.className = "form-status error";
-          statusMsg.classList.remove("hidden");
+          showToast("Validation Error", "Please fill in all fields correctly before sending.", "error");
           return;
         }
 
@@ -648,7 +680,6 @@
         btnText.classList.add("hidden");
         loader.classList.remove("hidden");
         submitBtn.disabled = true;
-        statusMsg.classList.add("hidden");
 
         const formData = {
           name: String(document.getElementById("name").value.trim()),
@@ -670,10 +701,7 @@
           await addDoc(collection(db, "messages"), formData);
 
           // Success state
-          statusMsg.textContent =
-            "Thank you! Your message has been sent successfully. I'll get back to you within 24 hours.";
-          statusMsg.className = "form-status success";
-          statusMsg.classList.remove("hidden");
+          showToast("Message Sent!", "Thank you! I've received your inquiry and will get back to you within 24 hours.", "success");
           contactForm.reset();
 
 
@@ -698,21 +726,12 @@
               "No internet connection detected. Please check your network.";
           }
 
-          statusMsg.textContent = errorText;
-          statusMsg.className = "form-status error";
-          statusMsg.classList.remove("hidden");
+          showToast("Delivery Failed", errorText, "error");
         } finally {
           // Restore UI state
           btnText.classList.remove("hidden");
           loader.classList.add("hidden");
           submitBtn.disabled = false;
-
-          // Auto-hide status after some time unless it's an error
-          if (statusMsg.classList.contains("success")) {
-            setTimeout(() => {
-              statusMsg.classList.add("hidden");
-            }, 8000);
-          }
         }
       });
     </script>
