@@ -451,7 +451,7 @@ const dashboardLoadTime = new Date();
 function showNotificationToast(title, message) {
   const toast = document.createElement("div");
   toast.className = "toast-notification fade-in";
-  toast.style.cssText = `position: fixed; bottom: 2rem; right: 2rem; background: #1a1a1a; border: 1px solid var(--accent-color); padding: 1.5rem; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10001; max-width: 350px;`;
+  toast.style.cssText = `position: fixed; bottom: 2rem; right: 2rem; background: #121212; border: 1px solid rgba(212, 175, 55, 0.5); padding: 1.5rem; border-radius: 20px; box-shadow: 0 25px 50px rgba(0,0,0,0.8), 0 0 25px rgba(212, 175, 55, 0.15); z-index: 10001; max-width: 380px; border-left: 5px solid var(--accent-color);`;
   toast.innerHTML = `
         <h4 style="color: var(--accent-color); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>

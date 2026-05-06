@@ -1561,17 +1561,33 @@ tr.clickable:hover {
 }
 
 .toast {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
+    background: #121212;
+    border: 1px solid rgba(212, 175, 55, 0.4);
     padding: 1rem 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 175, 55, 0.1);
     display: flex;
     align-items: center;
     gap: 1rem;
     color: var(--text-color);
     animation: toastSlideIn 0.3s ease-out;
-    min-width: 200px;
+    min-width: 280px;
+    z-index: 10002;
+}
+
+.toast.success {
+    border-color: rgba(68, 255, 68, 0.5);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(68, 255, 68, 0.15);
+}
+
+.toast.error {
+    border-color: rgba(255, 77, 77, 0.5);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 77, 77, 0.15);
+}
+
+.toast.loading {
+    border-color: rgba(212, 175, 55, 0.5);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 175, 55, 0.15);
 }
 
 .toast.loading .toast-loader {
@@ -1581,10 +1597,6 @@ tr.clickable:hover {
     border-top: 2px solid var(--accent-color);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
-}
-
-.toast.success {
-    border-left: 4px solid #4ade80;
 }
 
 .toast.success .toast-icon {
