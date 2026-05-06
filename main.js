@@ -233,9 +233,9 @@ function initScrollIndicator() {
     scrollIndicator.addEventListener('click', () => {
         const isMobile = window.innerWidth <= 768;
         if (isMobile) {
-            // Scroll 80% of viewport height
+            // Scroll 84% of viewport height
             window.scrollBy({
-                top: window.innerHeight * 0.80,
+                top: window.innerHeight * 0.84,
                 behavior: 'smooth'
             });
         } else {
