@@ -92,6 +92,26 @@
   border: 1px solid rgba(255, 77, 77, 0.2);
 }
 
+.toast.loading .toast-icon {
+  background: rgba(212, 175, 55, 0.1);
+  color: var(--accent-color);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.toast-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(212, 175, 55, 0.2);
+  border-top: 2px solid var(--accent-color);
+  border-radius: 50%;
+  animation: toast-spin 0.8s linear infinite;
+}
+
+@keyframes toast-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .toast-content {
   flex: 1;
 }
