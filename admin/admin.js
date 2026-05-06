@@ -1193,8 +1193,8 @@ async function loadSiteSettings() {
             document.getElementById('contact-email').value = data.email || '';
             document.getElementById('social-github').value = data.github || '';
             document.getElementById('social-linkedin').value = data.linkedin || '';
-            document.getElementById('social-instagram').value = data.instagram || '';
-            document.getElementById('social-twitter').value = data.twitter || '';
+            document.getElementById('social-whatsapp').value = data.whatsapp || '';
+            document.getElementById('social-whatsapp-msg').value = data.whatsappMsg || '';
         }
     } catch (error) {
         console.error("Error loading settings:", error);
@@ -1221,8 +1221,8 @@ async function loadSiteSettings() {
             email: document.getElementById('contact-email').value.trim(),
             github: document.getElementById('social-github').value.trim(),
             linkedin: document.getElementById('social-linkedin').value.trim(),
-            instagram: document.getElementById('social-instagram').value.trim(),
-            twitter: document.getElementById('social-twitter').value.trim(),
+            whatsapp: document.getElementById('social-whatsapp').value.trim(),
+            whatsappMsg: document.getElementById('social-whatsapp-msg').value.trim(),
             updatedAt: new Date()
         };
 
