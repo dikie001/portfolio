@@ -169,7 +169,32 @@ function initShare() {
     });
 }
 
+// Scroll Down Indicator
+function initScrollIndicator() {
+    const scrollIndicator = document.querySelector('.scroll-indicator');
+    if (!scrollIndicator) return;
+
+    scrollIndicator.addEventListener('click', () => {
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+            // Scroll halfway (50% of viewport height)
+            window.scrollBy({
+                top: window.innerHeight / 2,
+                behavior: 'smooth'
+            });
+        } else {
+            // Desktop: Scroll to About section
+            const aboutSection = document.getElementById('about');
+            if (aboutSection) {
+                aboutSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    });
+}
+
+
 // Initialize on DOM Load
 document.addEventListener('DOMContentLoaded', () => {
     initShare();
+    initScrollIndicator();
 });
