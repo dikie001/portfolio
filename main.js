@@ -248,8 +248,22 @@ function initScrollIndicator() {
     });
 }
 
+// Scroll Top logic
+function initScrollTop() {
+    const scrollTopBtn = document.querySelector("#scroll-top");
+    if (!scrollTopBtn) return;
+
+    scrollTopBtn.addEventListener("click", () => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    });
+}
+
 // Initialize on DOM Load
 document.addEventListener('DOMContentLoaded', () => {
     initShare();
     initScrollIndicator();
+    initScrollTop();
 });

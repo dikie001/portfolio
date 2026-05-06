@@ -2073,3 +2073,54 @@ html[data-theme='light'] .availability-card:hover {
   transform: scale(1.05);
   filter: brightness(1.1);
 }
+
+/* Scroll Up Indicator in Footer */
+.scroll-indicator.scroll-up {
+  position: absolute;
+  top: -4rem;
+  bottom: auto;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  z-index: 100;
+  opacity: 1;
+  visibility: visible;
+  transition: all 0.4s ease;
+}
+
+.scroll-indicator.scroll-up:hover {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-5px);
+}
+
+.scroll-indicator.scroll-up .arrows {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: rotate(180deg); /* Flip arrows to point up */
+  margin-bottom: 0.5rem;
+}
+
+.scroll-indicator.scroll-up .wheel {
+  animation: scroll-wheel-up 2s infinite;
+}
+
+@keyframes scroll-wheel-up {
+  0% { top: 25px; opacity: 1; }
+  100% { top: 6px; opacity: 0; }
+}
+
+@media (max-width: 768px) {
+  .scroll-indicator.scroll-up {
+    top: -3.5rem;
+    transform: translateX(-50%) scale(0.8);
+  }
+  
+  .scroll-indicator.scroll-up:hover {
+    transform: translateX(-50%) translateY(-3px) scale(0.8);
+  }
+}
